@@ -1,8 +1,44 @@
 <resources>
 
     <!-- Base application theme. -->
-    <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
-        <!-- Customize your theme here. -->
+    <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
+        <!--导航栏底色-->
+        <item name="colorPrimary">@color/style_color_primary</item>
+        <!--状态栏底色-->
+        <item name="colorPrimaryDark">@color/black</item>
+        <!--导航栏上的标题-->
+        <item name="android:textColorPrimary">@color/white_two</item>
+        <!--Activity窗口的颜色-->
+        <item name="android:windowBackground">@color/style_color_window_background</item>
+        <!--EditText 输入框中字体的颜色-->
+        <item name="editTextColor">@color/white_two</item>
+        <!--EditText提示文字颜色-->
+        <item name="android:textColorHint">@color/grey</item>
+        <!--按钮选中或者点击获得焦点后的颜色-->
+        <item name="colorAccent">#1a69b4</item>
+        <!--和 colorAccent相反，正常状态下按钮的颜色-->
+        <item name="colorControlNormal">@color/white_two</item>
+        <!--Button按钮正常状态颜色-->
+        <item name="colorButtonNormal">#1a69b4</item>
+
+        <item name="alertDialogTheme">@style/AppTheme.Dialog.Alert</item>
+
     </style>
+
+    <style name="ToolbarTheme" parent="AppTheme">
+        <item name="android:textColorPrimary">@android:color/white</item>
+        <item name="android:textColorSecondary">@android:color/white</item>
+        <!--item name="colorControlActivited">@android:color/white</item-->
+    </style>
+
+    <style name="text_register_item">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_marginLeft">@dimen/text_margin_left</item>
+        <item name="android:layout_marginRight">@dimen/text_margin_left</item>
+        <item name="android:layout_marginBottom">@dimen/text_margin_bottom</item>
+
+    </style>
+    <style name="AppTheme.Dialog.Alert" parent="Theme.AppCompat.Light.Dialog.Alert"/>
 
 </resources>

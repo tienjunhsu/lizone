@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+     <dimen name="register_toolbar_margin_bottom">37dp</dimen>
+    <dimen name="text_margin_bottom">0dp</dimen>
+    <dimen name="text_margin_left">10dp</dimen>
+</resources>

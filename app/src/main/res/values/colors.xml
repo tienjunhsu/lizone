@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="style_color_primary">#1d2228</color>
+    <color name="style_color_window_background">#101318</color>
+    <color name="white">#ffffff</color>
+    <color name="white_two">#989890</color>
+    <color name="black">#000000</color>
+    <color name="grey">#454545</color>
+    <color name="blue_two">#1a69b4</color>
+    <color name="tab_bg">#1a1f23</color>
+</resources>

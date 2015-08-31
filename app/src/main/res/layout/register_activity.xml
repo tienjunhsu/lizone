@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <include layout="@layout/toolbar_layout" />
+
+    <android.support.design.widget.TextInputLayout
+        android:id="@+id/edit_name"
+        style="@style/text_register_item"
+        android:layout_marginTop="@dimen/register_toolbar_margin_bottom"
+        >
+
+        <EditText
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="@string/hint_user_name"
+            android:inputType="number"
+            />
+    </android.support.design.widget.TextInputLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="@dimen/text_margin_left"
+        android:layout_marginRight="@dimen/text_margin_left"
+        android:baselineAligned="false"
+        android:gravity="bottom"
+        android:orientation="horizontal">
+
+    <android.support.design.widget.TextInputLayout
+        android:id="@+id/edit_code_verify"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        >
+
+        <EditText
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="@string/hint_verify_code"
+            android:inputType="number"
+            />
+    </android.support.design.widget.TextInputLayout>
+        <Button
+            android:id="@+id/btn_get_verify"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:onClick="onXmlBtClick"
+            android:maxHeight="50dp"
+            android:layout_weight="2"
+            android:text="@string/get_vevify_code"
+            />
+    </LinearLayout>
+
+    <android.support.design.widget.TextInputLayout
+        android:id="@+id/edit_password"
+        style="@style/text_register_item">
+
+        <EditText
+            android:textColorHint="@color/grey"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="text"
+            android:password="true"
+            android:hint="@string/hint_password" />
+    </android.support.design.widget.TextInputLayout>
+    <android.support.design.widget.TextInputLayout
+        android:id="@+id/edit_pass_confirm"
+        style="@style/text_register_item">
+
+        <EditText
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="text"
+            android:password="true"
+            android:hint="@string/hint_pass_confirm"/>
+    </android.support.design.widget.TextInputLayout>
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <CheckBox
+            android:id="@+id/check_user_agreement"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/user_agreement_confirm"
+            android:textColor="@color/white_two"
+            android:layout_marginLeft="@dimen/text_margin_left"
+            />
+        <TextView
+            android:id="@+id/text_user_agreement"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="5dp"
+            android:clickable="true"
+            android:onClick="onXmlBtClick"
+            android:text="@string/user_agreement_title"
+            android:textColor="@color/blue_two"
+            />
+        </LinearLayout>
+    <Button
+        android:id="@+id/submit"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:onClick="onXmlBtClick"
+        android:text="@string/register"
+        android:layout_marginLeft="@dimen/text_margin_left"
+        android:layout_marginRight="@dimen/text_margin_left"
+        android:minHeight="50dp"
+        />
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_marginTop="15dp"
+        android:gravity="center_horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:text="@string/has_lizone_account"
+            android:textColor="@color/white_two"
+            />
+        <TextView
+            android:id="@+id/btn_login"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:clickable="true"
+            android:onClick="onXmlBtClick"
+            android:layout_marginLeft="10dp"
+            android:text="@string/btn_login_title"
+            android:textColor="@color/blue_two"
+            />
+        </LinearLayout>
+</LinearLayout>

@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <group android:checkableBehavior="single">
+    <item
+        android:id="@+id/nav_open_account"
+        android:icon="@drawable/ic_open_account"
+        android:title="@string/open_account"/>
+    <item
+        android:id="@+id/nav_point"
+        android:icon="@drawable/ic_event"
+        android:title="@string/my_points"/>
+    <item
+        android:id="@+id/nav_account"
+        android:icon="@drawable/ic_account"
+        android:title="@string/my_account"/>
+    <item
+        android:id="@+id/nav_event"
+        android:icon="@drawable/ic_event"
+        android:title="@string/my_events"/>
+    <item
+        android:id="@+id/nav_gift"
+        android:icon="@drawable/ic_gift"
+        android:title="@string/my_gift"/>
+</group>
+</menu>

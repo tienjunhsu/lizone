@@ -43,7 +43,12 @@ public class SplashActivity extends BaseActivity implements Animation.AnimationL
     }
 
     private void redictedTo() {
-        startActivity(new Intent(this,TestActivity.class));
+        startActivity(new Intent(this,MainActivity.class));
         finish();
+    }
+
+    @Override
+    protected void initToolBar() {
+
     }
 }
