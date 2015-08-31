@@ -8,4 +8,7 @@
     <color name="grey">#454545</color>
     <color name="blue_two">#1a69b4</color>
     <color name="tab_bg">#1a1f23</color>
+
+    <color name="tab_item_normal">#1a1f23</color>
+    <color name="tab_item_pressed">#15181d</color>
 </resources>

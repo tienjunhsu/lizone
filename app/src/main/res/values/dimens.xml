@@ -2,5 +2,7 @@
 <resources>
      <dimen name="register_toolbar_margin_bottom">37dp</dimen>
     <dimen name="text_margin_bottom">0dp</dimen>
-    <dimen name="text_margin_left">10dp</dimen>
+    <dimen name="text_margin_left">16dp</dimen>
+    <dimen name="edit_text_size">16sp</dimen>
+    <dimen name="default_height">48dp</dimen>
 </resources>

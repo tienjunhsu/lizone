@@ -105,7 +105,7 @@ public class MainActivity extends BaseActivity implements OnTabChangeListener {
         int tabs[]= TabDb.getTabsTxt();
         for(int i=0;i<tabs.length;i++){
             TabHost.TabSpec tabSpec=tabHost.newTabSpec(getString(tabs[i])).setIndicator(getTabView(i));
-            tabHost.addTab(tabSpec,TabDb.getFragments()[i],null);
+            tabHost.addTab(tabSpec, TabDb.getFragments()[i],null);
             tabHost.setTag(i);
         }
     }
@@ -133,9 +133,11 @@ public class MainActivity extends BaseActivity implements OnTabChangeListener {
             if(i==tabHost.getCurrentTab()){
                 ((TextView)view.findViewById(R.id.tvTab)).setTextColor(getResources().getColor(R.color.blue_two));
                 iv.setImageResource(TabDb.getTabsImgLight()[i]);
+                view.setBackgroundColor(getResources().getColor(R.color.tab_item_pressed));
             }else{
                 ((TextView)view.findViewById(R.id.tvTab)).setTextColor(getResources().getColor(R.color.white_two));
                 iv.setImageResource(TabDb.getTabsImg()[i]);
+                view.setBackgroundColor(getResources().getColor(R.color.tab_item_normal));
             }
 
         }

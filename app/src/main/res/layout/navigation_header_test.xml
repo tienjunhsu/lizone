@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="192dp"
+    android:background="?attr/colorPrimaryDark"
+    android:orientation="vertical"
+    android:padding="16dp"
+    android:theme="@style/ThemeOverlay.AppCompat.Dark">
+
+
+<TextView
+    android:id="@+id/id_link"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_alignParentBottom="true"
+    android:layout_marginBottom="16dp"
+    android:text="http://blog.csdn.net/lmj623565791"/>
+
+<TextView
+    android:id="@+id/id_username"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_above="@id/id_link"
+    android:text="Zhang Hongyang"/>
+    <com.cquant.lizone.view.CircleImageView
+        android:id="@+id/nav_iv_portrait"
+        android:layout_width="72dp"
+        android:layout_height="72dp"
+        android:src="@drawable/ic_profile"
+        android:layout_above="@id/id_username"
+        android:layout_marginBottom="16dp"
+        app:border_width="1dp"
+        app:border_color="@color/grey"
+        />
+
+
+</RelativeLayout>

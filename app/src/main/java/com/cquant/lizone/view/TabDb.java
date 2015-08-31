@@ -18,7 +18,7 @@ public class TabDb {
         return ids;
     }
     public static int[] getTabsImgLight(){
-        int[] ids={R.drawable.ic_home_normal,R.drawable.ic_market_pressed,R.drawable.ic_explore_pressed};
+        int[] ids={R.drawable.ic_home_pressed,R.drawable.ic_market_pressed,R.drawable.ic_explore_pressed};
         return ids;
     }
     public static Class[] getFragments(){
