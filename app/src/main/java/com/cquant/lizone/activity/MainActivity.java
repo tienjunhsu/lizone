@@ -28,6 +28,7 @@ public class MainActivity extends BaseActivity implements OnTabChangeListener {
 
     private FragmentTabHost tabHost;
     private DrawerLayout mDrawerLayout;
+    //private NavigationView mNavigationView;
     private NavigationView mNavigationView;
     private Toolbar toolbar;
 
@@ -37,7 +38,7 @@ public class MainActivity extends BaseActivity implements OnTabChangeListener {
         setContentView(R.layout.main_activity_new);
 
         mDrawerLayout = (DrawerLayout) findViewById(R.id.id_drawer_layout);
-        mNavigationView = (NavigationView) findViewById(R.id.id_nv_menu);
+       // mNavigationView = (NavigationView) findViewById(R.id.id_nv_menu);
         toolbar = (Toolbar) findViewById(R.id.toolbar);
 
         tabHost=(FragmentTabHost)super.findViewById(android.R.id.tabhost);
@@ -47,12 +48,12 @@ public class MainActivity extends BaseActivity implements OnTabChangeListener {
         tabHost.setOnTabChangedListener(this);
         initToolBar();
         initTab();
-        setupDrawerContent(mNavigationView);
+       // setupDrawerContent(mNavigationView);
 
     }
 
     private void setupDrawerContent(NavigationView mNavigationView) {
-        mNavigationView.setNavigationItemSelectedListener(
+        /*mNavigationView.setNavigationItemSelectedListener(
 
                 new NavigationView.OnNavigationItemSelectedListener()
                 {
@@ -64,7 +65,7 @@ public class MainActivity extends BaseActivity implements OnTabChangeListener {
                         mDrawerLayout.closeDrawers();
                         return true;
                     }
-                });
+                });*/
     }
 
     @Override

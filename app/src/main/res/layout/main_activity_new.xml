@@ -32,14 +32,19 @@
         </android.support.v4.app.FragmentTabHost>
     </LinearLayout>
 
-    <android.support.design.widget.NavigationView
+    <LinearLayout
         android:id="@+id/id_nv_menu"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_gravity="left"
         android:fitsSystemWindows="true"
-        app:headerLayout="@layout/navigation_header_test"
-        app:menu="@menu/menu_drawer"
-        />
+        android:background="@color/nav_menu_bg"
+        android:orientation="vertical">
+
+        <include layout="@layout/navigation_header"/>
+        <include layout="@layout/navigation_menu"/>
+        <include layout="@layout/navigation_footer"/>
+
+    </LinearLayout>
 
 </android.support.v4.widget.DrawerLayout>

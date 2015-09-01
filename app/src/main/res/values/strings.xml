@@ -29,4 +29,6 @@
     <string name="my_account">我的账户</string>
     <string name="my_events">我的活动</string>
     <string name="my_gift">我的礼品</string>
+    <string name="accumulate_point">积分</string>
+    <string name="setting">设置</string>
 </resources>

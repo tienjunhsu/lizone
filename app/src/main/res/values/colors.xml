@@ -2,6 +2,7 @@
 <resources>
     <color name="style_color_primary">#1d2228</color>
     <color name="style_color_window_background">#101318</color>
+    <color name="nav_menu_bg">#111419</color>
     <color name="white">#ffffff</color>
     <color name="white_two">#989890</color>
     <color name="black">#000000</color>
@@ -11,4 +12,5 @@
 
     <color name="tab_item_normal">#1a1f23</color>
     <color name="tab_item_pressed">#15181d</color>
+    <color name="orange">#ff6100</color>
 </resources>

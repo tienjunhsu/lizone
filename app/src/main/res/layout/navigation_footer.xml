@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="horizontal"
+    android:gravity="left|bottom"
+    android:layout_marginBottom="20dp"
+    android:layout_marginRight="@dimen/text_margin_left"
+    android:layout_marginLeft="@dimen/text_margin_left">
+
+    <LinearLayout
+        android:id="@+id/nav_lv_setting"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <ImageView
+            android:layout_width="@dimen/default_height"
+            android:layout_height="@dimen/default_height"
+            android:src="@drawable/ic_setting_normal"/>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/white_two"
+            android:textSize="@dimen/nav_menu_item_text_size"
+            android:text="@string/setting"
+            />
+
+    </LinearLayout>
+
+</LinearLayout>
