@@ -3,17 +3,24 @@ package com.cquant.lizone.frag;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentPagerAdapter;
+import android.support.v4.view.ViewPager;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
+import android.widget.TextView;
 
 import com.android.volley.RequestQueue;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.ImageLoader;
 import com.android.volley.toolbox.Volley;
 import com.bigkoo.convenientbanner.CBPageAdapter;
+import com.bigkoo.convenientbanner.CBPageChangeListener;
 import com.bigkoo.convenientbanner.CBViewHolderCreator;
 import com.bigkoo.convenientbanner.ConvenientBanner;
 import com.cquant.lizone.LizoneApp;
@@ -21,6 +28,8 @@ import com.cquant.lizone.R;
 import com.cquant.lizone.bean.PromotionItem;
 import com.cquant.lizone.tool.ACache;
 import com.cquant.lizone.util.SharedPrefsUtil;
+import com.cquant.lizone.view.IconPagerAdapter;
+import com.cquant.lizone.view.TabPageIndicator;
 
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
@@ -36,9 +45,17 @@ public class HomeFragment extends BaseFragment {
     private ImageLoader mImageLoader;
 
     private ConvenientBanner mCBView;
+    private FrameLayout mFyCB;
+    private TextView mPromotionClickSum;
     private  ArrayList<PromotionItem> mPromotionList;
 
     private ACache mACache;
+
+    private static final String[] CONTENT = new String[] { "订阅动态", "高手动态" };
+    private static final int[] ICONS = new int[] {
+            R.drawable.perm_group_down,
+            R.drawable.perm_group_down_two
+    };
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -50,7 +67,18 @@ public class HomeFragment extends BaseFragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View root = inflater.inflate(R.layout.home_fragment, container, false);
+        mFyCB = (FrameLayout)root.findViewById(R.id.cb_view);
         mCBView = (ConvenientBanner)root.findViewById(R.id.convenientBanner);
+        mPromotionClickSum = (TextView)root.findViewById(R.id.promotion_click_num);
+
+        FragmentPagerAdapter adapter = new DynamicAdapter(getActivity().getSupportFragmentManager());
+
+        ViewPager pager = (ViewPager)root.findViewById(R.id.pager);
+        pager.setAdapter(adapter);
+
+        TabPageIndicator indicator = (TabPageIndicator)root.findViewById(R.id.indicator);
+        indicator.setViewPager(pager);
+
         return root;
     }
     @Override
@@ -62,12 +90,13 @@ public class HomeFragment extends BaseFragment {
     private void initCBView() {
         String mPromotions = SharedPrefsUtil.getStringValue(getActivity(),SharedPrefsUtil.PREFS_PROMOTIONS,null);
         if(mPromotions == null ){
-            mCBView.setVisibility(View.GONE);
+            mFyCB.setVisibility(View.GONE);
             return;
         }
         mPromotionList = PromotionItem.getItemList( mPromotions);
         Log.d("TianjunXu", "size =" + mPromotionList.size());
-               mCBView.setPages(new CBViewHolderCreator<NetworkImageHolderView>() {
+        mCBView.setPageIndicator(new int[]{R.drawable.ic_page_indicator, R.drawable.ic_page_indicator_focused},new CBPageItemSelected());
+        mCBView.setPages(new CBViewHolderCreator<NetworkImageHolderView>() {
             @Override
             public NetworkImageHolderView createHolder() {
                return new NetworkImageHolderView();
@@ -161,6 +190,42 @@ public class HomeFragment extends BaseFragment {
                     image.setImageResource(R.mipmap.ic_launcher);
                 }
             }
+        }
+    }
+
+    private class CBPageItemSelected implements CBPageChangeListener.OnCBPageSelected {
+
+        @Override
+        public void onPageSelected(int index) {
+            if(mPromotionClickSum != null) {
+                mPromotionClickSum.setText(mPromotionList.get(index).sum);
+            }
+        }
+    }
+
+    class DynamicAdapter extends FragmentPagerAdapter implements IconPagerAdapter {
+        public  DynamicAdapter(FragmentManager fm) {
+            super(fm);
+        }
+
+        @Override
+        public Fragment getItem(int position) {
+            return DynamicFragment.newInstance(CONTENT[position % CONTENT.length]);
+        }
+
+        @Override
+        public CharSequence getPageTitle(int position) {
+            // return CONTENT[position % CONTENT.length].toUpperCase();
+            return CONTENT[position % CONTENT.length];
+        }
+
+        @Override public int getIconResId(int index) {
+            return ICONS[index];
+        }
+
+        @Override
+        public int getCount() {
+            return CONTENT.length;
         }
     }
 }
