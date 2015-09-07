@@ -7,6 +7,7 @@ import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
 
 import com.cquant.lizone.R;
+import com.cquant.lizone.service.UpdateConfigService;
 
 /**
  * Created by PC on 2015/8/24.
@@ -25,7 +26,7 @@ public class SplashActivity extends BaseActivity implements Animation.AnimationL
         mAnimaInit.setDuration(800);
         mAnimaInit.setAnimationListener(this);
         mIvSplash.startAnimation(mAnimaInit);
-
+        startService(new Intent(this,UpdateConfigService.class));
     }
     @Override
     public void onAnimationStart(Animation animation) {
