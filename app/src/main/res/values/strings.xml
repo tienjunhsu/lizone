@@ -11,6 +11,7 @@
     <string name="user_agreement_confirm">我已阅读并同意</string>
 
     <string name="has_lizone_account">已有理财空间账号？</string>
+    <string name="no_lizone_account">您还没有理财空间帐号?</string>
     <string name="btn_login_title">点击登陆</string>
     <string name="login">登陆</string>
     <string name="get_vevify_code">获取验证码</string>

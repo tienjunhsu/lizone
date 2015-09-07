@@ -123,7 +123,7 @@ public class ConvenientBanner<T> extends LinearLayout {
         loPageTurningPoint.removeAllViews();
         mPointViews.clear();
         this.page_indicatorId = page_indicatorId;
-        if(mDatas==null)return this;
+        if (mDatas == null) return this;
         for (int count = 0; count < mDatas.size(); count++) {
             // 翻页指示的点
             ImageView pointView = new ImageView(getContext());

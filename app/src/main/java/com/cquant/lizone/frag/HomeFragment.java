@@ -15,10 +15,6 @@ import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.android.volley.RequestQueue;
-import com.android.volley.VolleyError;
-import com.android.volley.toolbox.ImageLoader;
-import com.android.volley.toolbox.Volley;
 import com.bigkoo.convenientbanner.CBPageAdapter;
 import com.bigkoo.convenientbanner.CBPageChangeListener;
 import com.bigkoo.convenientbanner.CBViewHolderCreator;
@@ -30,6 +26,7 @@ import com.cquant.lizone.tool.ACache;
 import com.cquant.lizone.util.SharedPrefsUtil;
 import com.cquant.lizone.view.IconPagerAdapter;
 import com.cquant.lizone.view.TabPageIndicator;
+import com.nostra13.universalimageloader.core.ImageLoader;
 
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
@@ -40,9 +37,6 @@ import java.util.ArrayList;
 public class HomeFragment extends BaseFragment {
 
     private static final String TAG = "HomeFragment";
-
-    private RequestQueue mVolleyQueue;
-    private ImageLoader mImageLoader;
 
     private ConvenientBanner mCBView;
     private FrameLayout mFyCB;
@@ -61,8 +55,6 @@ public class HomeFragment extends BaseFragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mACache = LizoneApp.getACache();
-        mVolleyQueue = Volley.newRequestQueue(getActivity());
-        mImageLoader = new ImageLoader(mVolleyQueue, new BitmapCache());
     }
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -96,6 +88,9 @@ public class HomeFragment extends BaseFragment {
         mPromotionList = PromotionItem.getItemList( mPromotions);
         Log.d("TianjunXu", "size =" + mPromotionList.size());
         mCBView.setPageIndicator(new int[]{R.drawable.ic_page_indicator, R.drawable.ic_page_indicator_focused},new CBPageItemSelected());
+        if(mPromotionList.size() < 2) {
+            mCBView.setPointViewVisible(false);
+        }
         mCBView.setPages(new CBViewHolderCreator<NetworkImageHolderView>() {
             @Override
             public NetworkImageHolderView createHolder() {
@@ -125,19 +120,6 @@ public class HomeFragment extends BaseFragment {
         super.onDestroy();
     }
 
-    public class BitmapCache implements ImageLoader.ImageCache {
-
-        @Override
-        public Bitmap getBitmap(String s) {
-            return mACache.getAsBitmap(s);
-        }
-
-        @Override
-        public void putBitmap(String s, Bitmap bitmap) {
-            mACache.put(s,bitmap);
-
-        }
-    }
     public class NetworkImageHolderView implements CBPageAdapter.Holder<PromotionItem>{
         private ImageView imageView;
         @Override
@@ -151,8 +133,7 @@ public class HomeFragment extends BaseFragment {
         @Override
         public void UpdateUI(Context context, final int position, PromotionItem data) {
            // imageView.setImageResource(R.drawable.ic_default_adimage);
-            //ImageLoader.getInstance().displayImage(data,imageView);
-            mImageLoader.get(data.img_url, new FadeInImageListener(imageView,getActivity()));
+            ImageLoader.getInstance().displayImage(data.img_url,imageView);
             imageView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
@@ -163,35 +144,6 @@ public class HomeFragment extends BaseFragment {
         }
     }
 
-    public class FadeInImageListener implements ImageLoader.ImageListener {
-
-        WeakReference<ImageView> mImageView;
-        Context mContext;
-
-        public FadeInImageListener(ImageView image,Context context) {
-            mImageView = new WeakReference<ImageView>(image);
-            mContext = context;
-        }
-
-        @Override
-        public void onErrorResponse(VolleyError arg0) {
-            if(mImageView.get() != null) {
-                mImageView.get().setImageResource(R.mipmap.ic_launcher);
-            }
-        }
-
-        @Override
-        public void onResponse(ImageLoader.ImageContainer response, boolean arg1) {
-            if(mImageView.get() != null) {
-                ImageView image = mImageView.get();
-                if(response.getBitmap() != null) {
-                    image.setImageBitmap(response.getBitmap());
-                } else {
-                    image.setImageResource(R.mipmap.ic_launcher);
-                }
-            }
-        }
-    }
 
     private class CBPageItemSelected implements CBPageChangeListener.OnCBPageSelected {
 
