@@ -1,5 +1,6 @@
 package com.cquant.lizone.activity;
 
+import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
@@ -84,6 +85,22 @@ public class MainActivity extends BaseActivity implements OnTabChangeListener {
         //ab.setHomeAsUpIndicator(R.drawable.ic_menu);
         ab.setDisplayHomeAsUpEnabled(true);
     }
+
+    public void onXmlBtClick(View v) {
+        switch (v.getId()) {
+            case R.id.nav_lv_open_account:
+                openFirmAccount();
+                break;
+            default:
+                break;
+        }
+    }
+
+    private void openFirmAccount() {
+        startActivity(new Intent(this,OpenFirmAccountActivity.class));
+        mDrawerLayout.closeDrawers();
+    }
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu)
     {

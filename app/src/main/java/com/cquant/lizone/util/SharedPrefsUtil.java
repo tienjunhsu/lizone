@@ -12,6 +12,7 @@ public class SharedPrefsUtil {
     public static final String PREFS_PROMOTIONS = "promotions_list";
     public static final String PREFS_USER_ID = "user_id";
     public static final String PREFS_PASS = "pass_word";
+    public static final String PREFS_ACCOUNT = "account_inf";
 
     /** 数据存储的XML名称 **/
     public final static String SETTING = "cquant";

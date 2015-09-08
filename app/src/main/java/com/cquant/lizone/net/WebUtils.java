@@ -21,6 +21,7 @@ import android.content.Context;
 import android.util.Log;
 
 import com.cquant.lizone.tool.StrTool;
+import com.cquant.lizone.util.GlobalVar;
 //import com.umeng.socialize.utils.Log;
 
 public class WebUtils {
@@ -112,6 +113,7 @@ public class WebUtils {
 	 */
 	public static String doPost(String url, String ctype, byte[] content,
 			int connectTimeout, int readTimeout) throws IOException {
+		Log.d("TianjunXu", " dopost");
 		HttpURLConnection conn = null;
 		OutputStream out = null;
 		String rsp = null;
@@ -129,6 +131,7 @@ public class WebUtils {
 				out = conn.getOutputStream();
 				out.write(content);
 				rsp = getResponseAsString(conn);
+				getSession(conn);
 			} catch (IOException e) {
 				@SuppressWarnings("unused")
 				Map<String, String> map = getParamsFromUrl(url);
@@ -145,6 +148,21 @@ public class WebUtils {
 		}
 		return rsp;
 	}
+   private  static void setSession(HttpURLConnection conn) {
+	   if (GlobalVar.SESSIONID!= null) {
+		   conn.setRequestProperty("Cookie","PHPSESSID="+GlobalVar.SESSIONID);
+	   }
+   }
+	private static void getSession(HttpURLConnection conn) {
+		String cookieVal =conn.getHeaderField("Set-Cookie");
+       // 获取session
+		if (cookieVal != null) {
+			GlobalVar.SESSIONID= cookieVal.substring(10, cookieVal.indexOf(";"));//10 is length(PHPSESSID=)
+			Log.d("TianjunXu", " getSession:"+cookieVal);
+			Log.d("TianjunXu", " GlobalVar.SESSIONID:"+GlobalVar.SESSIONID);
+		}
+	}
+
 
 	public static String doGet(String url, Map<String, String> params)
 			throws IOException {
@@ -198,6 +216,7 @@ public class WebUtils {
 		conn.setRequestProperty("Accept", "text/xml,text/javascript,text/html");
 		conn.setRequestProperty("User-Agent", "top-sdk-java");
 		conn.setRequestProperty("Content-Type", ctype);
+		//setSession(conn);//hsu
 		return conn;
 	}
 

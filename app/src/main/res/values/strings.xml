@@ -32,4 +32,7 @@
     <string name="my_gift">我的礼品</string>
     <string name="accumulate_point">积分</string>
     <string name="setting">设置</string>
+
+    <string name="default_text_num">--.--</string>
+
 </resources>

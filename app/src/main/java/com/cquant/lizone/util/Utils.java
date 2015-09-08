@@ -30,6 +30,7 @@ public class Utils {
     public static final String PARA_ARTICLE_ID = "tid";//文章ID
     public static final String REPORT_WEB_ADDR = "ReportWeb/";//调研文章详情页
     public static final String PROMOTIONS_ADDR = "huodong_list/";//活动列表地址
+    public static final String OPEN_FIRM_ADDR = "true_account/";//开通实盘账号
 
 
 }
