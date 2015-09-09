@@ -46,10 +46,8 @@ public class HomeFragment extends BaseFragment {
     private ACache mACache;
 
     private static final String[] CONTENT = new String[] { "订阅动态", "高手动态" };
-    private static final int[] ICONS = new int[] {
-            R.drawable.perm_group_down,
-            R.drawable.perm_group_down_two
-    };
+
+    private static final String[] F_CONTENT = new String[] { "sub", "master" };
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -67,6 +65,7 @@ public class HomeFragment extends BaseFragment {
 
         ViewPager pager = (ViewPager)root.findViewById(R.id.pager);
         pager.setAdapter(adapter);
+        pager.setCurrentItem(1);
 
         TabPageIndicator indicator = (TabPageIndicator)root.findViewById(R.id.indicator);
         indicator.setViewPager(pager);
@@ -154,24 +153,20 @@ public class HomeFragment extends BaseFragment {
         }
     }
 
-    class DynamicAdapter extends FragmentPagerAdapter implements IconPagerAdapter {
+    class DynamicAdapter extends FragmentPagerAdapter {
         public  DynamicAdapter(FragmentManager fm) {
             super(fm);
         }
 
         @Override
         public Fragment getItem(int position) {
-            return DynamicFragment.newInstance(CONTENT[position % CONTENT.length]);
+            return DynamicFragment.newInstance(F_CONTENT[position]);
         }
 
         @Override
         public CharSequence getPageTitle(int position) {
             // return CONTENT[position % CONTENT.length].toUpperCase();
             return CONTENT[position % CONTENT.length];
-        }
-
-        @Override public int getIconResId(int index) {
-            return ICONS[index];
         }
 
         @Override

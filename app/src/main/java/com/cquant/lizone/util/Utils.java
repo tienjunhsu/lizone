@@ -14,7 +14,7 @@ public class Utils {
     public static final String EDIT_PROFILE_ADDR = "edit_profile/";//修改个性签名
     public static final String PARA_EDIT_PROFILE = "profile";//修改个性签名参数
     public static final String SUB_LIST_ADDR = "Sub_list/";//订阅动态列表
-    public static final String PARA_SUB_LIST = "sys";//动态列表参数
+    public static final String PARA_SUB_LIST = "sys/";//动态列表参数
     public static final int SUB_MASTER = 1;//高手动态
     public static final int SUB_SUB = 0;//订阅动态
     public static final String GET_CODE_ADDR = "getCode/";//获取验证码

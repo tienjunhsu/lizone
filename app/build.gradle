@@ -28,4 +28,5 @@ dependencies {
     compile 'com.android.support:design:22.2.0'
     compile 'in.srain.cube:ultra-ptr:1.0.10'
     compile 'com.google.android.gms:play-services:7.5.0'
+    compile 'com.android.support:recyclerview-v7:22.2.+'
 }

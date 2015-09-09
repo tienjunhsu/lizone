@@ -56,7 +56,7 @@ public class AccountOverviewFragment extends BaseFragment {
         mBtnOpenPosition = (Button)root.findViewById(R.id.btn_open_position);
         mBtnClosePosition = (Button)root.findViewById(R.id.btn_open_position);
 
-        mBtnOpenPosition.setOnClickListener();
+        //mBtnOpenPosition.setOnClickListener();
 
         return root;
     }
