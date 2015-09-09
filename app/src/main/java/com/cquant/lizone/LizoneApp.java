@@ -29,7 +29,7 @@ public class LizoneApp extends Application {
         app= (LizoneApp) getApplicationContext();
         mACache = ACache.get(app,1024*1024*20,200);
         initImageLoader();
-        LeakCanary.install(this);
+        refWatcher = LeakCanary.install(this);
     }
     public static RefWatcher getRefWatcher(Context context) {
         LizoneApp application = (LizoneApp) context.getApplicationContext();

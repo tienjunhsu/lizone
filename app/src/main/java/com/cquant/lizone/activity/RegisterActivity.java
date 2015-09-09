@@ -94,14 +94,14 @@ public class RegisterActivity extends BaseActivity {
     protected void initToolBar() {
         toolbar.setTitle(R.string.register);
         toolbar.setNavigationIcon(R.drawable.ic_back);
+        super.initToolBar(toolbar);
+
         toolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
+                finish();
             }
         });
-
-        super.initToolBar(toolbar);
     }
 
     public void onXmlBtClick(View v) {

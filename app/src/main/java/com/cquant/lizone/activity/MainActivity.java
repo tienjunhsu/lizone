@@ -73,15 +73,14 @@ public class MainActivity extends BaseActivity implements OnTabChangeListener {
     protected void initToolBar() {
         toolbar.setTitle(R.string.home_title);
         toolbar.setNavigationIcon(R.mipmap.ic_launcher);
+        super.initToolBar(toolbar);
+        final ActionBar ab = getSupportActionBar();
         /*toolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
 
             }
         });*/
-
-        super.initToolBar(toolbar);
-        final ActionBar ab = getSupportActionBar();
         //ab.setHomeAsUpIndicator(R.drawable.ic_menu);
         ab.setDisplayHomeAsUpEnabled(true);
     }
@@ -91,11 +90,36 @@ public class MainActivity extends BaseActivity implements OnTabChangeListener {
             case R.id.nav_lv_open_account:
                 openFirmAccount();
                 break;
+            case R.id.nav_lv_point:
+                openPonitActivity();
+                break;
+            case R.id.nav_lv_account:
+                openAccountActivity();
+                break;
+            case R.id.nav_lv_event:
+                openEventActivity();
+                break;
+            case R.id.nav_lv_gift:
+                openGiftActivity();
+                break;
             default:
                 break;
         }
     }
 
+    private void openPonitActivity() {
+
+    }
+    private void openAccountActivity() {
+        startActivity(new Intent(this,AccountActivity.class));
+        mDrawerLayout.closeDrawers();
+    }
+    private void openEventActivity() {
+
+    }
+    private void openGiftActivity() {
+
+    }
     private void openFirmAccount() {
         startActivity(new Intent(this,OpenFirmAccountActivity.class));
         mDrawerLayout.closeDrawers();

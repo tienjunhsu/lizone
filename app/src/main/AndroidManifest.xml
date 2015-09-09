@@ -49,6 +49,10 @@
             android:screenOrientation="portrait" >
         </activity>
         <activity
+            android:name=".activity.AccountActivity"
+            android:screenOrientation="portrait" >
+        </activity>
+        <activity
             android:name=".activity.TestActivity"
             android:screenOrientation="portrait" >
         </activity>

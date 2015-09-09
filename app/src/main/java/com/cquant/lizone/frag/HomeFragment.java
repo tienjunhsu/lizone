@@ -86,7 +86,6 @@ public class HomeFragment extends BaseFragment {
             return;
         }
         mPromotionList = PromotionItem.getItemList( mPromotions);
-        Log.d("TianjunXu", "size =" + mPromotionList.size());
         mCBView.setPageIndicator(new int[]{R.drawable.ic_page_indicator, R.drawable.ic_page_indicator_focused},new CBPageItemSelected());
         if(mPromotionList.size() < 2) {
             mCBView.setPointViewVisible(false);

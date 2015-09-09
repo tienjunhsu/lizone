@@ -1,7 +1,6 @@
 package com.cquant.lizone.activity;
 
 import android.graphics.Bitmap;
-import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
@@ -14,8 +13,10 @@ import android.webkit.WebViewClient;
 import com.cquant.lizone.R;
 import com.cquant.lizone.util.Utils;
 
-public class OpenFirmAccountActivity extends BaseActivity {
-
+/**
+ * Created by PC on 2015/9/9.
+ */
+public class OpenPositionActivity extends BaseActivity  {
     private Toolbar toolbar;
     private WebView webview;
 
@@ -62,14 +63,14 @@ public class OpenFirmAccountActivity extends BaseActivity {
             }
             public void onPageFinished(WebView view, String url) {
                 super.onPageFinished(view, url);
-               // stopLoadingAnim();
+                // stopLoadingAnim();
             }
         });
     }
 
     @Override
     protected void initToolBar() {
-        toolbar.setTitle(R.string.open_account);
+        toolbar.setTitle("建仓");
         toolbar.setNavigationIcon(R.drawable.ic_back);
         super.initToolBar(toolbar);
         toolbar.setNavigationOnClickListener(new View.OnClickListener() {

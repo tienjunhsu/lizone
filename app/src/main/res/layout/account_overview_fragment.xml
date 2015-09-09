@@ -1,11 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView  xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/rotate_header_scroll_view"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+<LinearLayout
     android:layout_width="match_parent"
     android:orientation="vertical"
     android:layout_height="match_parent">
-
     <TextView
         android:layout_width="match_parent"
         android:layout_height="40dp"
@@ -51,7 +54,7 @@
             <TextView
                 style="@style/account_row_item"
                 android:layout_column="2"
-                android:text="可用资产"
+                android:text="占用资产"
                 />
             <TextView
                 style="@style/account_row_item"
@@ -61,16 +64,19 @@
         </TableRow>
         <TableRow>
             <TextView
+                android:id="@+id/tv_total_capital"
                 style="@style/account_row_item"
                 android:layout_column="1"
                 android:text="@string/default_text_num"
                 />
             <TextView
+                android:id="@+id/tv_occupy_cash"
                 style="@style/account_row_item"
                 android:layout_column="2"
                 android:text="@string/default_text_num"
                 />
             <TextView
+                android:id="@+id/tv_follow_capital"
                 style="@style/account_row_item"
                 android:layout_column="3"
                 android:text="@string/default_text_num"
@@ -95,16 +101,19 @@
         </TableRow>
         <TableRow>
             <TextView
+                android:id="@+id/tv_position_capital"
                 style="@style/account_row_item"
                 android:layout_column="1"
                 android:text="@string/default_text_num"
                 />
             <TextView
+                android:id="@+id/tv_available_cash"
                 style="@style/account_row_item"
                 android:layout_column="2"
                 android:text="@string/default_text_num"
                 />
             <TextView
+                android:id="@+id/tv_risk_ratio"
                 style="@style/account_row_item"
                 android:layout_column="3"
                 android:text="@string/default_text_num"
@@ -121,7 +130,7 @@
         <Button
             android:id="@+id/btn_open_position"
             android:layout_width="0.0px"
-            android:layout_height="48dp"
+            android:layout_height="40dp"
             android:text="建仓"
             android:textColor="@color/white"
             android:layout_marginLeft="16dp"
@@ -132,7 +141,7 @@
         <Button
             android:id="@+id/btn_close_position"
             android:layout_width="0.0px"
-            android:layout_height="48dp"
+            android:layout_height="40dp"
             android:text="平仓"
             android:background="@drawable/default_btn_radius_bg"
             android:textColor="@color/white"
@@ -196,3 +205,4 @@
             android:gravity="left|center_vertical" />
     </LinearLayout>
 </LinearLayout>
+</ScrollView>
