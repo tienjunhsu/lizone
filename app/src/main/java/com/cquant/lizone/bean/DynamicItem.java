@@ -13,17 +13,21 @@ import java.util.ArrayList;
  */
 public class DynamicItem {
 
-    public int user_id;
+    //public int user_id;
+    public String user_id;
     public int system;
     public String name;
     public String photo_url;
     public String time;
     public String text;
-    public int style;
+    //public int style;
+    public String style;
     public String ex_name;
-    public int ex_id;
+   // public int ex_id;
+   public String ex_id;
 
-    public DynamicItem(int mUser_id, int mSystem, String mName, String mPhoto_url, String mTime, String mText, int mStyle, String mEx_name, int mEx_id) {
+   // public DynamicItem(int mUser_id, int mSystem, String mName, String mPhoto_url, String mTime, String mText, int mStyle, String mEx_name, int mEx_id) {
+   public DynamicItem( String mUser_id, int mSystem, String mName, String mPhoto_url, String mTime, String mText,  String mStyle, String mEx_name,  String mEx_id) {
         this.user_id = mUser_id;
         this.system = mSystem;
         this.name = mName;
@@ -36,15 +40,15 @@ public class DynamicItem {
     }
 
     public static DynamicItem getItem(JSONObject obj) {
-        int mUser_id = JsnTool.getInt(obj,"user_id");
+        String mUser_id = JsnTool.getString(obj,"user_id");
         int mSystem = JsnTool.getInt(obj, "system");
         String mName=JsnTool.getString(obj, "name");
         String mPhoto_url = JsnTool.getString(obj, "photo_url");
         String mTime = JsnTool.getString(obj, "time");
         String mText = JsnTool.getString(obj, "text");
-        int mStyle = JsnTool.getInt(obj, "style");
+        String mStyle = JsnTool.getString(obj, "style");
         String mEx_name= JsnTool.getString(obj, "ex_name");
-        int mEx_id = JsnTool.getInt(obj, "ex_id");
+        String mEx_id = JsnTool.getString(obj, "ex_id");
         return new DynamicItem(mUser_id, mSystem, mName, mPhoto_url,mTime,mText,mStyle,mEx_name,mEx_id);
     }
 

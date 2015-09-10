@@ -150,7 +150,7 @@ public class WebUtils {
 	}
    private  static void setSession(HttpURLConnection conn) {
 	   if (GlobalVar.SESSIONID!= null) {
-		   conn.setRequestProperty("Cookie","PHPSESSID="+GlobalVar.SESSIONID);
+		   conn.setRequestProperty("Cookie", "PHPSESSID=" + GlobalVar.SESSIONID);
 	   }
    }
 	private static void getSession(HttpURLConnection conn) {
@@ -216,7 +216,9 @@ public class WebUtils {
 		conn.setRequestProperty("Accept", "text/xml,text/javascript,text/html");
 		conn.setRequestProperty("User-Agent", "top-sdk-java");
 		conn.setRequestProperty("Content-Type", ctype);
-		//setSession(conn);//hsu
+		if (method.equals("GET")) {
+			setSession(conn);//hsu
+		}
 		return conn;
 	}
 

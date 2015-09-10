@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:fillViewport="true"
+    android:layout_height="match_parent">
+<LinearLayout
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <RelativeLayout
+        android:layout_marginTop="2dp"
+        android:background="@color/style_color_primary"
+        android:layout_width="match_parent"
+        android:layout_height="40dp">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_alignParentLeft="true"
+            android:layout_marginLeft="@dimen/text_margin_left"
+            android:textColor="@color/white_two"
+            android:text="最新活动"
+            android:gravity="center_vertical|left"
+            />
+
+        <TextView
+            android:id="@+id/tv_more"
+            android:layout_alignParentRight="true"
+            android:layout_marginRight="@dimen/text_margin_left"
+            android:text="更多"
+            android:textColor="@color/white_two"
+            android:gravity="center_vertical|right"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent" />
+
+    </RelativeLayout>
+    <FrameLayout
+        android:id="@+id/cb_view"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/cb_height">
+
+        <com.bigkoo.convenientbanner.ConvenientBanner
+            android:id="@+id/convenientBanner"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"/>
+        <TextView
+            android:id="@+id/promotion_click_num"
+            android:background="@drawable/event_click_count_bg"
+            android:layout_gravity="bottom|left"
+            android:padding="10dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="10dp"
+            android:textStyle="bold"
+            android:textColor="@color/white_two"
+            android:textSize="20sp"
+            android:text="0人已经参加 " />
+    </FrameLayout>
+
+    <com.cquant.lizone.view.TabPageIndicator
+        android:id="@+id/indicator"
+        android:layout_height="48dp"
+        android:background="@color/style_color_primary"
+        android:layout_width="fill_parent"
+        />
+    <android.support.v4.view.ViewPager
+        android:id="@+id/pager"
+        android:layout_width="fill_parent"
+        android:background="@color/style_color_primary"
+        android:layout_height="0dp"
+        android:layout_marginTop="4dp"
+        android:layout_weight="1"
+        />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        android:text="Hello Home"
+        android:textColor="#ff0000"
+        android:textSize="40sp"
+        />
+
+</LinearLayout>
+</ScrollView>

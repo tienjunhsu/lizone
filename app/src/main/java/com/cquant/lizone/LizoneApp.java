@@ -2,8 +2,10 @@ package com.cquant.lizone;
 
 import android.app.Application;
 import android.content.Context;
+import android.text.TextUtils;
 
 import com.cquant.lizone.tool.ACache;
+import com.cquant.lizone.util.SharedPrefsUtil;
 import com.nostra13.universalimageloader.cache.disc.naming.Md5FileNameGenerator;
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.ImageLoader;
@@ -23,6 +25,8 @@ public class LizoneApp extends Application {
     private static LizoneApp app;
     private static ACache mACache;
 
+    public static boolean mCanLogin = false;
+
     @Override
     public void onCreate() {
         super.onCreate();
@@ -30,6 +34,16 @@ public class LizoneApp extends Application {
         mACache = ACache.get(app,1024*1024*20,200);
         initImageLoader();
         refWatcher = LeakCanary.install(this);
+        checkLogin();
+    }
+    private  void checkLogin(){
+        String name = SharedPrefsUtil.getStringValue(this,SharedPrefsUtil.PREFS_ACCOUNT,null);
+        String pass = SharedPrefsUtil.getStringValue(this,SharedPrefsUtil.PREFS_PASS,null);
+        if(TextUtils.isEmpty(name)||TextUtils.isEmpty(pass)) {
+            mCanLogin = false;
+        } else {
+            mCanLogin = true;
+        }
     }
     public static RefWatcher getRefWatcher(Context context) {
         LizoneApp application = (LizoneApp) context.getApplicationContext();

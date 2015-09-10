@@ -143,6 +143,7 @@ public class DynamicFragment extends BaseFragment {
     @Override
     public void onResume() {
         super.onResume();
+        getDynamic();
     }
     @Override
     public void onPause() {
