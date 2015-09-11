@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<TableLayout  xmlns:android="http://schemas.android.com/apk/res/android"
+android:background="@color/style_color_primary"
+android:stretchColumns="1,2,3"
+android:layout_width="match_parent"
+android:layout_height="wrap_content">
+<TableRow>
+    <TextView
+        android:id="@+id/tv_name"
+        style="@style/account_row_item"
+        android:layout_column="1"
+        android:text="中新油1000"
+        />
+    <TextView
+        android:id="@+id/tv_used"
+        style="@style/account_row_item"
+        android:layout_column="2"
+        android:text="占用：8575.76"
+        />
+    <TextView
+        android:id="@+id/tv_open_price"
+        style="@style/account_row_item"
+        android:layout_column="3"
+        android:text="建仓：283"
+        />
+</TableRow>
+<TableRow>
+    <TextView
+        android:id="@+id/tv_dir"
+        style="@style/account_row_item"
+        android:layout_column="1"
+        android:text="方向：买入"
+        />
+    <TextView
+        android:id="@+id/tv_num"
+        style="@style/account_row_item"
+        android:layout_column="2"
+        android:text="交易量：1"
+        />
+    <TextView
+        android:id="@+id/tv_price"
+        style="@style/account_row_item"
+        android:layout_column="3"
+        android:text="现价：288.29"
+        />
+</TableRow>
+<TableRow>
+    <TextView
+        android:id="@+id/tv_open_time"
+        style="@style/account_row_item"
+        android:layout_column="1"
+        android:text="09-10 03:09"
+        />
+    <TextView
+        android:id="@+id/tv_profit"
+        style="@style/account_row_item"
+        android:layout_column="2"
+        android:text="盈亏：5290.01"
+        />
+    <TextView
+        android:id="@+id/tv_profit_ratio"
+        style="@style/account_row_item"
+        android:layout_column="3"
+        android:text="收益率：0.62%"
+        />
+</TableRow>
+</TableLayout>

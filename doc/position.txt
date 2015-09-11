@@ -1,0 +1,7 @@
+msg ={"status":0,"msg":"\u6682\u65e0\u6301\u4ed3","data":""}
+
+msg ={"status":1,"msg":"","data":[{"id":"7142","ex_name":"\u73b0\u8d27\u767d\u94f6","ex_dir":"\u5356\u51fa","ex_number":"1","start_price":"3001","start_time":"09-11 16:05","profit_number":"-135","use_capital":"2250.75","newprice":"3010","yield":"-0.06%"}]}
+
+
+½»Ò×¼ÇÂ¼£º
+,msg ={"status":1,"msg":"","data":[{"ex_name":"\u4e2d\u65b0\u6cb91000","ex_code":"XHPEC","start_label":"283\u4e70\u5165","ex_number":"1\u624b","start_time":"09-10 03:09","end_label":"288.02\u5356\u51fa","end_number":"1\u624b","end_time":"09-11 15:54","profit":"5020","yield":"58.54%"},{"ex_name":"\u73b0\u8d27\u767d\u94f6","ex_code":"TJPME","start_label":"2993\u5356\u51fa","ex_number":"1\u624b","start_time":"09-10 03:07","end_label":"3000\u4e70\u5165","end_number":"1\u624b","end_time":"09-10 03:09","profit":"-105","yield":"-4.68%"}]}
