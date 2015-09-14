@@ -24,6 +24,7 @@ import com.cquant.lizone.tool.ACache;
 import com.cquant.lizone.tool.JsnTool;
 import com.cquant.lizone.tool.Md5FileNameGenerator;
 import com.cquant.lizone.util.Utils;
+import com.cquant.lizone.view.ItemDivider;
 import com.nostra13.universalimageloader.core.ImageLoader;
 
 import org.json.JSONObject;
@@ -125,6 +126,7 @@ public class DynamicFragment extends BaseFragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View root = inflater.inflate(R.layout.dynamic_fragment, container, false);
         mRecyclerView = (RecyclerView)root.findViewById(R.id.recyclerView);
+        mRecyclerView.addItemDecoration(new ItemDivider(getActivity(),R.drawable.dynamic_list_divider));
         return root;
     }
 

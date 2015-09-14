@@ -6,6 +6,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -39,8 +40,9 @@ public class ExploreFragment extends BaseFragment {
         tablayout.addTab(tab3);
         tablayout.addTab(tab4);
         tablayout.addTab(tab5);
-        TabPagerAdapter adapter = new  TabPagerAdapter(getActivity().getSupportFragmentManager());
+        TabPagerAdapter adapter = new  TabPagerAdapter(getChildFragmentManager());
         viewpager.setAdapter(adapter);
+        tablayout.setupWithViewPager(viewpager);
         //viewpager.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(tablayout));
         return root;
     }
@@ -51,10 +53,12 @@ public class ExploreFragment extends BaseFragment {
     @Override
     public void onResume() {
         super.onResume();
+        Log.d("TianjunXu","ExploreFrag:onResume");
     }
     @Override
     public void onPause() {
         super.onPause();
+        Log.d("TianjunXu", "ExploreFrag:onPause");
     }
     @Override
     public void onStop() {
@@ -80,6 +84,7 @@ public class ExploreFragment extends BaseFragment {
         @Override
         public Fragment getItem(int position) {
             Fragment fragment;
+            Log.d("TianjunXu","getItem:position = "+position);
             switch (position) {
                 case 0:
                     fragment = new SignMasterFragment();
