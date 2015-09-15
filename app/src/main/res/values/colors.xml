@@ -14,6 +14,8 @@
     <color name="tab_item_pressed">#15181d</color>
     <color name="orange">#ff6100</color>
 
+    <color name="green_two">#ff23ff64</color>
+    <color name="red_two">#ffff2218</color>
     <!--page indicator-->
     <color name="vpi__background_holo_dark">#ff000000</color>
     <color name="vpi__background_holo_light">#fff3f3f3</color>

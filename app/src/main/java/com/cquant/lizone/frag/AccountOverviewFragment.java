@@ -1,6 +1,7 @@
 package com.cquant.lizone.frag;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -10,7 +11,18 @@ import android.widget.TextView;
 
 import com.cquant.lizone.LizoneApp;
 import com.cquant.lizone.R;
+import com.cquant.lizone.bean.AccountOverViewItem;
+import com.cquant.lizone.net.WebHelper;
 import com.cquant.lizone.tool.ACache;
+import com.cquant.lizone.tool.JsnTool;
+import com.cquant.lizone.tool.Md5FileNameGenerator;
+import com.cquant.lizone.tool.StrTool;
+import com.cquant.lizone.util.GlobalVar;
+import com.cquant.lizone.util.Utils;
+
+import org.json.JSONObject;
+
+import java.util.ArrayList;
 
 /**
  * Created by PC on 2015/9/9.
@@ -20,6 +32,9 @@ public class AccountOverviewFragment extends BaseFragment {
     private static final String TAG = "AccountOverviewFragment";
 
     private ACache mACache;
+
+    private String url = Utils.BASE_URL+"MyAccount/";
+    protected WebHelper mWebhelper = null;
 
     private TextView mTvFloatingProfit;
     private ImageView mIconFloating;
@@ -34,10 +49,14 @@ public class AccountOverviewFragment extends BaseFragment {
     private Button mBtnOpenPosition;
     private Button mBtnClosePosition;
 
+    private AccountOverViewItem mOverView;
+    private String mFileName;
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mACache = LizoneApp.getACache();
+        mFileName = Md5FileNameGenerator.generate(url);
     }
 
     @Override
@@ -91,6 +110,7 @@ public class AccountOverviewFragment extends BaseFragment {
     @Override
     public void onResume() {
         super.onResume();
+        getOverView();
     }
     @Override
     public void onPause() {
@@ -103,7 +123,57 @@ public class AccountOverviewFragment extends BaseFragment {
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
+        mWebhelper = new WebHelper(getActivity());
+        initOverViewData();
     }
+    private void initOverViewData(){
+        String str = mACache.getAsString(mFileName);
+        if(str != null) {
+            mOverView = AccountOverViewItem.getItem(mACache.getAsString(mFileName));
+            refreshOverView();
+        }
+    }
+    private void refreshOverView() {
+        mTvFloatingProfit.setText(mOverView.floating);
+        mTotalCapital.setText(mOverView.total_capital);
+        mOccupyCash.setText(mOverView.use_cash);
+        mFollowCapital.setText(mOverView.follow_cash);
+        mPositionCapital.setText(mOverView.position_capital);
+        mAvailableCash.setText(mOverView.available_capital);
+        mRiskRatio.setText(mOverView.risk_rate);
+
+        if(StrTool.getDouble(mOverView.floating) < 0) {
+            mIconFloating.setImageResource(R.drawable.icon_floating_down);
+        } else {
+            mIconFloating.setImageResource(R.drawable.icon_floating_up);
+        }
+
+
+    }
+    private void getOverView() {
+        Log.d("TianjunXu", " getOverView:url = " + url);
+        mWebhelper.doLoadGet(url, null, new WebHelper.OnWebFinished() {
+
+            @Override
+            public void onWebFinished(boolean success, String msg) {
+                Log.d("TianjunXu", " gonWebFinished:success = " + success + ",msg =" + msg);
+                if (success) {
+                    JSONObject response = JsnTool.getObject(msg);
+                    if ((response != null) && (JsnTool.getInt(response, "status") == 1)) {
+                        parseOverView(msg);
+                    }
+                }
+            }
+        });
+    }
+
+    private void parseOverView(String msg) {
+
+        mOverView =AccountOverViewItem.getItem(msg);
+        refreshOverView();
+        mACache.put(mFileName, msg);
+    }
+
     @Override
     public void onDestroy() {
         super.onDestroy();

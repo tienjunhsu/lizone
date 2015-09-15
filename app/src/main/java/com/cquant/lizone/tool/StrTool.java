@@ -65,6 +65,8 @@
 
 package com.cquant.lizone.tool;
 
+import android.util.Log;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -832,5 +834,16 @@ public class StrTool {
 		}
 		matcherTag.appendTail(sb);
 		return sb.toString();
+	}
+
+	public static double getDouble(String str) {
+		double num = 0.0;
+		try{
+			num =Double.parseDouble(str);
+		} catch (NumberFormatException e) {
+            Log.d("TianjunXu", "NumberFormatException:str=" + str + "," + e.getMessage());
+		}
+		Log.d("TianjunXu", "getDouble:str=" + str+",num="+num );
+		return num;
 	}
 }

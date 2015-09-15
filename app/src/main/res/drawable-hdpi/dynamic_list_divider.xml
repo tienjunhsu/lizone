@@ -4,6 +4,6 @@
 
     <solid android:color="@color/style_color_window_background" />
 
-    <size android:height="4dp" />
+    <size android:height="1dp" />
 
 </shape>

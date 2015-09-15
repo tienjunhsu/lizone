@@ -18,6 +18,7 @@ import com.cquant.lizone.net.WebHelper;
 import com.cquant.lizone.tool.ACache;
 import com.cquant.lizone.tool.JsnTool;
 import com.cquant.lizone.tool.Md5FileNameGenerator;
+import com.cquant.lizone.tool.StrTool;
 import com.cquant.lizone.util.Utils;
 import com.cquant.lizone.view.CircleImageView;
 import com.cquant.lizone.view.ItemDivider;
@@ -60,20 +61,20 @@ public class AccountRecordFragment extends BaseFragment {
     }
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View root = inflater.inflate(R.layout.master_list_fragment, container, false);
+        View root = inflater.inflate(R.layout.default_fragment, container, false);
         mRecyclerView = (RecyclerView)root.findViewById(R.id.recyclerView);
         return root;
     }
     @Override
     public void onResume() {
         super.onResume();
-        getMaster();
-        Log.d("TianjunXu", "SignMasterFragment:onResume");
+        getRecord();
+        Log.d("TianjunXu", "AccountRecordFragment:onResume");
     }
     @Override
     public void onPause() {
         super.onPause();
-        Log.d("TianjunXu", "SignMasterFragment:onPause");
+        Log.d("TianjunXu", "AccountRecordFragment:onPause");
     }
     @Override
     public void onStop() {
@@ -86,7 +87,7 @@ public class AccountRecordFragment extends BaseFragment {
 
         mAdapter = new MasterAdapter();
         mRecyclerView.setAdapter(mAdapter);
-        mRecyclerView.addItemDecoration(new ItemDivider(getActivity(), R.drawable.default_recylerview_divider));
+        mRecyclerView.addItemDecoration(new ItemDivider(getActivity(), R.drawable.window_color_divider));
     }
 
     private void initList() {
@@ -97,8 +98,8 @@ public class AccountRecordFragment extends BaseFragment {
             mRecordList = new ArrayList<TradeRecordItem>();
         }
     }
-    private void getMaster() {
-        Log.d("TianjunXu", " getMaster:url = " + url);
+    private void getRecord() {
+        Log.d("TianjunXu", " getRecord:url = " + url);
         mWebhelper.doLoadGet(url, null, new WebHelper.OnWebFinished() {
 
             @Override
@@ -107,14 +108,14 @@ public class AccountRecordFragment extends BaseFragment {
                 if (success) {
                     JSONObject response = JsnTool.getObject(msg);
                     if ((response != null) && (JsnTool.getInt(response, "status") == 1)) {
-                        parseMaster(msg);
+                        parseRecord(msg);
                     }
                 }
             }
         });
     }
 
-    private void parseMaster(String msg) {
+    private void parseRecord(String msg) {
         mRecordList =TradeRecordItem.getItemList(msg);
         mAdapter.notifyDataSetChanged();
         mACache.put(mFileName, msg);
@@ -125,21 +126,36 @@ public class AccountRecordFragment extends BaseFragment {
 
         @Override
         public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup viewGroup, int i) {
-            View view = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.sign_master_list_item,viewGroup,false);
-            MasterViewHolder vh = new MasterViewHolder(view);
+            View view = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.record_list_item,viewGroup,false);
+            RecordViewHolder vh = new RecordViewHolder(view);
             return vh;
         }
 
         @Override
         public void onBindViewHolder(RecyclerView.ViewHolder viewHolder, int i) {
-            /*MasterViewHolder holder = (MasterViewHolder) viewHolder;
-            holder.mTvName.setText(mMasterList.get(i).name);
-            holder.mTvProfit.setText(mMasterList.get(i).yield+"%");
-            holder.mTvNum.setText(mMasterList.get(i).num);
-            holder.mTvSuccess.setText(mMasterList.get(i).success+"%");
-            if(!TextUtils.isEmpty(mMasterList.get(i).photo)) {
-                ImageLoader.getInstance().displayImage(mMasterList.get(i).photo,holder.mPhoto);
-            }*/
+            RecordViewHolder holder = (RecordViewHolder) viewHolder;
+            holder.mTvName.setText(mRecordList.get(i).ex_name);
+            holder.mTvCode.setText(mRecordList.get(i).ex_code);
+            holder.mTvBeginDir.setText(mRecordList.get(i).start_label);
+            holder.mTvBeginTime.setText(mRecordList.get(i).start_time);
+            holder.mTvEndDir.setText(mRecordList.get(i).end_label);
+            holder.mTvEndTime.setText(mRecordList.get(i).end_time);
+            holder.mTvNum.setText(mRecordList.get(i).end_number);
+            holder.mTvProfit.setText(mRecordList.get(i).profit);
+            holder.mTvYield.setText(mRecordList.get(i).yield);
+            // set text color
+            if(StrTool.getDouble(mRecordList.get(i).profit) > 0) {
+                holder.mTvProfit.setTextColor(getActivity().getResources().getColor(R.color.red_two));
+                holder.mTvYield.setTextColor(getActivity().getResources().getColor(R.color.red_two));
+            } else if(StrTool.getDouble(mRecordList.get(i).profit) < 0) {
+                holder.mTvProfit.setTextColor(getActivity().getResources().getColor(R.color.green_two));
+                holder.mTvYield.setTextColor(getActivity().getResources().getColor(R.color.green_two));
+            } else {
+                holder.mTvProfit.setTextColor(getActivity().getResources().getColor(R.color.white_two));
+                holder.mTvYield.setTextColor(getActivity().getResources().getColor(R.color.white_two));
+            }
+            //
+
         }
 
         @Override
@@ -147,22 +163,30 @@ public class AccountRecordFragment extends BaseFragment {
             return mRecordList.size();
         }
 
-        class MasterViewHolder extends RecyclerView.ViewHolder{
+        class RecordViewHolder extends RecyclerView.ViewHolder{
 
-            public CircleImageView mPhoto;
             public TextView mTvName;
+            public TextView mTvCode;
+            public TextView mTvBeginDir;
+            public TextView mTvBeginTime;
+            public TextView mTvEndDir;
+            public TextView mTvEndTime;
             public TextView mTvProfit;
             public TextView mTvNum;
-            public TextView mTvSuccess;
+            public TextView mTvYield;
 
-            public MasterViewHolder(View itemView) {
+            public RecordViewHolder(View itemView) {
                 super(itemView);
-                mPhoto = (CircleImageView) itemView.findViewById(R.id.photo);
 
-                mTvName = (TextView) itemView.findViewById(R.id.name);
-                mTvNum = (TextView) itemView.findViewById(R.id.trade_num);
-                mTvSuccess = (TextView) itemView.findViewById(R.id.success_ratio);
-                mTvProfit  = (TextView) itemView.findViewById(R.id.profit_ratio);
+                mTvName = (TextView) itemView.findViewById(R.id.ex_name);
+                mTvCode = (TextView) itemView.findViewById(R.id.ex_code);
+                mTvBeginDir = (TextView) itemView.findViewById(R.id.begin_dir);
+                mTvBeginTime = (TextView) itemView.findViewById(R.id.begin_time);
+                mTvEndDir = (TextView) itemView.findViewById(R.id.end_dir);
+                mTvEndTime = (TextView) itemView.findViewById(R.id.end_time);
+                mTvNum = (TextView) itemView.findViewById(R.id.tv_num);
+                mTvYield = (TextView) itemView.findViewById(R.id.tv_yield);
+                mTvProfit  = (TextView) itemView.findViewById(R.id.tv_profit);
             }
         }
     }
