@@ -843,7 +843,7 @@ public class StrTool {
 		} catch (NumberFormatException e) {
             Log.d("TianjunXu", "NumberFormatException:str=" + str + "," + e.getMessage());
 		}
-		Log.d("TianjunXu", "getDouble:str=" + str+",num="+num );
+		//Log.d("TianjunXu", "getDouble:str=" + str+",num="+num );
 		return num;
 	}
 }

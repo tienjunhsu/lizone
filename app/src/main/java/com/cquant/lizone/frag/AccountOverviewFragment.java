@@ -134,18 +134,22 @@ public class AccountOverviewFragment extends BaseFragment {
         }
     }
     private void refreshOverView() {
-        mTvFloatingProfit.setText(mOverView.floating);
-        mTotalCapital.setText(mOverView.total_capital);
-        mOccupyCash.setText(mOverView.use_cash);
-        mFollowCapital.setText(mOverView.follow_cash);
-        mPositionCapital.setText(mOverView.position_capital);
-        mAvailableCash.setText(mOverView.available_capital);
+        Log.d("TianjunXu","refreshOverView():="+mOverView.floating+",total_capital ="+mOverView.total_capital);
+        mTvFloatingProfit.setText(mOverView.floating+"");
+        mTotalCapital.setText(mOverView.total_capital+"");
+        mOccupyCash.setText(mOverView.use_cash+"");
+        mFollowCapital.setText(mOverView.follow_cash+"");
+        mPositionCapital.setText(mOverView.position_capital+"");
+        mAvailableCash.setText(mOverView.available_capital+"");
         mRiskRatio.setText(mOverView.risk_rate);
 
-        if(StrTool.getDouble(mOverView.floating) < 0) {
+        //if(StrTool.getDouble(mOverView.floating) < 0) {
+        if(mOverView.floating < 0) {
             mIconFloating.setImageResource(R.drawable.icon_floating_down);
+            mTvFloatingProfit.setTextColor(getResources().getColor(R.color.green_two));
         } else {
             mIconFloating.setImageResource(R.drawable.icon_floating_up);
+            mTvFloatingProfit.setTextColor(getResources().getColor(R.color.red_two));
         }
 
 
@@ -156,7 +160,7 @@ public class AccountOverviewFragment extends BaseFragment {
 
             @Override
             public void onWebFinished(boolean success, String msg) {
-                Log.d("TianjunXu", " gonWebFinished:success = " + success + ",msg =" + msg);
+                Log.d("TianjunXu", " getOverView:success = " + success + ",msg =" + msg);
                 if (success) {
                     JSONObject response = JsnTool.getObject(msg);
                     if ((response != null) && (JsnTool.getInt(response, "status") == 1)) {
