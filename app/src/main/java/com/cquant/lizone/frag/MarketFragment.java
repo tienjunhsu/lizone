@@ -8,18 +8,23 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.android_websockets.WebSocketClient;
 import com.cquant.lizone.R;
+
+import org.json.JSONObject;
 
 import java.net.URI;
 import java.net.URISyntaxException;
 
+import io.socket.client.IO;
+import io.socket.client.Socket;
+import io.socket.emitter.Emitter;
+
 /**
  * Created by asus on 2015/8/30.
  */
-public class MarketFragment extends BaseFragment implements WebSocketClient.Listener {
+public class MarketFragment extends BaseFragment {
 
-    private WebSocketClient mSocket = null;
+    private Socket socket;
 
     private String url = "http://1-yj.com:3000";
 
@@ -37,20 +42,47 @@ public class MarketFragment extends BaseFragment implements WebSocketClient.List
         super.onStart();;
     }
     public void connect() {
-           // List<BasicNameValuePair> extraHeaders = new ArrayList<BasicNameValuePair>();
-           // extraHeaders.add(new BasicNameValuePair("user", "renzh"));
-           // extraHeaders.add(new BasicNameValuePair("age", "24"));
-        Log.d("TianjunXu","connect");
-            try {
-                if (mSocket == null) {
-                    mSocket = new WebSocketClient(new URI(url), this,
-                            null);
-                }
-                mSocket.connect();
-            } catch (URISyntaxException e) {
-                e.printStackTrace();
-                Log.d("TianjunXu", "connect:URISyntaxException:"+e.getMessage());
+
+        try {
+            socket = IO.socket(url);
+        } catch (URISyntaxException e) {
+            e.printStackTrace();
+            Log.d("TianjunXu","connect:URISyntaxException "+e.getMessage());
+        }
+        socket.on(Socket.EVENT_CONNECT, new Emitter.Listener() {
+
+            @Override
+            public void call(Object... args) {
+                Log.d("TianjunXu","connect:EVENT_CONNECT");
             }
+
+        }).on("event", new Emitter.Listener() {
+
+            @Override
+            public void call(Object... args) {
+                Log.d("TianjunXu","connect:event");
+            }
+
+        }).on(Socket.EVENT_DISCONNECT, new Emitter.Listener() {
+
+            @Override
+            public void call(Object... args) {
+                Log.d("TianjunXu","connect:EVENT_DISCONNECT");
+            }
+
+        }).on(Socket.EVENT_MESSAGE, new Emitter.Listener() {
+            @Override
+            public void call(Object... args) {
+                Log.d("TianjunXu","connect:EVENT_MESSAGE");
+            }
+        }).on("notification", new Emitter.Listener() {
+            @Override
+            public void call(Object... args) {
+                JSONObject data = (JSONObject)args[0];
+                Log.d("TianjunXu", "connect:notification-->data="+data);
+            }
+        });;
+        socket.connect();
 
         //test
        /* WebHelper mWebhelper = new WebHelper(getActivity());
@@ -65,9 +97,7 @@ public class MarketFragment extends BaseFragment implements WebSocketClient.List
     }
 
     public void disconnected() {
-        if (mSocket != null && mSocket.isConnected()) {
-            mSocket.disconnect();
-        }
+
     }
     private Handler mHanler = new Handler() {
         @Override
@@ -103,48 +133,5 @@ public class MarketFragment extends BaseFragment implements WebSocketClient.List
     @Override
     public void onDestroy() {
         super.onDestroy();
-    }
-
-    @Override
-    public void onConnect() {
-
-        Log.d("TianjunXu","Socket:onConnect");
-
-       // mHanler.sendEmptyMessage(1);
-    }
-
-    @Override
-    public void onMessage(String message) {
-
-        Log.d("TianjunXu", "Socket:onMessage:message="+message);
-
-    }
-
-    @Override
-    public void onMessage(byte[] data) {
-        /*Message msg = new Message();
-        msg.what = 2;
-        msg.obj = data;
-        mHanler.sendMessage(msg);*/
-        Log.d("TianjunXu","Socket:onMessage:data="+new String(data));
-
-
-
-
-    }
-
-    @Override
-    public void onDisconnect(int code, String reason) {
-
-        //if(isVisible){
-            mHanler.sendEmptyMessageDelayed(3, 100);
-        //}
-        Log.d("TianjunXu","Socket:onDisconnect:code="+code+",reason="+reason);
-    }
-
-    @Override
-    public void onError(Exception error) {
-        Log.d("TianjunXu","Socket:onError:"+error.getMessage());
-
     }
 }
