@@ -7,6 +7,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ExpandableListView;
 
 import com.cquant.lizone.R;
 
@@ -27,6 +28,7 @@ public class MarketFragment extends BaseFragment {
     private Socket socket;
 
     private String url = "http://1-yj.com:3000";
+    private ExpandableListView listView;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -35,6 +37,7 @@ public class MarketFragment extends BaseFragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View root = inflater.inflate(R.layout.market_fragment, container, false);
+        listView = (ExpandableListView)root.findViewById(R.id.market_list);
         return root;
     }
     @Override
