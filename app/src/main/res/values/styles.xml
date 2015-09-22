@@ -26,6 +26,9 @@
         <!--Tab Page 指示-->
         <item name="vpiTabPageIndicatorStyle">@style/CustomTabPageIndicator</item>
 
+        <!--Activity进入退出动画-->
+        <item name="android:windowAnimationStyle">@style/AnimationActivity</item>
+
     </style>
 
     <style name="ToolbarTheme" parent="AppTheme">
@@ -33,6 +36,14 @@
         <item name="android:textColorSecondary">@android:color/white</item>
         <!--item name="colorControlActivited">@android:color/white</item-->
     </style>
+
+    <style name="AnimationActivity" parent="@android:style/Animation.Activity">
+        <item name="android:activityOpenEnterAnimation">@anim/anim_enter_new</item>
+        <item name="android:activityOpenExitAnimation">@anim/anim_exit_new</item>
+        <item name="android:activityCloseEnterAnimation">@anim/back_enter</item>
+        <item name="android:activityCloseExitAnimation">@anim/back_exit</item>
+    </style>
+
 
     <style name="text_register_item">
         <item name="android:layout_width">match_parent</item>

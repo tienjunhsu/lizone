@@ -3,50 +3,6 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical">
-
-    <LinearLayout
-        android:orientation="horizontal"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-
-        <LinearLayout
-            android:layout_width="0.0px"
-            android:layout_weight="1"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            >
-            <TextView
-                android:id="@+id/name_xau"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="伦敦金"
-                android:textColor="@color/white_two"
-                android:textSize="16sp"
-                android:gravity="center"
-                />
-            <TextView
-                android:id="@+id/price_xau"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:text="1172.73"
-                android:textSize="20sp"
-                android:textColor="@color/green_two"
-                android:gravity="center"
-                />
-            <TextView
-                android:id="@+id/amp_xau"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="-4.92 -0.42%"
-                android:textSize="14sp"
-                android:textColor="@color/green_two"
-                android:gravity="center"
-                />
-
-        </LinearLayout>
-
-    </LinearLayout>
-
     <ExpandableListView
         android:id="@+id/market_list"
         android:layout_width="match_parent"

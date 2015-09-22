@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<TextView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="48dp"
+    android:id="@+id/ex_name"
+    android:background="@color/style_color_primary"
+    android:text="新华商品现货合约交易中心"
+    android:textSize="16sp"
+    android:textColor="@color/white_two"
+    android:gravity="center_vertical|left"
+    android:paddingLeft="12dp"
+    >
+
+</TextView>
