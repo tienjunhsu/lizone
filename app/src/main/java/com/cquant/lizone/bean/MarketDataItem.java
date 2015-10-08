@@ -13,18 +13,18 @@ import java.util.ArrayList;
  */
 public class MarketDataItem {
     public int id;
-    public int  open;
+    public double  open;
     public String excode;
-    public int sell;
-    public int buy;
+    public double sell;
+    public double buy;
     public String name;
-    public int newprice;
+    public double newprice;
     public String label;
-    public int high;
-    public int low;
-    public int close;
+    public double high;
+    public double low;
+    public double close;
 
-    public MarketDataItem(int id,int open,String excode,int sell,int buy,String name,int newprice,String label,int high,int low,int close) {
+    public MarketDataItem(int id,double open,String excode,double sell,double buy,String name,double newprice,String label,double high,double low,double close) {
         this.id=id;
         this.open = open;
         this.excode = excode;
@@ -40,16 +40,16 @@ public class MarketDataItem {
     }
     public static MarketDataItem getItem(JSONObject obj) {
         int id = JsnTool.getInt(obj, "id");
-        int  open = JsnTool.getInt(obj,"open");
+        double  open = JsnTool.getDouble(obj, "open");
         String excode = JsnTool.getString(obj,"excode");
-        int sell = JsnTool.getInt(obj,"sell");
-        int buy = JsnTool.getInt(obj,"buy");
+        double sell = JsnTool.getDouble(obj, "sell");
+        double buy = JsnTool.getDouble(obj, "buy");
         String name = JsnTool.getString(obj,"name");
-        int newprice = JsnTool.getInt(obj,"newprice");
+        double newprice = JsnTool.getDouble(obj, "newprice");
         String label = JsnTool.getString(obj, "label");
-        int high = JsnTool.getInt(obj,"high");
-        int low = JsnTool.getInt(obj,"low");
-        int close = JsnTool.getInt(obj,"close");
+        double high = JsnTool.getDouble(obj, "high");
+        double low = JsnTool.getDouble(obj, "low");
+        double close = JsnTool.getDouble(obj,"close");
         return new  MarketDataItem(id,open,excode,sell,buy,name,newprice,label,high,low,close);
     }
     public static ArrayList<MarketDataItem> getItemList(String json) {

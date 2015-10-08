@@ -35,7 +35,7 @@ public class JsnTool {
 		double val = 0;
 		if (obj.has(key)) {
 			try {
-				val = obj.getDouble(key);  
+				val = obj.getDouble(key);
 			} catch (JSONException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();

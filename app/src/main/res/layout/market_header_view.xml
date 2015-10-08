@@ -120,4 +120,10 @@
 
         </LinearLayout>
     </LinearLayout>
+    <com.cquant.lizone.view.OptLayout
+        android:id="@+id/opt_list"
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+</com.cquant.lizone.view.OptLayout>
 </LinearLayout>

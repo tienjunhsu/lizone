@@ -14,8 +14,13 @@ import android.widget.TextView;
 import com.cquant.lizone.LizoneApp;
 import com.cquant.lizone.R;
 import com.cquant.lizone.bean.MarketDataItem;
+import com.cquant.lizone.net.WebHelper;
 import com.cquant.lizone.tool.ACache;
+import com.cquant.lizone.tool.LogTool;
 import com.cquant.lizone.tool.Md5FileNameGenerator;
+import com.cquant.lizone.tool.StrTool;
+import com.cquant.lizone.util.Utils;
+import com.cquant.lizone.view.OptLayout;
 
 import org.json.JSONObject;
 
@@ -47,6 +52,26 @@ public class MarketFragment extends BaseFragment {
     private MarketAdapter marketAdapter;
 
     private ArrayList<MarketDataItem> mDataList;
+
+    //header view
+    private TextView mFixVarName01;
+    private TextView mFixVarPrice01;
+    private TextView mFixVarAmp01;
+
+    private TextView mFixVarName02;
+    private TextView mFixVarPrice02;
+    private TextView mFixVarAmp02;
+
+    private TextView mFixVarName03;
+    private TextView mFixVarPrice03;
+    private TextView mFixVarAmp03;
+
+    private ArrayList<MarketDataItem> mFixHeaderData;
+    //
+    private WebHelper mWebhelper;
+
+    private OptLayout optView;
+
 
     private Map<String,ArrayList<MarketDataItem>> mGroup = new HashMap<String,ArrayList<MarketDataItem>>();
 
@@ -89,7 +114,88 @@ public class MarketFragment extends BaseFragment {
     private View getHeaderView() {
         LayoutInflater inflater = getActivity().getLayoutInflater();
         View header = inflater.inflate(R.layout.market_header_view,null);
+        mFixVarName01 = (TextView)header.findViewById(R.id.name_xau);
+        mFixVarName02 = (TextView)header.findViewById(R.id.name_usd);
+        mFixVarName03 = (TextView)header.findViewById(R.id.name_conc);
+
+        mFixVarPrice01 = (TextView)header.findViewById(R.id.price_xau);
+        mFixVarPrice02 = (TextView)header.findViewById(R.id.price_usd);
+        mFixVarPrice03 = (TextView)header.findViewById(R.id.price_conc);
+
+        mFixVarAmp01 = (TextView)header.findViewById(R.id.amp_xau);
+        mFixVarAmp02 = (TextView)header.findViewById(R.id.amp_usd);
+        mFixVarAmp03 = (TextView)header.findViewById(R.id.amp_conc);
+
+        optView = (OptLayout)header.findViewById(R.id.opt_list);
+        optView.initView();
+
         return header;
+    }
+    private void refreshFixHeaderView() {
+        mFixHeaderData = mGroup.get("ZHISHU");
+        if((mFixHeaderData == null)||mFixHeaderData.size() < 3) {
+            return;
+        }
+        double amp=0;
+        double amppercent = 0.00;
+        MarketDataItem item;
+        item = mFixHeaderData.get(0);
+        mFixVarName01.setText(item.name);
+        amp = StrTool.sub(item.newprice,item.close);
+        amppercent = amp*100.0/item.close;
+        mFixVarPrice01.setText(item.newprice+"");
+        mFixVarAmp01.setText(formatAmp(amp,amppercent));
+
+        if(amp > 0) {
+            mFixVarPrice01.setTextColor(getResources().getColor(R.color.red_two));
+            mFixVarAmp01.setTextColor(getResources().getColor(R.color.red_two));
+        } else if(amp < 0) {
+            mFixVarPrice01.setTextColor(getResources().getColor(R.color.green_two));
+            mFixVarAmp01.setTextColor(getResources().getColor(R.color.green_two));
+        } else {
+            mFixVarPrice01.setTextColor(getResources().getColor(R.color.white_two));
+            mFixVarAmp01.setTextColor(getResources().getColor(R.color.white_two));
+        }
+
+        item = mFixHeaderData.get(1);
+        mFixVarName02.setText(item.name);
+        amp = StrTool.sub(item.newprice,item.close);
+        amppercent = amp*100.0/item.close;
+        mFixVarPrice02.setText(item.newprice+"");
+        mFixVarAmp02.setText(formatAmp(amp,amppercent));
+
+        if(amp > 0) {
+            mFixVarPrice02.setTextColor(getResources().getColor(R.color.red_two));
+            mFixVarAmp02.setTextColor(getResources().getColor(R.color.red_two));
+        } else if(amp < 0) {
+            mFixVarPrice02.setTextColor(getResources().getColor(R.color.green_two));
+            mFixVarAmp02.setTextColor(getResources().getColor(R.color.green_two));
+        } else {
+            mFixVarPrice02.setTextColor(getResources().getColor(R.color.white_two));
+            mFixVarAmp02.setTextColor(getResources().getColor(R.color.white_two));
+        }
+
+        item = mFixHeaderData.get(2);
+        mFixVarName03.setText(item.name);
+        amp = StrTool.sub(item.newprice,item.close);
+        amppercent = amp*100.0/item.close;
+        mFixVarPrice03.setText(item.newprice+"");
+        mFixVarAmp03.setText(formatAmp(amp,amppercent));
+
+        if(amp > 0) {
+            mFixVarPrice03.setTextColor(getResources().getColor(R.color.red_two));
+            mFixVarAmp03.setTextColor(getResources().getColor(R.color.red_two));
+        } else if(amp < 0) {
+            mFixVarPrice03.setTextColor(getResources().getColor(R.color.green_two));
+            mFixVarAmp03.setTextColor(getResources().getColor(R.color.green_two));
+        } else {
+            mFixVarPrice03.setTextColor(getResources().getColor(R.color.white_two));
+            mFixVarAmp03.setTextColor(getResources().getColor(R.color.white_two));
+        }
+
+    }
+    private String formatAmp(double amp,double amppercent) {
+        return amp +"  "+String.format("%.2f",amppercent)+"%";
     }
     @Override
     public void onStart() {
@@ -168,6 +274,16 @@ public class MarketFragment extends BaseFragment {
         }
 
     };
+    private void getOptList() {
+        String optUrl = Utils.BASE_URL+"optlist/";
+        mWebhelper.doLoadGet(optUrl, null, new WebHelper.OnWebFinished() {
+
+            @Override
+            public void onWebFinished(boolean success, String msg) {
+                LogTool.d("getOptList:success = " + success + ",msg =" + msg);
+            }
+        });
+    }
     @Override
     public void onResume() {
         super.onResume();
@@ -186,8 +302,10 @@ public class MarketFragment extends BaseFragment {
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         mCache = LizoneApp.getACache();
+        mWebhelper = new WebHelper(getActivity());
         initView();
         initMarketData();
+        getOptList();
     }
 
     private void initView() {
@@ -207,6 +325,7 @@ public class MarketFragment extends BaseFragment {
         mDataList = MarketDataItem.getItemList(obj);
         groupData();
         marketAdapter.notifyDataSetChanged();
+        refreshFixHeaderView();
         mCache.put(mFileName,obj);
     }
 
@@ -281,8 +400,25 @@ public class MarketFragment extends BaseFragment {
             MarketDataItem item = mGroup.get(ex_label[groupPosition]).get(childPosition);
             mTvName.setText(item.name);
             mTvPrice.setText(item.newprice+"");
-            int amp = item.newprice - item.close;
+            double amp = StrTool.sub(item.newprice,item.close);
+            double amppercent = amp*100.0/item.close;
             mTvAmp.setText(amp+"");
+            mTvAmpRate.setText(String.format("%.2f",amppercent)+"%");
+
+            if(amp > 0) {
+                mTvPrice.setTextColor(getResources().getColor(R.color.red_two));
+                mTvAmp.setTextColor(getResources().getColor(R.color.red_two));
+                mTvAmpRate.setTextColor(getResources().getColor(R.color.red_two));
+            } else if(amp < 0) {
+                mTvPrice.setTextColor(getResources().getColor(R.color.green_two));
+                mTvAmp.setTextColor(getResources().getColor(R.color.green_two));
+                mTvAmpRate.setTextColor(getResources().getColor(R.color.green_two));
+            } else {
+                mTvPrice.setTextColor(getResources().getColor(R.color.white_two));
+                mTvAmp.setTextColor(getResources().getColor(R.color.white_two));
+                mTvAmpRate.setTextColor(getResources().getColor(R.color.white_two));
+            }
+
             return convertView;
         }
 

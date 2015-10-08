@@ -1,0 +1,40 @@
+{"status":1,"msg":"","data":[{"id":"421","name":"\u73b0\u8d27\u767d\u94f61K","section":"1","row":"1","quoteid":"2","label":"AG1000"},{"id":"422","name":"\u73b0\u8d27\u767d\u94f6","section":"1","row":"0","quoteid":"1","label":"XAGUSD"},{"id":"423","name":"\u524d\u6d77\u6cb950","section":"2","row":"4","quoteid":"18","label":"QHO50S"},{"id":"424","name":"\u4e2d\u65b0\u94dc1\u5428","section":"0","row":"2","quoteid":"22","label":"CU01T"}]}
+
+{
+    "status": 1,
+    "msg": "",
+    "data": [
+        {
+            "id": "421",
+            "name": "现货白银1K",
+            "section": "1",
+            "row": "1",
+            "quoteid": "2",
+            "label": "AG1000"
+        },
+        {
+            "id": "422",
+            "name": "现货白银",
+            "section": "1",
+            "row": "0",
+            "quoteid": "1",
+            "label": "XAGUSD"
+        },
+        {
+            "id": "423",
+            "name": "前海油50",
+            "section": "2",
+            "row": "4",
+            "quoteid": "18",
+            "label": "QHO50S"
+        },
+        {
+            "id": "424",
+            "name": "中新铜1吨",
+            "section": "0",
+            "row": "2",
+            "quoteid": "22",
+            "label": "CU01T"
+        }
+    ]
+}
