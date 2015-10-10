@@ -1,5 +1,6 @@
 package com.cquant.lizone.frag;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -13,6 +14,7 @@ import android.widget.TextView;
 
 import com.cquant.lizone.LizoneApp;
 import com.cquant.lizone.R;
+import com.cquant.lizone.activity.KPointActivity;
 import com.cquant.lizone.bean.MarketDataItem;
 import com.cquant.lizone.net.WebHelper;
 import com.cquant.lizone.tool.ACache;
@@ -200,6 +202,9 @@ public class MarketFragment extends BaseFragment {
     @Override
     public void onStart() {
         super.onStart();;
+        initView();
+        initMarketData();
+        getOptList();
     }
     public void connect() {
         if(socket == null) {
@@ -303,9 +308,6 @@ public class MarketFragment extends BaseFragment {
         super.onActivityCreated(savedInstanceState);
         mCache = LizoneApp.getACache();
         mWebhelper = new WebHelper(getActivity());
-        initView();
-        initMarketData();
-        getOptList();
     }
 
     private void initView() {
@@ -332,6 +334,11 @@ public class MarketFragment extends BaseFragment {
     @Override
     public void onDestroy() {
         super.onDestroy();
+    }
+
+    private void startKpointActivity(){
+        Intent intent = new Intent(getActivity(), KPointActivity.class);
+        startActivity(intent);
     }
 
     class MarketAdapter extends BaseExpandableListAdapter {
@@ -419,6 +426,13 @@ public class MarketFragment extends BaseFragment {
                 mTvAmpRate.setTextColor(getResources().getColor(R.color.white_two));
             }
 
+            convertView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    //do something
+                    startKpointActivity();
+                }
+            });
             return convertView;
         }
 

@@ -48,6 +48,11 @@
             android:screenOrientation="portrait" >
         </activity>
         <activity
+            android:name=".activity.KPointActivity"
+            android:hardwareAccelerated="true"
+            android:screenOrientation="portrait" >
+        </activity>
+        <activity
             android:name=".activity.TestActivity"
             android:screenOrientation="portrait" >
         </activity>
