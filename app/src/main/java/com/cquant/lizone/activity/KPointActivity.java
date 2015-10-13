@@ -4,15 +4,17 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
+import android.util.DisplayMetrics;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.webkit.WebSettings;
-import android.webkit.WebView;
-import android.webkit.WebViewClient;
 
 import com.cquant.lizone.R;
+import com.cquant.lizone.tool.LogTool;
 import com.cquant.lizone.util.Utils;
+import com.tencent.smtt.sdk.WebSettings;
+import com.tencent.smtt.sdk.WebView;
+import com.tencent.smtt.sdk.WebViewClient;
 
 /**
  * Created by PC on 2015/10/9.
@@ -23,7 +25,8 @@ public class KPointActivity extends BaseActivity {
     private WebView webview;
 
     private String url = "http://www.1-yj.com/Kline/index.php/Index/Kline/label/XAGUSD/res/30/";
-    //private String url = Utils.BASE_URL+"Build_Trade/";
+    //private String url = "http://www.1-yj.com/Kline/index.php/Index/Fenshi/label/XAGUSD/";
+    //private String url = "http://finance.sina.com.cn/futures/quotes/AG1512.shtml";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,9 +43,9 @@ public class KPointActivity extends BaseActivity {
 
     private void initWebView() {
         WebSettings wSettings = webview.getSettings();
+        wSettings.setJavaScriptEnabled(true);
         wSettings.setAppCacheEnabled(true);
         wSettings.setDomStorageEnabled(true);
-        wSettings.setJavaScriptEnabled(true);
         String appCacheDir = this.getApplicationContext()
                 .getDir("cache", Context.MODE_PRIVATE).getPath();
         wSettings.setAppCachePath(appCacheDir);
@@ -55,18 +58,40 @@ public class KPointActivity extends BaseActivity {
         wSettings.setDatabasePath(databaseDir);
         wSettings.setRenderPriority(WebSettings.RenderPriority.HIGH);
         wSettings.setJavaScriptCanOpenWindowsAutomatically(true);
+        wSettings.setUseWideViewPort(true);
+        wSettings.setLoadWithOverviewMode(true);
+        wSettings.setBuiltInZoomControls(true);
+        wSettings.setSupportZoom(true);
+        wSettings.enableSmoothTransition();
+        wSettings.setEnableSmoothTransition(true);
 
-        webview.setWebViewClient(new WebViewClient() {
+        int screenDensity = getResources().getDisplayMetrics().densityDpi ;
+        LogTool.d("screenDensity ="+screenDensity);
+        WebSettings.ZoomDensity zoomDensity = WebSettings.ZoomDensity.MEDIUM ;
+        if(screenDensity <=DisplayMetrics.DENSITY_MEDIUM) {
+            zoomDensity = WebSettings.ZoomDensity.CLOSE;
+        }else if(screenDensity <=DisplayMetrics.DENSITY_HIGH) {
+            zoomDensity = WebSettings.ZoomDensity.MEDIUM;
+        }else {
+            zoomDensity = WebSettings.ZoomDensity.FAR;
+        }
+        wSettings.setDefaultZoom(zoomDensity);
+
+        //wSettings.setSupportMultipleWindows();
+       webview.setWebViewClient(new WebViewClient() {
 
             public void onPageStarted(WebView view, String url, Bitmap favicon) {
                 //startLoadingAnim();
             }
+
             public boolean shouldOverrideUrlLoading(WebView view, String url) {
                 /*if (url.contains("login")) {
                     startLogin();
                 }*/
+                webview.loadUrl(url);
                 return true;
             }
+
             public void onPageFinished(WebView view, String url) {
                 super.onPageFinished(view, url);
                 // stopLoadingAnim();

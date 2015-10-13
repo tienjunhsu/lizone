@@ -58,6 +58,8 @@
         </activity>
 
         <service android:name=".service.UpdateConfigService" />
+
+        <meta-data android:name="QBSDKAppKey" android:value="1pwEXxdWSzlp5JEiEcxwE/DS"/>
     </application>
 
 </manifest>

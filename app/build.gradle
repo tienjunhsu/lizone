@@ -30,4 +30,5 @@ dependencies {
     compile 'com.google.android.gms:play-services:7.5.0'
     compile 'com.android.support:recyclerview-v7:22.2.+'
     compile 'io.socket:socket.io-client:0.6.1'
+    compile files('libs/tbs_sdk_v1.4.1.1085_25433_obfs_20150917_114640.jar')
 }
