@@ -12,6 +12,7 @@ import android.view.View;
 import com.cquant.lizone.R;
 import com.cquant.lizone.tool.LogTool;
 import com.cquant.lizone.util.Utils;
+import com.cquant.lizone.view.X5WebView;
 import com.tencent.smtt.sdk.WebSettings;
 import com.tencent.smtt.sdk.WebView;
 import com.tencent.smtt.sdk.WebViewClient;
@@ -22,7 +23,7 @@ import com.tencent.smtt.sdk.WebViewClient;
 public class KPointActivity extends BaseActivity {
 
     private Toolbar toolbar;
-    private WebView webview;
+    private X5WebView webview;
 
     private String url = "http://www.1-yj.com/Kline/index.php/Index/Kline/label/XAGUSD/res/30/";
     //private String url = "http://www.1-yj.com/Kline/index.php/Index/Fenshi/label/XAGUSD/";
@@ -34,14 +35,14 @@ public class KPointActivity extends BaseActivity {
         setContentView(R.layout.kpoint_activity);
 
         toolbar = (Toolbar) findViewById(R.id.toolbar);
-        webview = (WebView)findViewById(R.id.webview);
+        webview = (X5WebView)findViewById(R.id.webview);
 
         initToolBar();
-        initWebView();
+        //initWebView();
         webview.loadUrl(url);
     }
 
-    private void initWebView() {
+    /*private void initWebView() {
         WebSettings wSettings = webview.getSettings();
         wSettings.setJavaScriptEnabled(true);
         wSettings.setAppCacheEnabled(true);
@@ -85,9 +86,6 @@ public class KPointActivity extends BaseActivity {
             }
 
             public boolean shouldOverrideUrlLoading(WebView view, String url) {
-                /*if (url.contains("login")) {
-                    startLogin();
-                }*/
                 webview.loadUrl(url);
                 return true;
             }
@@ -97,7 +95,7 @@ public class KPointActivity extends BaseActivity {
                 // stopLoadingAnim();
             }
         });
-    }
+    }*/
 
     @Override
     protected void initToolBar() {
@@ -140,5 +138,10 @@ public class KPointActivity extends BaseActivity {
         }*/
 
         return super.onOptionsItemSelected(item);
+    }
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        android.os.Process.killProcess(android.os.Process.myPid());
     }
 }

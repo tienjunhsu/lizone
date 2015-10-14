@@ -6,6 +6,13 @@
     tools:context="com.cquant.lizone.activity.OpenFirmAccountActivity">
 
     <include layout="@layout/toolbar_layout"/>
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
     <LinearLayout
         android:layout_marginTop="2dp"
         android:layout_width="match_parent"
@@ -281,8 +288,17 @@
             android:layout_weight="1"
             android:layout_height="match_parent"/-->
     </LinearLayout>
-    <com.tencent.smtt.sdk.WebView
+    <!--com.tencent.smtt.sdk.WebView-->
+        <com.cquant.lizone.view.X5WebView
         android:id="@+id/webview"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"/>
+        android:layout_height="600dp"
+        />
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:text="To be,or not to be:that is the question;whether it's noblber in the mind to suffer;the slings and arrows of out"
+            />
+    </LinearLayout>
+    </ScrollView>
 </LinearLayout>
