@@ -336,8 +336,11 @@ public class MarketFragment extends BaseFragment {
         super.onDestroy();
     }
 
-    private void startKpointActivity(){
+    private void startKpointActivity(MarketDataItem item){
         Intent intent = new Intent(getActivity(), KPointActivity.class);
+        Bundle mBundle = new Bundle();
+        mBundle.putSerializable("marketDataItem",item);
+        intent.putExtras(mBundle);
         startActivity(intent);
     }
 
@@ -392,6 +395,7 @@ public class MarketFragment extends BaseFragment {
             }
             TextView tv = (TextView) convertView.findViewById(R.id.ex_name);
             tv.setText(ex_name[groupPosition]);
+            //listView.expandGroup(groupPosition);//hsu
             return convertView;
         }
 
@@ -404,7 +408,7 @@ public class MarketFragment extends BaseFragment {
             TextView mTvPrice = (TextView)convertView.findViewById(R.id.contract_price);
             TextView mTvAmp = (TextView)convertView.findViewById(R.id.contract_amp);
             TextView mTvAmpRate = (TextView)convertView.findViewById(R.id.contract_amp_rate);
-            MarketDataItem item = mGroup.get(ex_label[groupPosition]).get(childPosition);
+            final MarketDataItem item = mGroup.get(ex_label[groupPosition]).get(childPosition);
             mTvName.setText(item.name);
             mTvPrice.setText(item.newprice+"");
             double amp = StrTool.sub(item.newprice,item.close);
@@ -430,7 +434,7 @@ public class MarketFragment extends BaseFragment {
                 @Override
                 public void onClick(View v) {
                     //do something
-                    startKpointActivity();
+                    startKpointActivity(item);
                 }
             });
             return convertView;

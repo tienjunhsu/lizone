@@ -6,12 +6,16 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 
 /**
  * Created by PC on 2015/9/21.
  */
-public class MarketDataItem {
+public class MarketDataItem implements Serializable {
+
+    private static final long serialVersionUID = -7060210544600464481L;
+
     public int id;
     public double  open;
     public String excode;

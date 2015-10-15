@@ -5,300 +5,324 @@
     android:orientation="vertical"
     tools:context="com.cquant.lizone.activity.OpenFirmAccountActivity">
 
-    <include layout="@layout/toolbar_layout"/>
+    <include layout="@layout/toolbar_layout" />
+
     <ScrollView
+        android:id="@+id/scrollView"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="vertical">
-    <LinearLayout
-        android:layout_marginTop="2dp"
-        android:layout_width="match_parent"
-        android:layout_height="120dp"
-        android:orientation="horizontal"
-        android:background="?attr/colorPrimary"
-        android:paddingRight="16dp"
-        >
-        <LinearLayout
-            android:layout_width="0.0px"
-            android:layout_weight="1"
-            android:layout_height="match_parent"
-            android:gravity="center"
-            android:orientation="vertical">
-            <TextView
-                android:id="@+id/tv_price"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="220.71"
-                android:textColor="@color/green_two"
-                android:gravity="center"
-                android:textSize="25sp"
-                />
-            <TextView
-                android:id="@+id/tv_amp"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="-0.48 -0.22%"
-                android:gravity="center"
-                android:textColor="@color/green_two"
-                android:textSize="16sp"
-                />
-        </LinearLayout>
-            <TableLayout
-                android:layout_width="0.0px"
-                android:layout_weight="1"
-                android:layout_height="match_parent"
-                android:layout_gravity="center"
-                android:shrinkColumns="2"
-                >
-                <TableRow
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:gravity="center"
-                    >
-                    <TextView
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="买价"
-                        android:gravity="center_vertical|left"
-                        android:textSize="16sp"
-                        android:layout_weight="1"
-                        android:textColor="@color/grey"
-                        />
-                    <TextView
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="卖价"
-                        android:gravity="center_vertical|right"
-                        android:textSize="16sp"
-                        android:layout_weight="1"
-                        android:textColor="@color/grey"
-                        />
-                </TableRow>
-                <TableRow
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:gravity="center"
-                    >
-                    <TextView
-                        android:id="@+id/tv_buy"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="221.15"
-                        android:gravity="center_vertical|left"
-                        android:textSize="16sp"
-                        android:layout_weight="1"
-                        android:textColor="@color/green_two"
-                        />
-                    <TextView
-                        android:id="@+id/tv_sell"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="卖价"
-                        android:gravity="center_vertical|right"
-                        android:textSize="16sp"
-                        android:layout_weight="1"
-                        android:textColor="@color/green_two"
-                        />
-                </TableRow>
-                <TableRow
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:gravity="center"
-                    >
-                    <TextView
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="最高"
-                        android:gravity="center_vertical|left"
-                        android:textSize="16sp"
-                        android:layout_weight="1"
-                        android:textColor="@color/grey"
-                        />
-                    <TextView
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="最低"
-                        android:gravity="center_vertical|right"
-                        android:textSize="16sp"
-                        android:layout_weight="1"
-                        android:textColor="@color/grey"
-                        />
-                </TableRow>
 
-                <TableRow
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:gravity="center"
-                    >
-                    <TextView
-                        android:id="@+id/tv_high"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="222.04"
-                        android:gravity="center_vertical|left"
-                        android:textSize="16sp"
-                        android:layout_weight="1"
-                        android:textColor="@color/red_two"
-                        />
-                    <TextView
-                        android:id="@+id/tv_low"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="220.43"
-                        android:gravity="center_vertical|right"
-                        android:textSize="16sp"
-                        android:layout_weight="1"
-                        android:textColor="@color/green_two"
-                        />
-                </TableRow>
-            </TableLayout>
-    </LinearLayout>
-    <LinearLayout
-        android:orientation="horizontal"
-        android:paddingRight="16sp"
-        android:paddingLeft="16sp"
-        android:paddingTop="8dp"
-        android:paddingBottom="8dp"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
         <LinearLayout
-            android:orientation="horizontal"
-            android:layout_width="0.0px"
-            android:layout_weight="1"
-            android:gravity="center_vertical|left"
-            android:layout_height="wrap_content">
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:text="开盘： "
-                android:textSize="16sp"
-                android:textColor="@color/grey"
-                />
-            <TextView
-                android:id="@+id/tv_open"
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:text="221.35"
-                android:textSize="16sp"
-                android:textColor="@color/red_two"
-                />
-        </LinearLayout>
-        <LinearLayout
-            android:orientation="horizontal"
-            android:layout_width="0.0px"
-            android:layout_weight="1"
-            android:gravity="center"
-            android:layout_height="wrap_content">
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:text="昨收： "
-                android:textSize="16sp"
-                android:textColor="@color/grey"
-                />
-            <TextView
-                android:id="@+id/tv_close"
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:text="221.20"
-                android:textSize="16sp"
-                android:textColor="@color/grey"
-                />
-        </LinearLayout>
-        <LinearLayout
-            android:orientation="horizontal"
-            android:layout_width="0.0px"
-            android:layout_weight="1"
-            android:gravity="center_vertical|right"
-            android:layout_height="wrap_content">
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:text="振幅： "
-                android:textSize="16sp"
-                android:textColor="@color/grey"
-                />
-            <TextView
-                android:id="@+id/tv_percent"
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:text="-0.22%"
-                android:textSize="16sp"
-                android:textColor="@color/green_two"
-                />
-        </LinearLayout>
-    </LinearLayout>
-    <LinearLayout
-        android:orientation="horizontal"
-        android:layout_width="match_parent"
-        android:background="?attr/colorPrimary"
-        android:divider="@drawable/window_color_divider_vertical"
-        android:showDividers="middle"
-        android:layout_height="48dp">
-        <TextView
-            android:id="@+id/btn_time_chart"
-            android:layout_width="0.0px"
-            android:layout_weight="1"
-            android:text="分时"
-            android:textSize="20sp"
-            android:textColor="@color/white_two"
-            android:gravity="center"
-            android:layout_height="match_parent" />
-        <TextView
-            android:id="@+id/btn_d"
-            android:layout_width="0.0px"
-            android:layout_weight="1"
-            android:text="日线"
-            android:textSize="20sp"
-            android:textColor="@color/white_two"
-            android:gravity="center"
-            android:layout_height="match_parent" />
-        <TextView
-            android:id="@+id/btn_w"
-            android:layout_width="0.0px"
-            android:layout_weight="1"
-            android:text="周线"
-            android:textSize="20sp"
-            android:textColor="@color/white_two"
-            android:gravity="center"
-            android:layout_height="match_parent" />
-        <TextView
-            android:id="@+id/btn_m"
-            android:layout_width="0.0px"
-            android:layout_weight="1"
-            android:text="月线"
-            android:textSize="20sp"
-            android:textColor="@color/white_two"
-            android:gravity="center"
-            android:layout_height="match_parent" />
-        <TextView
-            android:id="@+id/btn_bs60"
-            android:layout_width="0.0px"
-            android:layout_weight="1"
-            android:text="BS60"
-            android:textSize="20sp"
-            android:textColor="@color/white_two"
-            android:gravity="center"
-            android:layout_height="match_parent" />
-        <!--Spinner
-            android:layout_width="0.0px"
-            android:layout_weight="1"
-            android:layout_height="match_parent"/-->
-    </LinearLayout>
-    <!--com.tencent.smtt.sdk.WebView-->
-        <com.cquant.lizone.view.X5WebView
-        android:id="@+id/webview"
-        android:layout_width="match_parent"
-        android:layout_height="600dp"
-        />
-        <TextView
+            android:id="@+id/ly_head"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:text="To be,or not to be:that is the question;whether it's noblber in the mind to suffer;the slings and arrows of out"
-            />
-    </LinearLayout>
+            android:orientation="vertical">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="120dp"
+                android:layout_marginTop="2dp"
+                android:background="?attr/colorPrimary"
+                android:orientation="horizontal"
+                android:paddingRight="16dp">
+
+                <LinearLayout
+                    android:layout_width="0.0px"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:id="@+id/tv_price"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center"
+                        android:text="-.-"
+                        android:textColor="@color/green_two"
+                        android:textSize="25sp" />
+
+                    <TextView
+                        android:id="@+id/tv_amp"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center"
+                        android:text="-.- -.-"
+                        android:textColor="@color/green_two"
+                        android:textSize="16sp" />
+                </LinearLayout>
+
+                <TableLayout
+                    android:layout_width="0.0px"
+                    android:layout_height="match_parent"
+                    android:layout_gravity="center"
+                    android:layout_weight="1"
+                    android:shrinkColumns="2">
+
+                    <TableRow
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:gravity="center">
+
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:gravity="center_vertical|left"
+                            android:text="买价"
+                            android:textColor="@color/grey"
+                            android:textSize="16sp" />
+
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:gravity="center_vertical|right"
+                            android:text="卖价"
+                            android:textColor="@color/grey"
+                            android:textSize="16sp" />
+                    </TableRow>
+
+                    <TableRow
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:gravity="center">
+
+                        <TextView
+                            android:id="@+id/tv_buy"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:gravity="center_vertical|left"
+                            android:text="-.-"
+                            android:textColor="@color/green_two"
+                            android:textSize="16sp" />
+
+                        <TextView
+                            android:id="@+id/tv_sell"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:gravity="center_vertical|right"
+                            android:text="-.-"
+                            android:textColor="@color/green_two"
+                            android:textSize="16sp" />
+                    </TableRow>
+
+                    <TableRow
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:gravity="center">
+
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:gravity="center_vertical|left"
+                            android:text="最高"
+                            android:textColor="@color/grey"
+                            android:textSize="16sp" />
+
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:gravity="center_vertical|right"
+                            android:text="最低"
+                            android:textColor="@color/grey"
+                            android:textSize="16sp" />
+                    </TableRow>
+
+                    <TableRow
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:gravity="center">
+
+                        <TextView
+                            android:id="@+id/tv_high"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:gravity="center_vertical|left"
+                            android:text="-.-"
+                            android:textColor="@color/red_two"
+                            android:textSize="16sp" />
+
+                        <TextView
+                            android:id="@+id/tv_low"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:gravity="center_vertical|right"
+                            android:text="-.-"
+                            android:textColor="@color/green_two"
+                            android:textSize="16sp" />
+                    </TableRow>
+                </TableLayout>
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:paddingBottom="8dp"
+                android:paddingLeft="16sp"
+                android:paddingRight="16sp"
+                android:paddingTop="8dp">
+
+                <LinearLayout
+                    android:layout_width="0.0px"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:gravity="center_vertical|left"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:text="开盘： "
+                        android:textColor="@color/grey"
+                        android:textSize="16sp" />
+
+                    <TextView
+                        android:id="@+id/tv_open"
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:text="-.-"
+                        android:textColor="@color/red_two"
+                        android:textSize="16sp" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="0.0px"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:text="昨收： "
+                        android:textColor="@color/grey"
+                        android:textSize="16sp" />
+
+                    <TextView
+                        android:id="@+id/tv_close"
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:text="-.-"
+                        android:textColor="@color/grey"
+                        android:textSize="16sp" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="0.0px"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:gravity="center_vertical|right"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:text="振幅： "
+                        android:textColor="@color/grey"
+                        android:textSize="16sp" />
+
+                    <TextView
+                        android:id="@+id/tv_percent"
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:text="-.-"
+                        android:textColor="@color/green_two"
+                        android:textSize="16sp" />
+                </LinearLayout>
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="48dp"
+                android:background="?attr/colorPrimary"
+                android:divider="@drawable/window_color_divider_vertical"
+                android:orientation="horizontal"
+                android:showDividers="middle">
+
+                <TextView
+                    android:id="@+id/btn_time_chart"
+                    android:layout_width="0.0px"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:clickable="true"
+                    android:gravity="center"
+                    android:onClick="onXmlBtClick"
+                    android:text="分时"
+                    android:textColor="@color/white_two"
+                    android:textSize="20sp" />
+
+                <TextView
+                    android:id="@+id/btn_d"
+                    android:layout_width="0.0px"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:clickable="true"
+                    android:gravity="center"
+                    android:onClick="onXmlBtClick"
+                    android:text="日线"
+                    android:textColor="@color/white_two"
+                    android:textSize="20sp" />
+
+                <TextView
+                    android:id="@+id/btn_w"
+                    android:layout_width="0.0px"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:clickable="true"
+                    android:gravity="center"
+                    android:onClick="onXmlBtClick"
+                    android:text="周线"
+                    android:textColor="@color/white_two"
+                    android:textSize="20sp" />
+
+                <TextView
+                    android:id="@+id/btn_m"
+                    android:layout_width="0.0px"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:clickable="true"
+                    android:gravity="center"
+                    android:onClick="onXmlBtClick"
+                    android:text="月线"
+                    android:textColor="@color/white_two"
+                    android:textSize="20sp" />
+
+                <TextView
+                    android:id="@+id/btn_bs60"
+                    android:layout_width="0.0px"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:clickable="true"
+                    android:gravity="center"
+                    android:onClick="onXmlBtClick"
+                    android:text="BS60"
+                    android:textColor="@color/white_two"
+                    android:textSize="20sp" />
+                <!--Spinner
+                    android:layout_width="0.0px"
+                    android:layout_weight="1"
+                    android:layout_height="match_parent"/-->
+            </LinearLayout>
+
+            <com.tencent.smtt.sdk.WebView
+                android:id="@+id/webview"
+                android:layout_width="match_parent"
+                android:layout_height="400dp"
+                android:background="#101419" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:text="To be,or not to be:that is the question;whether it's noblber in the mind to suffer;the slings and arrows of out" />
+        </LinearLayout>
     </ScrollView>
 </LinearLayout>
