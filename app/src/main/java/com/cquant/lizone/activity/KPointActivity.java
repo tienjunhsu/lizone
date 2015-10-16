@@ -3,8 +3,13 @@ package com.cquant.lizone.activity;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentPagerAdapter;
+import android.support.v4.view.ViewPager;
 import android.support.v7.widget.Toolbar;
 import android.util.DisplayMetrics;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -14,9 +19,15 @@ import android.widget.TextView;
 
 import com.cquant.lizone.R;
 import com.cquant.lizone.bean.MarketDataItem;
+import com.cquant.lizone.frag.MonthMasterFragment;
+import com.cquant.lizone.frag.ShortMasterFragment;
+import com.cquant.lizone.frag.SignMasterFragment;
+import com.cquant.lizone.frag.StabMasterFragment;
+import com.cquant.lizone.frag.YearMasterFragment;
 import com.cquant.lizone.tool.LogTool;
 import com.cquant.lizone.tool.StrTool;
 import com.cquant.lizone.util.Utils;
+import com.cquant.lizone.view.TabLayout;
 import com.tencent.smtt.sdk.WebSettings;
 import com.tencent.smtt.sdk.WebView;
 import com.tencent.smtt.sdk.WebViewClient;
@@ -50,6 +61,9 @@ public class KPointActivity extends BaseActivity {
 
     private ScrollView mScrollView;
 
+    private TabLayout mTabLayout;
+    private ViewPager viewpager;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -70,6 +84,17 @@ public class KPointActivity extends BaseActivity {
         mTvOpen = (TextView)findViewById(R.id.tv_open);
         mTvClose = (TextView)findViewById(R.id.tv_close);
         mTvPercent = (TextView)findViewById(R.id.tv_percent);
+
+        mTabLayout = (TabLayout) findViewById(R.id.tabs);
+        mTabLayout.addTab(mTabLayout.newTab().setText("财经热点"));
+        mTabLayout.addTab(mTabLayout.newTab().setText("市场要闻"));
+        mTabLayout.addTab(mTabLayout.newTab().setText("策略研报"));
+
+        viewpager= (ViewPager)findViewById(R.id.pager);
+        TabPagerAdapter adapter = new  TabPagerAdapter(getSupportFragmentManager());
+        viewpager.setAdapter(adapter);
+        mTabLayout.setupWithViewPager(viewpager);
+
 
         buildTimeChartUrl();
 
@@ -273,7 +298,9 @@ public class KPointActivity extends BaseActivity {
         webview.loadUrl(url);
     }
 
-
+    public String getItemLabel() {
+        return dataItem.label;
+    }
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
@@ -300,4 +327,43 @@ public class KPointActivity extends BaseActivity {
         super.onDestroy();
         //android.os.Process.killProcess(android.os.Process.myPid());
     }
+    class TabPagerAdapter extends FragmentPagerAdapter {
+        public final int COUNT = 3;
+        private String[] titles = new String[]{"财经热点", "市场要闻", "策略研报"};
+
+        public TabPagerAdapter(FragmentManager fm) {
+            super(fm);
+        }
+
+        @Override
+        public Fragment getItem(int position) {
+            Fragment fragment;
+            switch (position) {
+                case 0:
+                    fragment = new SignMasterFragment();
+                    break;
+                case 1:
+                    fragment = new StabMasterFragment();
+                    break;
+                case 2:
+                    fragment = new ShortMasterFragment();
+                    break;
+                default:
+                    fragment = new SignMasterFragment();
+                    break;
+            }
+            return fragment;
+        }
+
+        @Override
+        public int getCount() {
+            return COUNT;
+        }
+
+        @Override
+        public CharSequence getPageTitle(int position) {
+            return titles[position];
+        }
+    }
+
 }

@@ -85,5 +85,10 @@
             android:gravity="center"
             android:textColor="@color/white_two"/>
     </LinearLayout>
+    <TabLayout
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:background="#33ff0000"
+        ></TabLayout>
 
 </LinearLayout>

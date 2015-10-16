@@ -14,6 +14,9 @@
         android:orientation="vertical" >
 
         <include layout="@layout/toolbar_layout"/>
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="2dp"/>
 
         <FrameLayout  android:id="@+id/contentLayout"
             android:layout_width="match_parent"

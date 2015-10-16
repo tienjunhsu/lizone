@@ -84,7 +84,6 @@ public class HomepageActivity extends BaseActivity {
         mTabLayout.addTab(mTabLayout.newTab().setText(titles.get(1)));
         mTabLayout.addTab(mTabLayout.newTab().setText(titles.get(2)));
         mTabLayout.addTab(mTabLayout.newTab().setText(titles.get(3)));
-
         //add to test
         List<Fragment> fragments = new ArrayList<>();
         fragments.add(new AccountRecordFragment());

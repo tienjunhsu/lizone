@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+android:id="@+id/cb_view"
+android:layout_width="match_parent"
+android:layout_height="@dimen/cb_height">
+
+<com.bigkoo.convenientbanner.ConvenientBanner
+    android:id="@+id/convenientBanner"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"/>
+<TextView
+    android:id="@+id/promotion_click_num"
+    android:background="@drawable/event_click_count_bg"
+    android:layout_gravity="bottom|left"
+    android:padding="10dp"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_marginBottom="10dp"
+    android:textStyle="bold"
+    android:textColor="@color/white_two"
+    android:textSize="20sp"
+    android:text="0人已经参加 " />
+</FrameLayout>
