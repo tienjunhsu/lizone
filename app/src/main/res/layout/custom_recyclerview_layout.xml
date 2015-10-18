@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.cquant.lizone.view.MyScrollview xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:fillViewport="true"
+    android:layout_height="match_parent">
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:text="This is Test RecyclerView in ScrollView"
+        android:textColor="@color/red_two"
+        android:textSize="18sp"
+        />
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:text="This is Test RecyclerView in ScrollView"
+        android:textColor="@color/red_two"
+        android:textSize="18sp"
+        />
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:text="This is Test RecyclerView in ScrollView"
+        android:textColor="@color/red_two"
+        android:textSize="18sp"
+        />
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:text="This is Test RecyclerView in ScrollView"
+        android:textColor="@color/red_two"
+        android:textSize="18sp"
+        />
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:text="This is Test RecyclerView in ScrollView"
+        android:textColor="@color/red_two"
+        android:textSize="18sp"
+        />
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:text="This is Test RecyclerView in ScrollView"
+        android:textColor="@color/red_two"
+        android:textSize="18sp"
+        />
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:text="This is Test RecyclerView in ScrollView"
+        android:textColor="@color/red_two"
+        android:textSize="18sp"
+        />
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:text="This is Test RecyclerView in ScrollView"
+        android:textColor="@color/red_two"
+        android:textSize="18sp"
+        />
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:text="This is Test RecyclerView in ScrollView"
+        android:textColor="@color/red_two"
+        android:textSize="18sp"
+        />
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:text="This is Test RecyclerView in ScrollView"
+        android:textColor="@color/red_two"
+        android:textSize="18sp"
+        />
+
+        <!--com.cquant.lizone.view.CustomRecyclerview-->
+        <android.support.v7.widget.RecyclerView
+
+        android:id="@+id/recyclerView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+    </LinearLayout>
+</com.cquant.lizone.view.MyScrollview>

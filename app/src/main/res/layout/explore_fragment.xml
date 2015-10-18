@@ -4,8 +4,7 @@
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical">
-
-    <android.support.design.widget.TabLayout
+        <android.support.design.widget.TabLayout
         android:id="@+id/tablayout"
         android:layout_width="match_parent"
         android:background="@color/style_color_primary"
@@ -27,5 +26,4 @@
         android:textColor="#ff0000"
         android:textSize="40sp"
         />
-
 </LinearLayout>

@@ -2,6 +2,7 @@ package com.cquant.lizone.view;
 
 import com.cquant.lizone.R;
 import com.cquant.lizone.frag.ExploreFragment;
+import com.cquant.lizone.frag.ExploreFragmentNew;
 import com.cquant.lizone.frag.HomeFragment;
 import com.cquant.lizone.frag.MarketFragment;
 

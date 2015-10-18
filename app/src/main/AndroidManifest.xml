@@ -33,6 +33,12 @@
             android:screenOrientation="portrait" >
         </activity>
         <activity
+            android:name=".activity.LoginActivity"
+            android:launchMode="singleInstance"
+            android:noHistory="true"
+            android:screenOrientation="portrait" >
+        </activity>
+        <activity
             android:name=".activity.MainActivity"
             android:screenOrientation="portrait" />
         <activity
@@ -48,7 +54,12 @@
             android:screenOrientation="portrait" >
         </activity>
         <activity
-            android:name=".activity.KPointActivity"
+        android:name=".activity.KPointActivity"
+        android:hardwareAccelerated="true"
+        android:screenOrientation="portrait" >
+     </activity>
+        <activity
+            android:name=".activity.NewsPageActivity"
             android:hardwareAccelerated="true"
             android:screenOrientation="portrait" >
         </activity>

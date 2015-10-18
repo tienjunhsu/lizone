@@ -12,6 +12,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.cquant.lizone.R;
+import com.cquant.lizone.tool.LogTool;
 
 /**
  * Created by asus on 2015/8/30.
@@ -88,6 +89,7 @@ public class ExploreFragment extends BaseFragment {
             switch (position) {
                 case 0:
                     fragment = new SignMasterFragment();
+                    //fragment = new SaginMasterFragmentTest();
                     break;
                 case 1:
                     fragment = new StabMasterFragment();

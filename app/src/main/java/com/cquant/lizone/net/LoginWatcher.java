@@ -24,8 +24,8 @@ public class LoginWatcher {
     private static int referNum = 0;
 
     private static  Timer timer_=null;
-    private  static  String user_id = "18682169419";
-    private static  String pass_word = "nmyzdg21254";
+    private  static  String user_id ;//= "18682169419";
+    private static  String pass_word ;//= "nmyzdg21254";
 
     private static WebHelper mWebhelper = null;
 

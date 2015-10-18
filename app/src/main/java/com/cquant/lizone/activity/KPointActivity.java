@@ -5,25 +5,29 @@ import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentPagerAdapter;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.ViewPager;
 import android.support.v7.widget.Toolbar;
 import android.util.DisplayMetrics;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.BaseAdapter;
 import android.widget.LinearLayout;
+import android.widget.ListView;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
 import android.widget.ScrollView;
 import android.widget.TextView;
 
 import com.cquant.lizone.R;
 import com.cquant.lizone.bean.MarketDataItem;
-import com.cquant.lizone.frag.MonthMasterFragment;
-import com.cquant.lizone.frag.ShortMasterFragment;
-import com.cquant.lizone.frag.SignMasterFragment;
-import com.cquant.lizone.frag.StabMasterFragment;
-import com.cquant.lizone.frag.YearMasterFragment;
+import com.cquant.lizone.frag.NewsFragment;
+import com.cquant.lizone.tool.DlgTool;
 import com.cquant.lizone.tool.LogTool;
 import com.cquant.lizone.tool.StrTool;
 import com.cquant.lizone.util.Utils;
@@ -35,7 +39,7 @@ import com.tencent.smtt.sdk.WebViewClient;
 /**
  * Created by PC on 2015/10/9.
  */
-public class KPointActivity extends BaseActivity {
+public class KPointActivity extends BaseActivity implements RadioGroup.OnCheckedChangeListener{
 
     private Toolbar toolbar;
     private WebView webview;
@@ -59,10 +63,20 @@ public class KPointActivity extends BaseActivity {
     private double ampDelta = 0.0;
     private String ampPercent = "-.-%";
 
-    private ScrollView mScrollView;
+    //private ScrollView mScrollView;
 
     private TabLayout mTabLayout;
     private ViewPager viewpager;
+
+    private RadioGroup mRadioMoney;
+    private RadioGroup mRadioCycle;
+    private FragmentManager fm;
+    private FragmentTransaction tx;
+    private Fragment fragment1;
+    private Fragment fragment2;
+    private Fragment fragment3;
+
+    private int mCurSelected = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -74,7 +88,7 @@ public class KPointActivity extends BaseActivity {
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         webview = (WebView)findViewById(R.id.webview);
 
-        mScrollView = (ScrollView)findViewById(R.id.scrollView);
+        //mScrollView = (ScrollView)findViewById(R.id.scrollView);
         mTvPrice = (TextView)findViewById(R.id.tv_price);
         mTvAmp = (TextView)findViewById(R.id.tv_amp);
         mTvBuy = (TextView)findViewById(R.id.tv_buy);
@@ -85,15 +99,19 @@ public class KPointActivity extends BaseActivity {
         mTvClose = (TextView)findViewById(R.id.tv_close);
         mTvPercent = (TextView)findViewById(R.id.tv_percent);
 
-        mTabLayout = (TabLayout) findViewById(R.id.tabs);
-        mTabLayout.addTab(mTabLayout.newTab().setText("财经热点"));
-        mTabLayout.addTab(mTabLayout.newTab().setText("市场要闻"));
-        mTabLayout.addTab(mTabLayout.newTab().setText("策略研报"));
+        mRadioMoney = (RadioGroup)findViewById(R.id.rg_money);
+        mRadioCycle = (RadioGroup)findViewById(R.id.rg_cycle);
 
-        viewpager= (ViewPager)findViewById(R.id.pager);
-        TabPagerAdapter adapter = new  TabPagerAdapter(getSupportFragmentManager());
-        viewpager.setAdapter(adapter);
-        mTabLayout.setupWithViewPager(viewpager);
+        fm = getSupportFragmentManager();
+        fragment1 = NewsFragment.newInstance("Article/type/1/");
+        fragment2 = NewsFragment.newInstance("Article/type/2/");
+        fragment3 = NewsFragment.newInstance("Report/type/"+dataItem.id);
+        tx = fm.beginTransaction();
+        tx.replace(R.id.id_content,fragment1);
+        tx.commit();
+
+        mRadioMoney.setOnCheckedChangeListener(this);
+        mRadioCycle.setOnCheckedChangeListener(onCycleChangeListener);
 
 
         buildTimeChartUrl();
@@ -103,7 +121,7 @@ public class KPointActivity extends BaseActivity {
         webview.loadUrl(url);
 
         refreshHeadView(dataItem, true);
-        mScrollView.scrollTo(0,0);
+        //mScrollView.scrollTo(0,0);
     }
 
     private void refreshHeadView(MarketDataItem dataItem,boolean isInit) {
@@ -277,12 +295,34 @@ public class KPointActivity extends BaseActivity {
                 break;
             case R.id.btn_bs60:
                 loadBSChart();
+                popSelectExchange(v);
                 break;
             default:
                 break;
         }
     }
 
+    private void popSelectExchange(View v) {
+        View layout = getLayoutInflater().inflate(R.layout.default_pop_list, null);
+        ListView lv = (ListView) layout.findViewById(R.id.lv_selector);
+        CycleAdapter adp = new CycleAdapter(this);
+        lv.setAdapter(adp);
+        lv.setOnItemClickListener(selectMenuOnClickListener);
+        DlgTool.showAsDropDown(v, layout, new int[]{0, 0}, true);
+    }
+    private AdapterView.OnItemClickListener selectMenuOnClickListener = new AdapterView.OnItemClickListener(){
+
+        @Override
+        public void onItemClick(AdapterView<?> arg0, View arg1, int arg2,
+                                long arg3) {
+            if((arg2 >= 0) && (arg2 < cycles.length)) {
+                //mViewPager.setCurrentItem(arg2, false);
+                mCurSelected = arg2;
+            }
+           DlgTool.closePopDlg();
+        }
+
+    };
     private void loadBarsChart(String d) {
         buildKLineUrl(d);
         webview.loadUrl(url);
@@ -327,42 +367,103 @@ public class KPointActivity extends BaseActivity {
         super.onDestroy();
         //android.os.Process.killProcess(android.os.Process.myPid());
     }
-    class TabPagerAdapter extends FragmentPagerAdapter {
-        public final int COUNT = 3;
-        private String[] titles = new String[]{"财经热点", "市场要闻", "策略研报"};
-
-        public TabPagerAdapter(FragmentManager fm) {
-            super(fm);
-        }
+    private RadioGroup.OnCheckedChangeListener onCycleChangeListener = new RadioGroup.OnCheckedChangeListener() {
 
         @Override
-        public Fragment getItem(int position) {
-            Fragment fragment;
-            switch (position) {
-                case 0:
-                    fragment = new SignMasterFragment();
+        public void onCheckedChanged(RadioGroup radioGroup, int i) {
+            int radioButtonId = radioGroup.getCheckedRadioButtonId();
+            switch(radioButtonId) {
+                case R.id.btn_time_chart:
+                    loadTimeChart();
                     break;
-                case 1:
-                    fragment = new StabMasterFragment();
+                case R.id.btn_d:
+                    loadBarsChart("D");
                     break;
-                case 2:
-                    fragment = new ShortMasterFragment();
+                case R.id.btn_w:
+                    loadBarsChart("W");
+                    break;
+                case R.id.btn_m:
+                    loadBarsChart("W");
+                    break;
+                case R.id.btn_bs60:
+                    loadBSChart();
                     break;
                 default:
-                    fragment = new SignMasterFragment();
                     break;
             }
-            return fragment;
+
+        }
+    };
+
+    @Override
+    public void onCheckedChanged(RadioGroup group, int checkedId) {
+        int radioButtonId = group.getCheckedRadioButtonId();
+        RadioButton rb = (RadioButton) group.findViewById(radioButtonId);
+        String str = rb.getText().toString();
+        switch(radioButtonId) {
+            case R.id.money_one:{
+                LogTool.d("new select is :"+str);
+                fm = getSupportFragmentManager();
+                tx = fm.beginTransaction();
+                tx.replace(R.id.id_content,fragment1);
+                tx.commit();
+                break;
+            }
+            case R.id.money_two:{
+                LogTool.d("new select is :"+str);
+                fm = getSupportFragmentManager();
+                tx = fm.beginTransaction();
+                tx.replace(R.id.id_content,fragment2);
+                tx.commit();
+                break;
+            }
+            case R.id.money_three:{
+                LogTool.d("new select is :"+str);
+                fm = getSupportFragmentManager();
+                tx = fm.beginTransaction();
+                tx.replace(R.id.id_content,fragment3);
+                tx.commit();
+                break;
+            }
+        }
+    }
+
+    private String[] cycles = new String[]{"BS60","30分","15分","5分"};
+    private class CycleAdapter extends BaseAdapter {
+        private LayoutInflater inflater;
+
+        public CycleAdapter(Context context) {
+            inflater = (LayoutInflater) context
+                    .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         }
 
         @Override
         public int getCount() {
-            return COUNT;
+            return cycles.length;
         }
 
         @Override
-        public CharSequence getPageTitle(int position) {
-            return titles[position];
+        public Object getItem(int position) {
+            return cycles[position];
+        }
+
+        @Override
+        public long getItemId(int position) {
+            return position;
+        }
+
+        @Override
+        public View getView(int position, View convertView, ViewGroup parent) {
+            View view;
+            TextView text;
+            view= inflater.inflate(R.layout.default_pop_list_item, null, false);
+            text = (TextView) view;
+            text.setText(cycles[position]);
+            if (position == mCurSelected) {
+                view.setBackgroundResource(R.color.text_orange);
+                text.setTextColor(getResources().getColor(R.color.blue_two));
+            }
+            return view;
         }
     }
 

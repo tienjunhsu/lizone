@@ -28,15 +28,15 @@ public class SplashActivity extends BaseActivity implements Animation.AnimationL
         mAnimaInit.setDuration(3000);
         mAnimaInit.setAnimationListener(this);
         mIvSplash.startAnimation(mAnimaInit);
-        if(!QbSdk.isTbsCoreInited()){//preinit只需要调用一次，如果已经完成了初始化，那么就直接构造view
-            QbSdk.preInit(this, myCallback);//设置X5初始化完成的回调接口
+        if(!QbSdk.isTbsCoreInited()){
+            QbSdk.preInit(this, myCallback);
         }
         startService(new Intent(this,UpdateConfigService.class));
     }
     private QbSdk.PreInitCallback myCallback=new QbSdk.PreInitCallback() {
 
         @Override
-        public void onViewInitFinished() {//当X5webview 初始化结束后的回调
+        public void onViewInitFinished() {
             // TODO Auto-generated method stub
             LogTool.d("PreInitCallback:onViewInitFinished");
         }

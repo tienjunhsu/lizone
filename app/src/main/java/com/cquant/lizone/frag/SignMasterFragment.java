@@ -1,5 +1,6 @@
 package com.cquant.lizone.frag;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -13,6 +14,8 @@ import android.widget.TextView;
 
 import com.cquant.lizone.LizoneApp;
 import com.cquant.lizone.R;
+import com.cquant.lizone.activity.HomepageActivity;
+import com.cquant.lizone.activity.TestActivity;
 import com.cquant.lizone.bean.ExploreListItem;
 import com.cquant.lizone.net.WebHelper;
 import com.cquant.lizone.tool.ACache;
@@ -20,7 +23,10 @@ import com.cquant.lizone.tool.JsnTool;
 import com.cquant.lizone.tool.Md5FileNameGenerator;
 import com.cquant.lizone.util.Utils;
 import com.cquant.lizone.view.CircleImageView;
+import com.cquant.lizone.view.CustomRecyclerview;
+import com.cquant.lizone.view.FullyLinearLayoutManager;
 import com.cquant.lizone.view.ItemDivider;
+import com.cquant.lizone.view.OnItemClickListener;
 import com.nostra13.universalimageloader.core.ImageLoader;
 
 import org.json.JSONObject;
@@ -43,6 +49,7 @@ public class SignMasterFragment extends  BaseFragment{
     protected String mFileName;
 
     protected RecyclerView mRecyclerView;
+    //protected CustomRecyclerview mRecyclerView;
     private MasterAdapter mAdapter;
 
     @Override
@@ -61,7 +68,10 @@ public class SignMasterFragment extends  BaseFragment{
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View root = inflater.inflate(R.layout.master_list_fragment, container, false);
+        //View root = inflater.inflate(R.layout.custom_recyclerview_layout, container, false);
         mRecyclerView = (RecyclerView)root.findViewById(R.id.recyclerView);
+
+       // mRecyclerView = (CustomRecyclerview)root.findViewById(R.id.recyclerView);
         return root;
     }
     @Override
@@ -82,6 +92,7 @@ public class SignMasterFragment extends  BaseFragment{
 
     private void initReRecyclerView() {
         LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity());
+        //FullyLinearLayoutManager layoutManager = new FullyLinearLayoutManager(getActivity());
         mRecyclerView.setLayoutManager(layoutManager);
 
         mAdapter = new MasterAdapter();
@@ -147,7 +158,7 @@ public class SignMasterFragment extends  BaseFragment{
             return mMasterList.size();
         }
 
-        class MasterViewHolder extends RecyclerView.ViewHolder{
+        class MasterViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
 
             public CircleImageView mPhoto;
             public TextView mTvName;
@@ -163,7 +174,24 @@ public class SignMasterFragment extends  BaseFragment{
                 mTvNum = (TextView) itemView.findViewById(R.id.trade_num);
                 mTvSuccess = (TextView) itemView.findViewById(R.id.success_ratio);
                 mTvProfit  = (TextView) itemView.findViewById(R.id.profit_ratio);
+                itemView.setOnClickListener(this);
+            }
+            @Override
+            public void onClick(View v) {
+                mOnClickListener.onClick(v, getPosition());
             }
         }
+    }
+    private OnItemClickListener mOnClickListener = new OnItemClickListener() {
+        @Override
+        public void onClick(View v,int position) {
+            startActivity(position);
+        }
+    };
+    private void startActivity(int position) {
+        Intent intent = new Intent(getActivity(), HomepageActivity.class);
+        //Intent intent = new Intent(getActivity(), TestActivity.class);
+        intent.putExtra("user_id", mMasterList.get(position).id);
+        getActivity().startActivity(intent);
     }
 }

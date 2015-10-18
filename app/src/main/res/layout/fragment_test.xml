@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.cquant.lizone.view.MyScrollview xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:fillViewport="true"
+    android:layout_height="match_parent">
+
+<LinearLayout
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    >
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:text="This is Test RecyclerView in ScrollView"
+        android:textColor="@color/red_two"
+        android:textSize="18sp"
+        />
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:text="This is Test RecyclerView in ScrollView"
+        android:textColor="@color/red_two"
+        android:textSize="18sp"
+        />
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:text="This is Test RecyclerView in ScrollView"
+        android:textColor="@color/red_two"
+        android:textSize="18sp"
+        />
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:text="This is Test RecyclerView in ScrollView"
+        android:textColor="@color/red_two"
+        android:textSize="18sp"
+        />
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:text="This is Test RecyclerView in ScrollView"
+        android:textColor="@color/red_two"
+        android:textSize="18sp"
+        />
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:text="This is Test RecyclerView in ScrollView"
+        android:textColor="@color/red_two"
+        android:textSize="18sp"
+        />
+    <RadioGroup
+        android:id="@+id/rg_money"
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:layout_marginBottom="21dp"
+        android:background="@drawable/invest_mount_background"
+        android:orientation="horizontal"
+        android:padding="2dp" >
+
+        <RadioButton
+            android:id="@+id/money_one"
+            android:layout_width="fill_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:background="@drawable/mount_button_bg_selector"
+            android:button="@null"
+            android:checked="true"
+            android:gravity="center"
+            android:text="10万以内"
+            android:layout_marginRight="1dp"
+            android:textColor="@drawable/mount_text_color_selector" />
+
+        <!--
+            View
+            android:layout_width="2dp"
+            android:layout_height="match_parent"
+            android:background="#0079ff" /
+        -->
+
+        <RadioButton
+            android:id="@+id/money_two"
+            android:layout_width="fill_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:background="@drawable/mount_button_bg_selector"
+            android:button="@null"
+            android:gravity="center"
+            android:text="10-20万"
+            android:layout_marginRight="1dp"
+            android:textColor="@drawable/mount_text_color_selector" />
+
+        <!--
+            View
+            android:layout_width="2dp"
+            android:layout_height="match_parent"
+            android:background="#0079ff" /
+        -->
+
+        <RadioButton
+            android:id="@+id/money_three"
+            android:layout_width="fill_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:background="@drawable/mount_button_bg_selector"
+            android:button="@null"
+            android:gravity="center"
+            android:text="20万以上"
+            android:textColor="@drawable/mount_text_color_selector" />
+    </RadioGroup>
+    <FrameLayout
+        android:id="@+id/id_content"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent" >
+    </FrameLayout>
+</LinearLayout>
+        </com.cquant.lizone.view.MyScrollview>

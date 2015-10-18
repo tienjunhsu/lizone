@@ -1,20 +1,35 @@
 package com.cquant.lizone.activity;
 
 import android.os.Bundle;
+import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.widget.Toolbar;
+import android.text.TextUtils;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.cquant.lizone.R;
+import com.cquant.lizone.bean.HomepageHeadItem;
 import com.cquant.lizone.frag.AccountPositionFragment;
 import com.cquant.lizone.frag.AccountRecordFragment;
+import com.cquant.lizone.frag.HomepagePositionFragment;
+import com.cquant.lizone.frag.HomepageRecordFragment;
+import com.cquant.lizone.frag.HomepageStatFragment;
+import com.cquant.lizone.frag.HomepageViewFragment;
+import com.cquant.lizone.net.WebHelper;
+import com.cquant.lizone.tool.JsnTool;
+import com.cquant.lizone.tool.LogTool;
+import com.cquant.lizone.util.Utils;
+import com.nostra13.universalimageloader.core.ImageLoader;
+
+import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -42,16 +57,69 @@ public class HomepageActivity extends BaseActivity {
     private Button mBtnSub;
     private Button mBtnFollow;
 
+    private String user_id;
+
+    private String header_url;
+
+    private WebHelper mWebhelper = null;
+    private HomepageHeadItem headerData;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.homepage_activity);
         //初始化控件及布局
         initView();
+
+        user_id = getIntent().getStringExtra("user_id");
+        header_url = Utils.BASE_URL +"UserHomeData/uid/" +user_id;
+        mWebhelper = new WebHelper(this);
+
+       // AppBarLayout mAppBarLayout = (AppBarLayout)findViewById(R.id.app_bar);
+        //mAppBarLayout.
+        
+        getHeaderData();
     }
+
+    public String getUserId() {
+        return user_id;
+    }
+    private void getHeaderData() {
+        mWebhelper.doLoadGet(header_url, null, new WebHelper.OnWebFinished() {
+
+            @Override
+            public void onWebFinished(boolean success, String msg) {
+                LogTool.v(" HomePageActivity ->getHeaderData,gonWebFinished:success = " + success + ",msg =" + msg);
+                if (success) {
+                    JSONObject response = JsnTool.getObject(msg);
+                    if ((response != null) && (JsnTool.getInt(response, "status") == 1)) {
+                        parseHeaderData(msg);
+                    }
+                }
+            }
+        });
+    }
+
+    private void parseHeaderData(String msg) {
+        headerData = HomepageHeadItem.getItem(msg);
+        refreshHeader();
+    }
+
+    private void refreshHeader() {
+        if(!TextUtils.isEmpty(headerData.photo)) {
+            ImageLoader.getInstance().displayImage(headerData.photo,mHeadView);
+        }
+        mName.setText(headerData.name);
+        mIntroduction.setText(headerData.profile);
+        mFansNum.setText(headerData.fans);
+        mSubNum.setText(headerData.sub_num);
+        mTradeNum .setText(headerData.trade_num);
+        mProfiteRate.setText(headerData.yield);
+    }
+
     private void initView() {
         mToolbar = (Toolbar)findViewById(R.id.tool_bar);
-        mToolbar.setTitle(R.string.register);
+        mToolbar.setTitle("个人主页");
         mToolbar.setNavigationIcon(R.drawable.ic_back);
         super.initToolBar(mToolbar);
 
@@ -86,10 +154,10 @@ public class HomepageActivity extends BaseActivity {
         mTabLayout.addTab(mTabLayout.newTab().setText(titles.get(3)));
         //add to test
         List<Fragment> fragments = new ArrayList<>();
-        fragments.add(new AccountRecordFragment());
-        fragments.add(new AccountPositionFragment());
-        fragments.add(new AccountRecordFragment());
-        fragments.add(new AccountPositionFragment());
+        fragments.add(new HomepageStatFragment());
+        fragments.add(new HomepageRecordFragment());
+        fragments.add(new HomepagePositionFragment());
+        fragments.add(new HomepageViewFragment());
 
         FragmentAdapter adapter = new FragmentAdapter(getSupportFragmentManager(), fragments, titles);
         mViewPager.setAdapter(adapter);

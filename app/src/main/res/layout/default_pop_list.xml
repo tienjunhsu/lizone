@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ListView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/lv_selector"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:cacheColorHint="#0000"
+    android:divider="@color/style_color_window_background"
+    android:dividerHeight="1dp"
+    android:footerDividersEnabled="false"
+    android:headerDividersEnabled="false"
+    android:listSelector="@drawable/default_list_selector" />

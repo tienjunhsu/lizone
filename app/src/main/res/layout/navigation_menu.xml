@@ -146,6 +146,7 @@
         android:layout_height="@dimen/nav_menu_item_hight"
         android:onClick="onXmlBtClick"
         android:gravity="center_vertical"
+        android:visibility="gone"
         android:orientation="horizontal">
 
         <ImageView
@@ -166,5 +167,6 @@
     <View
         android:layout_width="match_parent"
         android:layout_height="1dp"
+        android:visibility="gone"
         android:background="@color/grey"/>
 </LinearLayout>

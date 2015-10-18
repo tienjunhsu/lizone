@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical">
+
+    <com.cquant.lizone.view.MyScrollview
+        android:layout_width="match_parent"
+        android:fillViewport="true"
+        android:layout_height="match_parent">
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="48dp"
+                android:text="This is Test ViewPager in ScrollView"
+                android:textColor="@color/green_two"
+                android:textSize="18sp"
+                />
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="48dp"
+                android:text="This is Test ViewPager in ScrollView"
+                android:textColor="@color/green_two"
+                android:textSize="18sp"
+                />
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="48dp"
+                android:text="This is Test ViewPager in ScrollView"
+                android:textColor="@color/green_two"
+                android:textSize="18sp"
+                />
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="48dp"
+                android:text="This is Test ViewPager in ScrollView"
+                android:textColor="@color/green_two"
+                android:textSize="18sp"
+                />
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="48dp"
+                android:text="This is Test ViewPager in ScrollView"
+                android:textColor="@color/green_two"
+                android:textSize="18sp"
+                />
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="48dp"
+                android:text="This is Test ViewPager in ScrollView"
+                android:textColor="@color/green_two"
+                android:textSize="18sp"
+                />
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/text1"
+                android:layout_width="wrap_content"
+                android:layout_height="48dp"
+                android:text="签约高手"
+                android:textColor="@color/grey"
+                android:textSize="18sp"
+                android:clickable="true"
+                android:gravity="center"
+                android:onClick="onXmlBtClick"
+                />
+            <TextView
+                android:id="@+id/text2"
+                android:layout_width="wrap_content"
+                android:layout_height="48dp"
+                android:text="稳定收益"
+                android:textColor="@color/grey"
+                android:clickable="true"
+                android:gravity="center"
+                android:onClick="onXmlBtClick"
+                android:textSize="18sp"
+                />
+            <TextView
+                android:id="@+id/text3"
+                android:layout_width="wrap_content"
+                android:layout_height="48dp"
+                android:text="短线收益"
+                android:textColor="@color/grey"
+                android:clickable="true"
+                android:gravity="center"
+                android:onClick="onXmlBtClick"
+                android:textSize="18sp"
+                />
+            <TextView
+                android:id="@+id/text4"
+                android:layout_width="wrap_content"
+                android:layout_height="48dp"
+                android:text="月收益"
+                android:textColor="@color/grey"
+                android:clickable="true"
+                android:gravity="center"
+                android:onClick="onXmlBtClick"
+                android:textSize="18sp"
+                />
+            <TextView
+                android:id="@+id/text5"
+                android:layout_width="wrap_content"
+                android:layout_height="48dp"
+                android:clickable="true"
+                android:gravity="center"
+                android:onClick="onXmlBtClick"
+                android:text="年收益"
+                android:textColor="@color/grey"
+                android:textSize="18sp"
+                />
+
+            </LinearLayout>
+            <FrameLayout
+                android:id="@+id/id_content"
+                android:background="#33ee0000"
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent" >
+            </FrameLayout>
+        </LinearLayout>
+    </com.cquant.lizone.view.MyScrollview>
+</LinearLayout>

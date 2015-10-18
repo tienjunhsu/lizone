@@ -63,7 +63,7 @@ public class DynamicFragment extends BaseFragment {
 
         if ((savedInstanceState != null) && savedInstanceState.containsKey(KEY_CONTENT)) {
             mContent = savedInstanceState.getString(KEY_CONTENT);
-        }
+        }//这里也许应该去掉，不必保存状态
 		if(mContent.equals("master")) {
             url = url+"1/";
 		}else {
@@ -138,7 +138,7 @@ public class DynamicFragment extends BaseFragment {
     public void onStart() {
           super.onStart();
           Log.d("TianjunXu","start:url = "+url+",mContent="+mContent);
-          getDynamic();
+          //getDynamic();
     }
     @Override
     public void onResume() {

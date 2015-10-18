@@ -1,5 +1,6 @@
 package com.cquant.lizone.frag;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -13,12 +14,14 @@ import android.widget.TextView;
 
 import com.cquant.lizone.LizoneApp;
 import com.cquant.lizone.R;
+import com.cquant.lizone.activity.HomepageActivity;
 import com.cquant.lizone.bean.ExploreListItem;
 import com.cquant.lizone.net.WebHelper;
 import com.cquant.lizone.tool.ACache;
 import com.cquant.lizone.tool.JsnTool;
 import com.cquant.lizone.tool.Md5FileNameGenerator;
 import com.cquant.lizone.util.Utils;
+import com.cquant.lizone.view.OnItemClickListener;
 import com.nostra13.universalimageloader.core.ImageLoader;
 
 import org.json.JSONObject;
@@ -142,7 +145,7 @@ public class MasterListFragment extends BaseFragment {
             return mMasterList.size();
         }
 
-        class MasterViewHolder extends RecyclerView.ViewHolder{
+        class MasterViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
             public ImageView mPhoto;
             public TextView mTvName;
@@ -158,7 +161,23 @@ public class MasterListFragment extends BaseFragment {
                 mTvNum = (TextView) itemView.findViewById(R.id.trade_num);
                 mTvSuccess = (TextView) itemView.findViewById(R.id.success_ratio);
                 mTvProfit  = (TextView) itemView.findViewById(R.id.profit_ratio);
+                itemView.setOnClickListener(this);
+            }
+            @Override
+            public void onClick(View v) {
+                mOnClickListener.onClick(v,getPosition());
             }
         }
+    }
+    private OnItemClickListener mOnClickListener = new OnItemClickListener() {
+        @Override
+        public void onClick(View v,int position) {
+            startActivity(position);
+        }
+    };
+    private void startActivity(int position) {
+        Intent intent = new Intent(getActivity(), HomepageActivity.class);
+        intent.putExtra("user_id", mMasterList.get(position).id);
+        getActivity().startActivity(intent);
     }
 }

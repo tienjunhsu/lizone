@@ -19,6 +19,7 @@ import android.widget.TabHost.OnTabChangeListener;
 import android.widget.TabWidget;
 import android.widget.TextView;
 
+import com.cquant.lizone.LizoneApp;
 import com.cquant.lizone.R;
 import com.cquant.lizone.view.TabDb;
 
@@ -88,23 +89,48 @@ public class MainActivity extends BaseActivity implements OnTabChangeListener {
     public void onXmlBtClick(View v) {
         switch (v.getId()) {
             case R.id.nav_lv_open_account:
-                openFirmAccount();
+                if(LizoneApp.mCanLogin ) {
+                    openFirmAccount();
+                } else {
+                    gotoLogin();
+                }
                 break;
             case R.id.nav_lv_point:
-                openPonitActivity();
+                if(LizoneApp.mCanLogin ) {
+                    openPonitActivity();
+                } else {
+                    gotoLogin();
+                }
                 break;
             case R.id.nav_lv_account:
-                openAccountActivity();
+                if(LizoneApp.mCanLogin ) {
+                    openAccountActivity();
+                } else {
+                    gotoLogin();
+                }
                 break;
             case R.id.nav_lv_event:
-                openEventActivity();
+                if(LizoneApp.mCanLogin ) {
+                    openEventActivity();
+                }else {
+                    gotoLogin();
+                }
                 break;
             case R.id.nav_lv_gift:
-                openGiftActivity();
+                if(LizoneApp.mCanLogin ) {
+                    openGiftActivity();
+                }else {
+                    gotoLogin();
+                }
                 break;
             default:
                 break;
         }
+    }
+
+    private void gotoLogin() {
+        startActivity(new Intent(this,LoginActivity.class));
+        mDrawerLayout.closeDrawers();
     }
 
     private void openPonitActivity() {
