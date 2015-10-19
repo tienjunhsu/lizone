@@ -30,6 +30,7 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 
 import io.socket.client.IO;
@@ -74,6 +75,11 @@ public class MarketFragment extends BaseFragment {
 
     private OptLayout optView;
 
+    private int red ;
+    private int green;
+    private int white;
+
+    private HashMap expandedPositions = new HashMap();
 
     private Map<String,ArrayList<MarketDataItem>> mGroup = new HashMap<String,ArrayList<MarketDataItem>>();
 
@@ -104,13 +110,14 @@ public class MarketFragment extends BaseFragment {
             e.printStackTrace();
             Log.d("TianjunXu","connect:URISyntaxException "+e.getMessage());
         }
+        expandedPositions.put(0, 0);//hsu,2015/10/19,默认打开第一组
     }
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View root = inflater.inflate(R.layout.market_fragment, container, false);
         listView = (ExpandableListView)root.findViewById(R.id.market_list);
         listView.addHeaderView(getHeaderView());
-        //listView.setGroupIndicator(nn);//箭头图标
+        //listView.setGroupIndicator(getActivity().getResources().getDrawable(R.drawable.expand_list_indicator));
         return root;
     }
     private View getHeaderView() {
@@ -149,14 +156,14 @@ public class MarketFragment extends BaseFragment {
         mFixVarAmp01.setText(formatAmp(amp,amppercent));
 
         if(amp > 0) {
-            mFixVarPrice01.setTextColor(getResources().getColor(R.color.red_two));
-            mFixVarAmp01.setTextColor(getResources().getColor(R.color.red_two));
+            mFixVarPrice01.setTextColor(red);
+            mFixVarAmp01.setTextColor(red);
         } else if(amp < 0) {
-            mFixVarPrice01.setTextColor(getResources().getColor(R.color.green_two));
-            mFixVarAmp01.setTextColor(getResources().getColor(R.color.green_two));
+            mFixVarPrice01.setTextColor(green);
+            mFixVarAmp01.setTextColor(green);
         } else {
-            mFixVarPrice01.setTextColor(getResources().getColor(R.color.white_two));
-            mFixVarAmp01.setTextColor(getResources().getColor(R.color.white_two));
+            mFixVarPrice01.setTextColor(white);
+            mFixVarAmp01.setTextColor(white);
         }
 
         item = mFixHeaderData.get(1);
@@ -167,14 +174,14 @@ public class MarketFragment extends BaseFragment {
         mFixVarAmp02.setText(formatAmp(amp,amppercent));
 
         if(amp > 0) {
-            mFixVarPrice02.setTextColor(getResources().getColor(R.color.red_two));
-            mFixVarAmp02.setTextColor(getResources().getColor(R.color.red_two));
+            mFixVarPrice02.setTextColor(red);
+            mFixVarAmp02.setTextColor(red);
         } else if(amp < 0) {
-            mFixVarPrice02.setTextColor(getResources().getColor(R.color.green_two));
-            mFixVarAmp02.setTextColor(getResources().getColor(R.color.green_two));
+            mFixVarPrice02.setTextColor(green);
+            mFixVarAmp02.setTextColor(green);
         } else {
-            mFixVarPrice02.setTextColor(getResources().getColor(R.color.white_two));
-            mFixVarAmp02.setTextColor(getResources().getColor(R.color.white_two));
+            mFixVarPrice02.setTextColor(white);
+            mFixVarAmp02.setTextColor(white);
         }
 
         item = mFixHeaderData.get(2);
@@ -185,14 +192,14 @@ public class MarketFragment extends BaseFragment {
         mFixVarAmp03.setText(formatAmp(amp,amppercent));
 
         if(amp > 0) {
-            mFixVarPrice03.setTextColor(getResources().getColor(R.color.red_two));
-            mFixVarAmp03.setTextColor(getResources().getColor(R.color.red_two));
+            mFixVarPrice03.setTextColor(red);
+            mFixVarAmp03.setTextColor(red);
         } else if(amp < 0) {
-            mFixVarPrice03.setTextColor(getResources().getColor(R.color.green_two));
-            mFixVarAmp03.setTextColor(getResources().getColor(R.color.green_two));
+            mFixVarPrice03.setTextColor(green);
+            mFixVarAmp03.setTextColor(green);
         } else {
-            mFixVarPrice03.setTextColor(getResources().getColor(R.color.white_two));
-            mFixVarAmp03.setTextColor(getResources().getColor(R.color.white_two));
+            mFixVarPrice03.setTextColor(white);
+            mFixVarAmp03.setTextColor(white);
         }
 
     }
@@ -293,11 +300,23 @@ public class MarketFragment extends BaseFragment {
     public void onResume() {
         super.onResume();
         connect();
+        expandListView();
+        LogTool.d(".......MarketFragment:onResume");
     }
+
+    private void expandListView() {
+        Iterator iterator = expandedPositions.keySet().iterator();
+        while(iterator.hasNext()) {
+            listView.expandGroup((int)iterator.next());
+        }
+
+    }
+
     @Override
     public void onPause() {
         super.onPause();
         disconnected();
+        LogTool.d(".......MarketFragment:onPause");
     }
     @Override
     public void onStop() {
@@ -308,11 +327,27 @@ public class MarketFragment extends BaseFragment {
         super.onActivityCreated(savedInstanceState);
         mCache = LizoneApp.getACache();
         mWebhelper = new WebHelper(getActivity());
+        red = getActivity().getResources().getColor(R.color.red_two);
+        green = getActivity().getResources().getColor(R.color.green_two);
+        white = getActivity().getResources().getColor(R.color.white_two);
     }
 
     private void initView() {
         marketAdapter = new MarketAdapter();
         listView.setAdapter(marketAdapter);
+        listView.setOnGroupExpandListener(new ExpandableListView.OnGroupExpandListener() {
+            @Override
+            public void onGroupExpand(int i) {
+                LogTool.d("onGroupExpand:" + i);
+                expandedPositions.put(i, i);
+            }
+        });
+        listView.setOnGroupCollapseListener(new ExpandableListView.OnGroupCollapseListener() {
+            @Override
+            public void onGroupCollapse(int i) {
+                expandedPositions.remove(i);
+            }
+        });
     }
 
     private void initMarketData() {
@@ -333,6 +368,13 @@ public class MarketFragment extends BaseFragment {
 
     @Override
     public void onDestroy() {
+        if(socket != null) {
+            if(socket.connected()) {
+                socket.disconnect();
+                socket.close();
+            }
+            socket = null;
+        }
         super.onDestroy();
     }
 
@@ -417,17 +459,17 @@ public class MarketFragment extends BaseFragment {
             mTvAmpRate.setText(String.format("%.2f",amppercent)+"%");
 
             if(amp > 0) {
-                mTvPrice.setTextColor(getResources().getColor(R.color.red_two));
-                mTvAmp.setTextColor(getResources().getColor(R.color.red_two));
-                mTvAmpRate.setTextColor(getResources().getColor(R.color.red_two));
+                mTvPrice.setTextColor(red);
+                mTvAmp.setTextColor(red);
+                mTvAmpRate.setTextColor(red);
             } else if(amp < 0) {
-                mTvPrice.setTextColor(getResources().getColor(R.color.green_two));
-                mTvAmp.setTextColor(getResources().getColor(R.color.green_two));
-                mTvAmpRate.setTextColor(getResources().getColor(R.color.green_two));
+                mTvPrice.setTextColor(green);
+                mTvAmp.setTextColor(green);
+                mTvAmpRate.setTextColor(green);
             } else {
-                mTvPrice.setTextColor(getResources().getColor(R.color.white_two));
-                mTvAmp.setTextColor(getResources().getColor(R.color.white_two));
-                mTvAmpRate.setTextColor(getResources().getColor(R.color.white_two));
+                mTvPrice.setTextColor(white);
+                mTvAmp.setTextColor(white);
+                mTvAmpRate.setTextColor(white);
             }
 
             convertView.setOnClickListener(new View.OnClickListener() {

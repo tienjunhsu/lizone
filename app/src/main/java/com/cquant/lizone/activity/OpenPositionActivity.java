@@ -20,8 +20,8 @@ public class OpenPositionActivity extends BaseActivity  {
     private Toolbar toolbar;
     private WebView webview;
 
-    private String url = Utils.BASE_URL + Utils.OPEN_FIRM_ADDR;
-    //private String url = Utils.BASE_URL+"Build_Trade/";
+    //private String url = Utils.BASE_URL + Utils.OPEN_FIRM_ADDR;
+    private String url = Utils.BASE_URL+"Build_Trade/";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

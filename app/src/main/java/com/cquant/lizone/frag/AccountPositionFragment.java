@@ -6,6 +6,7 @@ import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
@@ -19,6 +20,7 @@ import com.cquant.lizone.tool.Md5FileNameGenerator;
 import com.cquant.lizone.tool.StrTool;
 import com.cquant.lizone.util.Utils;
 import com.cquant.lizone.view.ItemDivider;
+import com.cquant.lizone.view.OnItemClickListener;
 
 import org.json.JSONObject;
 
@@ -161,7 +163,7 @@ public class AccountPositionFragment extends BaseFragment {
             return mPositionList.size();
         }
 
-        class PositionViewHolder extends RecyclerView.ViewHolder{
+        class PositionViewHolder extends RecyclerView.ViewHolder implements OnClickListener{
 
             public TextView mTvName;
             public TextView mTvUsed;
@@ -185,8 +187,20 @@ public class AccountPositionFragment extends BaseFragment {
                 mTvTime = (TextView) itemView.findViewById(R.id.tv_open_time);
                 mTvProfit  = (TextView) itemView.findViewById(R.id.tv_profit);
                 mTvYield = (TextView) itemView.findViewById(R.id.tv_profit_ratio);
+                itemView.setOnClickListener(this);
+            }
+
+            @Override
+            public void onClick(View view) {
+                mOnClickListener.onClick(view,getPosition());
             }
         }
     }
+    private OnItemClickListener mOnClickListener = new OnItemClickListener() {
+        @Override
+        public void onClick(View v,int position) {
+            //startActivity(position);
+        }
+    };
 
 }

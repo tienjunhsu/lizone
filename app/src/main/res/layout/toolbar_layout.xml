@@ -1,17 +1,20 @@
-<android.support.v7.widget.Toolbar
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.v7.widget.Toolbar xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:theme="@style/ToolbarTheme"
     android:id="@+id/toolbar"
     android:layout_width="match_parent"
     android:layout_height="?attr/actionBarSize"
     android:background="?attr/colorPrimary">
 
-    <ImageView
+    <com.cquant.lizone.view.CircleImageView
         android:id="@+id/actionbar_ic"
-        android:layout_width="24dp"
-        android:layout_height="24dp"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
         android:src="@drawable/ic_login_name"
         android:visibility="gone"
+        android:clickable="true"
+        app:border_width="1dp"
+        app:border_color="@color/grey"
         />
     <TextView
         android:id="@+id/actionbar_title"
@@ -25,7 +28,7 @@
         />
      <Button
          android:id="@+id/actionbar_menu"
-         android:layout_width="wrap_content"
+         android:layout_width="50dp"
          android:layout_height="32dp"
          android:layout_gravity="right"
          android:text="交易"

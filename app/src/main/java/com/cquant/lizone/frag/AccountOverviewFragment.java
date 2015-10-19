@@ -1,5 +1,6 @@
 package com.cquant.lizone.frag;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -11,6 +12,8 @@ import android.widget.TextView;
 
 import com.cquant.lizone.LizoneApp;
 import com.cquant.lizone.R;
+import com.cquant.lizone.activity.AccountActivity;
+import com.cquant.lizone.activity.OpenPositionActivity;
 import com.cquant.lizone.bean.AccountOverViewItem;
 import com.cquant.lizone.net.WebHelper;
 import com.cquant.lizone.tool.ACache;
@@ -73,25 +76,20 @@ public class AccountOverviewFragment extends BaseFragment {
         mRiskRatio = (TextView)root.findViewById(R.id.tv_risk_ratio);
 
         mBtnOpenPosition = (Button)root.findViewById(R.id.btn_open_position);
-        mBtnClosePosition = (Button)root.findViewById(R.id.btn_open_position);
+        mBtnClosePosition = (Button)root.findViewById(R.id.btn_close_position);
 
-        //mBtnOpenPosition.setOnClickListener();
-
+        mBtnOpenPosition.setOnClickListener(mOpenPositionListener);
+        mBtnClosePosition.setOnClickListener(mClosePositionListener);
         return root;
     }
-    View.OnClickListener mOpenPositionListener = new View.OnClickListener() {
+    private View.OnClickListener mOpenPositionListener = new View.OnClickListener() {
 
         @Override
         public void onClick(View v) {
             openPosition();
         }
     };
-
-    private void openPosition() {
-
-    }
-
-    View.OnClickListener mClosePositionListener = new View.OnClickListener() {
+    private View.OnClickListener mClosePositionListener = new View.OnClickListener() {
 
         @Override
         public void onClick(View v) {
@@ -99,10 +97,13 @@ public class AccountOverviewFragment extends BaseFragment {
         }
     };
 
-    private void closePosition() {
-
+    private void openPosition() {
+          Intent intent = new Intent(getActivity(), OpenPositionActivity.class);
+         getActivity().startActivity(intent);
     }
-
+    private void closePosition() {
+        ((AccountActivity)getActivity()).setCurrentItem(1);//进入持仓页
+    }
     @Override
     public void onStart() {
         super.onStart();
@@ -146,10 +147,10 @@ public class AccountOverviewFragment extends BaseFragment {
         //if(StrTool.getDouble(mOverView.floating) < 0) {
         if(mOverView.floating < 0) {
             mIconFloating.setImageResource(R.drawable.icon_floating_down);
-            mTvFloatingProfit.setTextColor(getResources().getColor(R.color.green_two));
+            mTvFloatingProfit.setTextColor(getActivity().getResources().getColor(R.color.green_two));
         } else {
             mIconFloating.setImageResource(R.drawable.icon_floating_up);
-            mTvFloatingProfit.setTextColor(getResources().getColor(R.color.red_two));
+            mTvFloatingProfit.setTextColor(getActivity().getResources().getColor(R.color.red_two));
         }
 
 

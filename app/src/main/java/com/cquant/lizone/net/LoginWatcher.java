@@ -76,7 +76,14 @@ public class LoginWatcher {
         }
     };
 
-    private static void startLogin() {
+    public  static void setUser(String user_id,String pass,boolean isTrue) {
+        user_id = user_id;
+        pass_word = pass;
+        if(isTrue) {
+            saveAccount();
+        }
+    }
+    public static void startLogin() {
         if(user_id == null) {
             user_id = SharedPrefsUtil.getStringValue(LizoneApp.getApp(),SharedPrefsUtil.PREFS_USER_ID,null);
         }
@@ -91,12 +98,20 @@ public class LoginWatcher {
             @Override
             public void onWebFinished(boolean success, String msg) {
                 if(success) {
+                    saveAccount();
                     parseAccountInf(msg);
                 }
             }
         });
     }
 
+    private static void saveAccount() {
+        if(!LizoneApp.mCanLogin ) {
+            LizoneApp.mCanLogin = true;
+            SharedPrefsUtil.putStringValue(LizoneApp.getApp(), SharedPrefsUtil.PREFS_USER_ID, user_id);
+            SharedPrefsUtil.putStringValue(LizoneApp.getApp(), SharedPrefsUtil.PREFS_PASS, pass_word);
+        }
+    }
     private static void parseAccountInf(String msg) {
         JSONObject json = JsnTool.getObject(msg);
         if((json != null)&&(JsnTool.getInt(json,"status")==1)) {

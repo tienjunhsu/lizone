@@ -9,6 +9,7 @@ import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.widget.Toolbar;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -22,6 +23,7 @@ import android.widget.TextView;
 
 import com.cquant.lizone.LizoneApp;
 import com.cquant.lizone.R;
+import com.cquant.lizone.view.CircleImageView;
 import com.cquant.lizone.view.TabDb;
 
 /**
@@ -35,7 +37,7 @@ public class MainActivity extends BaseActivity implements OnTabChangeListener {
     private NavigationView mNavigationView;
     private Toolbar toolbar;
     private TextView mTvTitle;
-    private ImageView mImgLogo;
+    private CircleImageView mImgLogo;
     private Button mActionMenu;
 
     @Override
@@ -47,7 +49,7 @@ public class MainActivity extends BaseActivity implements OnTabChangeListener {
        // mNavigationView = (NavigationView) findViewById(R.id.id_nv_menu);
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         mTvTitle = (TextView)findViewById(R.id.actionbar_title);
-        mImgLogo = (ImageView)findViewById(R.id.actionbar_ic);
+        mImgLogo = (CircleImageView)findViewById(R.id.actionbar_ic);
         mActionMenu = (Button)findViewById(R.id.actionbar_menu);
         
         tabHost=(FragmentTabHost)super.findViewById(android.R.id.tabhost);
@@ -79,10 +81,31 @@ public class MainActivity extends BaseActivity implements OnTabChangeListener {
 
     @Override
     protected void initToolBar() {
-        //toolbar.setTitle(R.string.home_title);
+        toolbar.setTitle("");
         //toolbar.setNavigationIcon(R.mipmap.ic_launcher);
+        mTvTitle.setVisibility(View.VISIBLE);
+        mImgLogo.setVisibility(View.VISIBLE);
+        mActionMenu.setVisibility(View.VISIBLE);
+        mImgLogo.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View view) {
+                mDrawerLayout.openDrawer(Gravity.LEFT);
+            }
+        });
+        mActionMenu.setOnClickListener(new View.OnClickListener(){
+
+            @Override
+            public void onClick(View view) {
+                if(LizoneApp.mCanLogin ) {
+                    openAccountActivity();
+                } else {
+                    gotoLogin();
+                }
+            }
+        });
         super.initToolBar(toolbar);
-        final ActionBar ab = getSupportActionBar();
+       // final ActionBar ab = getSupportActionBar();
         /*toolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -90,7 +113,8 @@ public class MainActivity extends BaseActivity implements OnTabChangeListener {
             }
         });*/
         //ab.setHomeAsUpIndicator(R.drawable.ic_menu);
-        ab.setDisplayHomeAsUpEnabled(true);
+       // ab.setDisplayHomeAsUpEnabled(true);
+
     }
 
     public void onXmlBtClick(View v) {
@@ -185,7 +209,7 @@ public class MainActivity extends BaseActivity implements OnTabChangeListener {
         }
     }
     private View getTabView(int idx){
-        View view= LayoutInflater.from(this).inflate(R.layout.footer_tabs,null);
+        View view= LayoutInflater.from(this).inflate(R.layout.footer_tabs, null);
         ((TextView)view.findViewById(R.id.tvTab)).setText(TabDb.getTabsTxt()[idx]);
         if(idx==0){
             ((TextView)view.findViewById(R.id.tvTab)).setTextColor(getResources().getColor(R.color.blue_two));
@@ -209,6 +233,7 @@ public class MainActivity extends BaseActivity implements OnTabChangeListener {
                 ((TextView)view.findViewById(R.id.tvTab)).setTextColor(getResources().getColor(R.color.blue_two));
                 iv.setImageResource(TabDb.getTabsImgLight()[i]);
                 view.setBackgroundColor(getResources().getColor(R.color.tab_item_pressed));
+                setToolBarTitle(i);//2015/10/19
             }else{
                 ((TextView)view.findViewById(R.id.tvTab)).setTextColor(getResources().getColor(R.color.white_two));
                 iv.setImageResource(TabDb.getTabsImg()[i]);
@@ -216,5 +241,8 @@ public class MainActivity extends BaseActivity implements OnTabChangeListener {
             }
 
         }
+    }
+    private void setToolBarTitle(int i) {
+        mTvTitle.setText(TabDb.getTabsTxt()[i]);
     }
 }

@@ -64,6 +64,10 @@
             android:screenOrientation="portrait" >
         </activity>
         <activity
+            android:name=".activity.OpenPositionActivity"
+            android:screenOrientation="portrait" >
+        </activity>
+        <activity
             android:name=".activity.TestActivity"
             android:screenOrientation="portrait" >
         </activity>

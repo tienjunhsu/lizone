@@ -35,6 +35,7 @@ public class AccountActivity extends BaseActivity {
     private AccountPositionFragment mPositionFrag;
     private AccountRecordFragment mRecordFrag;
 
+    private TabPageIndicator indicator;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -58,8 +59,14 @@ public class AccountActivity extends BaseActivity {
         ViewPager pager = (ViewPager)findViewById(R.id.pager);
         pager.setAdapter(adapter);
 
-        TabPageIndicator indicator = (TabPageIndicator)findViewById(R.id.indicator);
+        indicator = (TabPageIndicator)findViewById(R.id.indicator);
         indicator.setViewPager(pager);
+    }
+
+    public void setCurrentItem(int i) {
+        if((i >=0)&&(i <listFragment.size())) {
+            indicator.setCurrentItem(i);
+        }
     }
 
     @Override
