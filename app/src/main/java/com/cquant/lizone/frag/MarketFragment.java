@@ -128,8 +128,8 @@ public class MarketFragment extends BaseFragment {
         mFixVarAmp02 = (TextView)header.findViewById(R.id.amp_usd);
         mFixVarAmp03 = (TextView)header.findViewById(R.id.amp_conc);
 
-        optView = (OptLayout)header.findViewById(R.id.opt_list);
-        optView.initView();
+        //optView = (OptLayout)header.findViewById(R.id.opt_list);
+        //optView.initView();
 
         return header;
     }

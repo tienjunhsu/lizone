@@ -305,12 +305,13 @@
                     android:layout_height="match_parent"
                     android:layout_weight="1"
                     android:background="@drawable/mount_button_bg_selector"
-                    android:drawableRight="@drawable/icon_arrow_down"
+                    android:drawableRight="@drawable/icon_arrow_d"
                     android:button="@null"
                     android:gravity="center_vertical|right"
-                    android:text="BS60"
+                    android:text="BS60 "
                     android:paddingRight="10dp"
-                    android:textColor="@drawable/mount_text_color_selector" />
+                    android:textColor="@drawable/mount_text_color_selector"
+                    android:checked="false" />
             </RadioGroup>
 
             <com.tencent.smtt.sdk.WebView

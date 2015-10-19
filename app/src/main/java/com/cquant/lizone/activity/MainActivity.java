@@ -13,6 +13,7 @@ import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TabHost;
 import android.widget.TabHost.OnTabChangeListener;
@@ -33,6 +34,9 @@ public class MainActivity extends BaseActivity implements OnTabChangeListener {
     //private NavigationView mNavigationView;
     private NavigationView mNavigationView;
     private Toolbar toolbar;
+    private TextView mTvTitle;
+    private ImageView mImgLogo;
+    private Button mActionMenu;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,7 +46,10 @@ public class MainActivity extends BaseActivity implements OnTabChangeListener {
         mDrawerLayout = (DrawerLayout) findViewById(R.id.id_drawer_layout);
        // mNavigationView = (NavigationView) findViewById(R.id.id_nv_menu);
         toolbar = (Toolbar) findViewById(R.id.toolbar);
-
+        mTvTitle = (TextView)findViewById(R.id.actionbar_title);
+        mImgLogo = (ImageView)findViewById(R.id.actionbar_ic);
+        mActionMenu = (Button)findViewById(R.id.actionbar_menu);
+        
         tabHost=(FragmentTabHost)super.findViewById(android.R.id.tabhost);
         tabHost.setup(this,super.getSupportFragmentManager()
                 ,R.id.contentLayout);
@@ -72,8 +79,8 @@ public class MainActivity extends BaseActivity implements OnTabChangeListener {
 
     @Override
     protected void initToolBar() {
-        toolbar.setTitle(R.string.home_title);
-        toolbar.setNavigationIcon(R.mipmap.ic_launcher);
+        //toolbar.setTitle(R.string.home_title);
+        //toolbar.setNavigationIcon(R.mipmap.ic_launcher);
         super.initToolBar(toolbar);
         final ActionBar ab = getSupportActionBar();
         /*toolbar.setNavigationOnClickListener(new View.OnClickListener() {
@@ -155,7 +162,7 @@ public class MainActivity extends BaseActivity implements OnTabChangeListener {
     public boolean onCreateOptionsMenu(Menu menu)
     {
         // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_drawer, menu);
+        //getMenuInflater().inflate(R.menu.menu_drawer, menu);
         return true;
     }
 
