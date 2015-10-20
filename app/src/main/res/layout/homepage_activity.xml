@@ -166,21 +166,31 @@
             <Button
                 android:id="@+id/btn_sub"
                 android:layout_width="150dp"
-                android:layout_height="48dp"
+                android:layout_height="40dp"
+                android:background="@drawable/action_bar_btn_bg"
+                android:textColor="@color/blue_two"
                 android:text="+ 订阅"
                 />
             <Button
                 android:id="@+id/btn_follow"
                 android:layout_width="150dp"
-                android:layout_height="48dp"
+                android:layout_height="40dp"
                 android:layout_alignParentRight="true"
+                android:background="@drawable/action_bar_btn_bg"
+                android:textColor="@color/blue_two"
                 android:text="立即跟单"
                 />
         </RelativeLayout>
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="@color/style_color_window_background"/>
         <android.support.design.widget.TabLayout
             android:id="@+id/tab_layout"
-            android:layout_marginTop="1dp"
             android:layout_width="match_parent"
+            app:tabIndicatorColor="@color/blue_two"
+            app:tabSelectedTextColor="@color/blue_two"
+            app:tabTextColor="@color/white_two"
             android:layout_height="40dp"/>
     </android.support.design.widget.AppBarLayout>
 

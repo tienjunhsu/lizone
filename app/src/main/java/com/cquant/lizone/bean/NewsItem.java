@@ -12,6 +12,7 @@ import java.util.ArrayList;
  * Created by asus on 2015/10/18.
  */
 public class NewsItem {
+    //K线页财经热点、市场要闻
 
     public String id;
     public String title;

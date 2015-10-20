@@ -4,30 +4,26 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical">
-
+    <include layout="@layout/toolbar_layout"/>
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/style_color_window_background"/>
     <android.support.design.widget.TabLayout
         android:id="@+id/tablayout"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
         android:background="@color/style_color_primary"
         app:tabGravity="fill"
-        app:tabIndicatorColor="@color/blue_two"
         app:tabMode="fixed"
+        app:tabIndicatorColor="@color/blue_two"
         app:tabSelectedTextColor="@color/blue_two"
+        app:tabTextColor="@color/white_two"
         app:tabTextAppearance="@style/CustomTabLayoutTextAppearance"
-        app:tabTextColor="@color/white_two" />
+        android:layout_height="wrap_content" />
 
     <android.support.v4.view.ViewPager
         android:id="@+id/pager"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1" />
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Hello Explore"
-        android:textColor="#ff0000"
-        android:textSize="40sp"
-        android:visibility="gone" />
 </LinearLayout>

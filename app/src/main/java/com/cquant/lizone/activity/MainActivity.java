@@ -172,6 +172,8 @@ public class MainActivity extends BaseActivity implements OnTabChangeListener {
         mDrawerLayout.closeDrawers();
     }
     private void openEventActivity() {
+        startActivity(new Intent(this,EventActivity.class));
+        mDrawerLayout.closeDrawers();
 
     }
     private void openGiftActivity() {
