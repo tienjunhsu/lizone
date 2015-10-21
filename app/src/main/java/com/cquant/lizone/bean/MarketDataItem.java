@@ -1,5 +1,8 @@
 package com.cquant.lizone.bean;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import com.cquant.lizone.tool.JsnTool;
 
 import org.json.JSONArray;
@@ -12,9 +15,9 @@ import java.util.ArrayList;
 /**
  * Created by PC on 2015/9/21.
  */
-public class MarketDataItem implements Serializable {
+public class MarketDataItem implements Parcelable {
 
-    private static final long serialVersionUID = -7060210544600464481L;
+    //private static final long serialVersionUID = -7060210544600464481L;
 
     public int id;
     public double  open;
@@ -85,4 +88,48 @@ public class MarketDataItem implements Serializable {
         }
         return list;
     }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel parcel, int i) {
+        parcel.writeInt(id);
+        parcel.writeDouble(open);
+        parcel.writeString(excode);
+        parcel.writeDouble(sell);
+        parcel.writeDouble(buy);
+        parcel.writeString(name);
+        parcel.writeDouble(newprice);
+        parcel.writeString(label);
+        parcel.writeDouble(high);
+        parcel.writeDouble(low);
+        parcel.writeDouble(close);
+    }
+    public MarketDataItem(Parcel in) {
+        this.id=in.readInt();
+        this.open = in.readDouble();
+        this.excode = in.readString();
+        this.sell = in.readDouble();
+        this.buy = in.readDouble();
+        this.name = in.readString();
+        this.newprice = in.readDouble();
+        this.label = in.readString();
+        this.high = in.readDouble();
+        this.low = in.readDouble();
+        this.close = in.readDouble();
+    }
+    public static final Parcelable.Creator<MarketDataItem> CREATOR = new Creator<MarketDataItem>() {
+        @Override
+        public MarketDataItem createFromParcel(Parcel parcel) {
+            return new MarketDataItem(parcel);
+        }
+
+        @Override
+        public MarketDataItem[] newArray(int i) {
+            return new MarketDataItem[i];
+        }
+    };
 }

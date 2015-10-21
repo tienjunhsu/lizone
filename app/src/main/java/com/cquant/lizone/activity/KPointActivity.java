@@ -2,6 +2,7 @@ package com.cquant.lizone.activity;
 
 import android.content.Context;
 import android.graphics.Bitmap;
+import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -15,10 +16,12 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.BaseAdapter;
 import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.PopupWindow;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.ScrollView;
@@ -39,7 +42,9 @@ import com.tencent.smtt.sdk.WebViewClient;
 /**
  * Created by PC on 2015/10/9.
  */
-public class KPointActivity extends BaseActivity implements RadioGroup.OnCheckedChangeListener{
+public class KPointActivity extends BaseActivity implements RadioGroup.OnCheckedChangeListener {
+
+    private static final String TAG = "KPointActivity";
 
     private Toolbar toolbar;
     private WebView webview;
@@ -70,6 +75,8 @@ public class KPointActivity extends BaseActivity implements RadioGroup.OnChecked
 
     private RadioGroup mRadioMoney;
     private RadioGroup mRadioCycle;
+    private RadioButton mBSRadio;
+
     private FragmentManager fm;
     private FragmentTransaction tx;
     private Fragment fragment1;
@@ -82,36 +89,39 @@ public class KPointActivity extends BaseActivity implements RadioGroup.OnChecked
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        dataItem = (MarketDataItem)getIntent().getSerializableExtra("marketDataItem");
+        LogTool.d(".......KPointActivity:onCreate");
+        dataItem = (MarketDataItem) getIntent().getParcelableExtra("marketDataItem");
         setContentView(R.layout.kpoint_activity);
 
         toolbar = (Toolbar) findViewById(R.id.toolbar);
-        webview = (WebView)findViewById(R.id.webview);
+        webview = (WebView) findViewById(R.id.webview);
 
         //mScrollView = (ScrollView)findViewById(R.id.scrollView);
-        mTvPrice = (TextView)findViewById(R.id.tv_price);
-        mTvAmp = (TextView)findViewById(R.id.tv_amp);
-        mTvBuy = (TextView)findViewById(R.id.tv_buy);
-        mTvSell = (TextView)findViewById(R.id.tv_sell);
-        mTvHigh = (TextView)findViewById(R.id.tv_high);
-        mTvLow = (TextView)findViewById(R.id.tv_low);
-        mTvOpen = (TextView)findViewById(R.id.tv_open);
-        mTvClose = (TextView)findViewById(R.id.tv_close);
-        mTvPercent = (TextView)findViewById(R.id.tv_percent);
+        mTvPrice = (TextView) findViewById(R.id.tv_price);
+        mTvAmp = (TextView) findViewById(R.id.tv_amp);
+        mTvBuy = (TextView) findViewById(R.id.tv_buy);
+        mTvSell = (TextView) findViewById(R.id.tv_sell);
+        mTvHigh = (TextView) findViewById(R.id.tv_high);
+        mTvLow = (TextView) findViewById(R.id.tv_low);
+        mTvOpen = (TextView) findViewById(R.id.tv_open);
+        mTvClose = (TextView) findViewById(R.id.tv_close);
+        mTvPercent = (TextView) findViewById(R.id.tv_percent);
 
-        mRadioMoney = (RadioGroup)findViewById(R.id.rg_money);
-        mRadioCycle = (RadioGroup)findViewById(R.id.rg_cycle);
+        mRadioMoney = (RadioGroup) findViewById(R.id.rg_money);
+        mRadioCycle = (RadioGroup) findViewById(R.id.rg_cycle);
+        mBSRadio = (RadioButton) findViewById(R.id.btn_bs60);
 
         fm = getSupportFragmentManager();
         fragment1 = NewsFragment.newInstance("Article/type/1/");
         fragment2 = NewsFragment.newInstance("Article/type/2/");
-        fragment3 = NewsFragment.newInstance("Report/type/"+dataItem.id);
+        fragment3 = NewsFragment.newInstance("Report/type/" + dataItem.id);
         tx = fm.beginTransaction();
-        tx.replace(R.id.id_content,fragment1);
+        tx.replace(R.id.id_content, fragment1);
         tx.commit();
 
         mRadioMoney.setOnCheckedChangeListener(this);
         mRadioCycle.setOnCheckedChangeListener(onCycleChangeListener);
+        mBSRadio.setOnClickListener(mBSRadioOnclickListener);//test,hsu
 
 
         buildTimeChartUrl();
@@ -121,15 +131,27 @@ public class KPointActivity extends BaseActivity implements RadioGroup.OnChecked
         webview.loadUrl(url);
 
         refreshHeadView(dataItem, true);
-        //mScrollView.scrollTo(0,0);
     }
 
-    private void refreshHeadView(MarketDataItem dataItem,boolean isInit) {
+    @Override
+    public void onResume() {
+        super.onResume();
+        LogTool.d(TAG + ":onResume");
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        //disconnected();//比较耗时，测试一下
+        LogTool.d(TAG + ":onPause");
+    }
+
+    private void refreshHeadView(MarketDataItem dataItem, boolean isInit) {
         calculateAmp(dataItem);
         mTvPrice.setText(dataItem.newprice + "");
         mTvAmp.setText(ampDelta + " " + ampPercent);
-        mTvBuy.setText(dataItem.buy+"");
-        mTvSell.setText(dataItem.sell+"");
+        mTvBuy.setText(dataItem.buy + "");
+        mTvSell.setText(dataItem.sell + "");
         mTvHigh.setText(dataItem.high + "");
         mTvLow.setText(dataItem.low + "");
         mTvOpen.setText(dataItem.open + "");
@@ -138,7 +160,7 @@ public class KPointActivity extends BaseActivity implements RadioGroup.OnChecked
 
         setHeadColor(dataItem);
 
-        if(isInit) { //进入时候srollview停留在顶部
+        if (isInit) { //进入时候srollview停留在顶部
             mTvPrice.setFocusable(true);
             mTvPrice.setFocusableInTouchMode(true);
             mTvPrice.requestFocus();
@@ -150,15 +172,15 @@ public class KPointActivity extends BaseActivity implements RadioGroup.OnChecked
         int mColorGreen = getResources().getColor(R.color.green_two);
         int mColorWhite = getResources().getColor(R.color.white_two);
 
-        double amp_Delta = StrTool.sub(dataItem.newprice,dataItem.close);
+        double amp_Delta = StrTool.sub(dataItem.newprice, dataItem.close);
 
-        if(amp_Delta > 0) {
+        if (amp_Delta > 0) {
             mTvPrice.setTextColor(mColorRed);
             mTvAmp.setTextColor(mColorRed);
             mTvSell.setTextColor(mColorRed);
             mTvBuy.setTextColor(mColorRed);
             mTvPercent.setTextColor(mColorRed);
-        } else if(amp_Delta < 0) {
+        } else if (amp_Delta < 0) {
             mTvPrice.setTextColor(mColorGreen);
             mTvAmp.setTextColor(mColorGreen);
             mTvSell.setTextColor(mColorGreen);
@@ -171,23 +193,23 @@ public class KPointActivity extends BaseActivity implements RadioGroup.OnChecked
             mTvBuy.setTextColor(mColorWhite);
             mTvPercent.setTextColor(mColorWhite);
         }
-        if(dataItem.open > dataItem.close) {
+        if (dataItem.open > dataItem.close) {
             mTvOpen.setTextColor(mColorRed);
-        } else if(dataItem.open < dataItem.close) {
+        } else if (dataItem.open < dataItem.close) {
             mTvOpen.setTextColor(mColorGreen);
         } else {
             mTvOpen.setTextColor(mColorWhite);
         }
-        if(dataItem.high > dataItem.close) {
+        if (dataItem.high > dataItem.close) {
             mTvHigh.setTextColor(mColorRed);
-        } else if(dataItem.high < dataItem.close) {
+        } else if (dataItem.high < dataItem.close) {
             mTvHigh.setTextColor(mColorGreen);
         } else {
             mTvHigh.setTextColor(mColorWhite);
         }
-        if(dataItem.low > dataItem.close) {
+        if (dataItem.low > dataItem.close) {
             mTvLow.setTextColor(mColorRed);
-        } else if(dataItem.low < dataItem.close) {
+        } else if (dataItem.low < dataItem.close) {
             mTvLow.setTextColor(mColorGreen);
         } else {
             mTvLow.setTextColor(mColorWhite);
@@ -195,18 +217,20 @@ public class KPointActivity extends BaseActivity implements RadioGroup.OnChecked
     }
 
     private void calculateAmp(MarketDataItem dataItem) {
-        ampDelta = StrTool.sub(dataItem.newprice,dataItem.close);
-        ampPercent = String.format("%.2f",ampDelta*100/dataItem.close)+"%";
+        ampDelta = StrTool.sub(dataItem.newprice, dataItem.close);
+        ampPercent = String.format("%.2f", ampDelta * 100 / dataItem.close) + "%";
     }
 
     private void buildTimeChartUrl() {
-        url = "http://www.1-yj.com/Kline/index.php/Index/Fenshi/label/"+dataItem.label+"/";
+        url = "http://www.1-yj.com/Kline/index.php/Index/Fenshi/label/" + dataItem.label + "/";
     }
+
     private void buildKLineUrl(String cycle) {
-        url = "http://www.1-yj.com/Kline/index.php/Index/Kline/label/"+dataItem.label+"/res/"+cycle;
+        url = "http://www.1-yj.com/Kline/index.php/Index/Kline/label/" + dataItem.label + "/res/" + cycle;
     }
+
     private void buildBS60Url() {
-        url = "http://www.1-yj.com/Kline/index.php/Index/BSline/res/60/label/"+dataItem.label;
+        url = "http://www.1-yj.com/Kline/index.php/Index/BSline/res/60/label/" + dataItem.label;
     }
 
     private void initWebView() {
@@ -233,14 +257,14 @@ public class KPointActivity extends BaseActivity implements RadioGroup.OnChecked
         wSettings.enableSmoothTransition();
         wSettings.setEnableSmoothTransition(true);
 
-        int screenDensity = getResources().getDisplayMetrics().densityDpi ;
-        LogTool.d("screenDensity ="+screenDensity);
-        WebSettings.ZoomDensity zoomDensity = WebSettings.ZoomDensity.MEDIUM ;
-        if(screenDensity <=DisplayMetrics.DENSITY_MEDIUM) {
+        int screenDensity = getResources().getDisplayMetrics().densityDpi;
+        LogTool.d("screenDensity =" + screenDensity);
+        WebSettings.ZoomDensity zoomDensity = WebSettings.ZoomDensity.MEDIUM;
+        if (screenDensity <= DisplayMetrics.DENSITY_MEDIUM) {
             zoomDensity = WebSettings.ZoomDensity.CLOSE;
-        }else if(screenDensity <=DisplayMetrics.DENSITY_HIGH) {
+        } else if (screenDensity <= DisplayMetrics.DENSITY_HIGH) {
             zoomDensity = WebSettings.ZoomDensity.MEDIUM;
-        }else {
+        } else {
             zoomDensity = WebSettings.ZoomDensity.FAR;
         }
         wSettings.setDefaultZoom(zoomDensity);
@@ -248,7 +272,7 @@ public class KPointActivity extends BaseActivity implements RadioGroup.OnChecked
         webview.setBackgroundColor(0x101419);
 
         //wSettings.setSupportMultipleWindows();
-       webview.setWebViewClient(new WebViewClient() {
+        webview.setWebViewClient(new WebViewClient() {
 
             public void onPageStarted(WebView view, String url, Bitmap favicon) {
                 //startLoadingAnim();
@@ -280,7 +304,7 @@ public class KPointActivity extends BaseActivity implements RadioGroup.OnChecked
     }
 
     public void onXmlBtClick(View v) {
-        switch (v.getId()) {
+        /*switch (v.getId()) {
             case R.id.btn_time_chart:
                 loadTimeChart();
                 break;
@@ -294,35 +318,75 @@ public class KPointActivity extends BaseActivity implements RadioGroup.OnChecked
                 loadBarsChart("W");
                 break;
             case R.id.btn_bs60:
-                loadBSChart();
+                //loadBSChart();
+                LogTool.d("CLICK btn_bs60");
                 popSelectExchange(v);
                 break;
             default:
                 break;
-        }
+        }*/
     }
 
+    private View.OnClickListener mBSRadioOnclickListener = new View.OnClickListener() {
+
+        @Override
+        public void onClick(View view) {
+            LogTool.d("mBSRadioOnclickListener");
+            popSelectExchange(mBSRadio);
+        }
+    };
+    private PopupWindow popupWindow;
+
     private void popSelectExchange(View v) {
+        LogTool.d("popSelectExchange");
         View layout = getLayoutInflater().inflate(R.layout.default_pop_list, null);
         ListView lv = (ListView) layout.findViewById(R.id.lv_selector);
         CycleAdapter adp = new CycleAdapter(this);
         lv.setAdapter(adp);
         lv.setOnItemClickListener(selectMenuOnClickListener);
-        DlgTool.showAsDropDown(v, layout, new int[]{0, 0}, true);
+        //DlgTool.showAsDropDown(v, layout, new int[]{0, 0}, true);
+        popupWindow = new PopupWindow(getResources().getDimensionPixelSize(R.dimen.pop_window_width), WindowManager.LayoutParams.WRAP_CONTENT);
+        popupWindow.setContentView(layout);
+        popupWindow.setFocusable(true);
+        popupWindow.setOutsideTouchable(true);
+        popupWindow.setBackgroundDrawable(new BitmapDrawable());//不设置这个点击外面不会消失
+        popupWindow.showAsDropDown(v);
     }
-    private AdapterView.OnItemClickListener selectMenuOnClickListener = new AdapterView.OnItemClickListener(){
+
+    private AdapterView.OnItemClickListener selectMenuOnClickListener = new AdapterView.OnItemClickListener() {
 
         @Override
         public void onItemClick(AdapterView<?> arg0, View arg1, int arg2,
                                 long arg3) {
-            if((arg2 >= 0) && (arg2 < cycles.length)) {
-                //mViewPager.setCurrentItem(arg2, false);
+            if ((arg2 >= 0) && (arg2 < cycles.length)) {
                 mCurSelected = arg2;
+                loadSelectCycle();
             }
-           DlgTool.closePopDlg();
+            closePopDlg();
         }
 
     };
+
+    private void loadSelectCycle() {
+        if((mCurSelected >=0)&&(mCurSelected < 4)) {
+            mBSRadio.setText(cycles[mCurSelected]);
+            if (mCurSelected == 0) {
+                loadBSChart();
+            } else {
+                loadBarsChart(cyclesArray[mCurSelected - 1]);
+            }
+        }
+    }
+
+    private void closePopDlg() {
+        if (popupWindow != null) {
+            if (popupWindow.isShowing()) {
+                popupWindow.dismiss();
+            }
+            popupWindow = null;
+        }
+    }
+
     private void loadBarsChart(String d) {
         buildKLineUrl(d);
         webview.loadUrl(url);
@@ -341,6 +405,7 @@ public class KPointActivity extends BaseActivity implements RadioGroup.OnChecked
     public String getItemLabel() {
         return dataItem.label;
     }
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
@@ -362,17 +427,19 @@ public class KPointActivity extends BaseActivity implements RadioGroup.OnChecked
 
         return super.onOptionsItemSelected(item);
     }
+
     @Override
     public void onDestroy() {
         super.onDestroy();
         //android.os.Process.killProcess(android.os.Process.myPid());
     }
+
     private RadioGroup.OnCheckedChangeListener onCycleChangeListener = new RadioGroup.OnCheckedChangeListener() {
 
         @Override
         public void onCheckedChanged(RadioGroup radioGroup, int i) {
             int radioButtonId = radioGroup.getCheckedRadioButtonId();
-            switch(radioButtonId) {
+            switch (radioButtonId) {
                 case R.id.btn_time_chart:
                     loadTimeChart();
                     break;
@@ -386,7 +453,8 @@ public class KPointActivity extends BaseActivity implements RadioGroup.OnChecked
                     loadBarsChart("W");
                     break;
                 case R.id.btn_bs60:
-                    loadBSChart();
+                    //loadBSChart(); //不进行任何处理，放到mBSRadioOnclickListener里面去
+                    //LogTool.d("CLICK btn_bs60");
                     break;
                 default:
                     break;
@@ -400,35 +468,37 @@ public class KPointActivity extends BaseActivity implements RadioGroup.OnChecked
         int radioButtonId = group.getCheckedRadioButtonId();
         RadioButton rb = (RadioButton) group.findViewById(radioButtonId);
         String str = rb.getText().toString();
-        switch(radioButtonId) {
-            case R.id.money_one:{
-                LogTool.d("new select is :"+str);
+        switch (radioButtonId) {
+            case R.id.money_one: {
+                LogTool.d("new select is :" + str);
                 fm = getSupportFragmentManager();
                 tx = fm.beginTransaction();
-                tx.replace(R.id.id_content,fragment1);
+                tx.replace(R.id.id_content, fragment1);
                 tx.commit();
                 break;
             }
-            case R.id.money_two:{
-                LogTool.d("new select is :"+str);
+            case R.id.money_two: {
+                LogTool.d("new select is :" + str);
                 fm = getSupportFragmentManager();
                 tx = fm.beginTransaction();
-                tx.replace(R.id.id_content,fragment2);
+                tx.replace(R.id.id_content, fragment2);
                 tx.commit();
                 break;
             }
-            case R.id.money_three:{
-                LogTool.d("new select is :"+str);
+            case R.id.money_three: {
+                LogTool.d("new select is :" + str);
                 fm = getSupportFragmentManager();
                 tx = fm.beginTransaction();
-                tx.replace(R.id.id_content,fragment3);
+                tx.replace(R.id.id_content, fragment3);
                 tx.commit();
                 break;
             }
         }
     }
 
-    private String[] cycles = new String[]{"BS60","30分","15分","5分"};
+    private String[] cycles = new String[]{"BS60", "30分", "15分", "5分"};
+    private String[] cyclesArray = new String[]{"30", "15", "5"};
+
     private class CycleAdapter extends BaseAdapter {
         private LayoutInflater inflater;
 
@@ -456,7 +526,7 @@ public class KPointActivity extends BaseActivity implements RadioGroup.OnChecked
         public View getView(int position, View convertView, ViewGroup parent) {
             View view;
             TextView text;
-            view= inflater.inflate(R.layout.default_pop_list_item, null, false);
+            view = inflater.inflate(R.layout.default_pop_list_item, null, false);
             text = (TextView) view;
             text.setText(cycles[position]);
             if (position == mCurSelected) {

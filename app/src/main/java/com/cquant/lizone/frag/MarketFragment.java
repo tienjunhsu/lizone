@@ -14,6 +14,7 @@ import android.widget.TextView;
 
 import com.cquant.lizone.LizoneApp;
 import com.cquant.lizone.R;
+import com.cquant.lizone.activity.EventActivity;
 import com.cquant.lizone.activity.KPointActivity;
 import com.cquant.lizone.bean.MarketDataItem;
 import com.cquant.lizone.net.WebHelper;
@@ -315,12 +316,13 @@ public class MarketFragment extends BaseFragment {
     @Override
     public void onPause() {
         super.onPause();
-        disconnected();
+        //disconnected();//比较耗时，测试一下
         LogTool.d(".......MarketFragment:onPause");
     }
     @Override
     public void onStop() {
         super.onStop();
+        LogTool.d(".......MarketFragment:onStop");
     }
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
@@ -381,9 +383,11 @@ public class MarketFragment extends BaseFragment {
     private void startKpointActivity(MarketDataItem item){
         Intent intent = new Intent(getActivity(), KPointActivity.class);
         Bundle mBundle = new Bundle();
-        mBundle.putSerializable("marketDataItem",item);
+       // mBundle.putSerializable("marketDataItem", item);
+        mBundle.putParcelable("marketDataItem", item);
         intent.putExtras(mBundle);
-        startActivity(intent);
+        getActivity().startActivity(intent);
+        //getActivity().startActivity(new Intent(getActivity(),EventActivity.class));
     }
 
     class MarketAdapter extends BaseExpandableListAdapter {
@@ -476,6 +480,7 @@ public class MarketFragment extends BaseFragment {
                 @Override
                 public void onClick(View v) {
                     //do something
+                    LogTool.d(".......MarketFragment:setOnClickListener");
                     startKpointActivity(item);
                 }
             });

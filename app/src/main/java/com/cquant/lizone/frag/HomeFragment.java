@@ -1,6 +1,7 @@
 package com.cquant.lizone.frag;
 
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -21,6 +22,9 @@ import com.bigkoo.convenientbanner.CBViewHolderCreator;
 import com.bigkoo.convenientbanner.ConvenientBanner;
 import com.cquant.lizone.LizoneApp;
 import com.cquant.lizone.R;
+import com.cquant.lizone.activity.EventActivity;
+import com.cquant.lizone.activity.LoginActivity;
+import com.cquant.lizone.activity.WebPageActivity;
 import com.cquant.lizone.bean.PromotionItem;
 import com.cquant.lizone.tool.ACache;
 import com.cquant.lizone.util.SharedPrefsUtil;
@@ -41,6 +45,7 @@ public class HomeFragment extends BaseFragment {
     private ConvenientBanner mCBView;
     private FrameLayout mFyCB;
     private TextView mPromotionClickSum;
+    private TextView mMoreEvent;
     private  ArrayList<PromotionItem> mPromotionList;
 
     private ACache mACache;
@@ -50,6 +55,24 @@ public class HomeFragment extends BaseFragment {
 
     private static final String[] F_CONTENT = new String[] { "sub", "master" };
 
+    private View.OnClickListener onMoreEventListener = new View.OnClickListener() {
+
+        @Override
+        public void onClick(View view) {
+            if(LizoneApp.mCanLogin ) {
+                openEventActivity();
+            }else {
+                gotoLogin();
+            }
+        }
+    };
+    private void gotoLogin() {
+        getActivity().startActivity(new Intent(getActivity(),LoginActivity.class));
+    }
+    private void openEventActivity() {
+        getActivity().startActivity(new Intent(getActivity(),EventActivity.class));
+
+    }
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -61,6 +84,9 @@ public class HomeFragment extends BaseFragment {
         mFyCB = (FrameLayout)root.findViewById(R.id.cb_view);
         mCBView = (ConvenientBanner)root.findViewById(R.id.convenientBanner);
         mPromotionClickSum = (TextView)root.findViewById(R.id.promotion_click_num);
+
+        mMoreEvent = (TextView)root.findViewById(R.id.tv_more);
+        mMoreEvent.setOnClickListener(onMoreEventListener);
 
        // FragmentPagerAdapter adapter = new DynamicAdapter(getActivity().getSupportFragmentManager());
         FragmentPagerAdapter adapter = new DynamicAdapter(getChildFragmentManager());
@@ -88,7 +114,7 @@ public class HomeFragment extends BaseFragment {
             return;
         }
         mPromotionList = PromotionItem.getItemList( mPromotions);
-        mCBView.setPageIndicator(new int[]{R.drawable.ic_page_indicator, R.drawable.ic_page_indicator_focused},new CBPageItemSelected());
+        mCBView.setPageIndicator(new int[]{R.drawable.ic_page_indicator, R.drawable.ic_page_indicator_focused}, new CBPageItemSelected());
         if(mPromotionList.size() < 2) {
             mCBView.setPointViewVisible(false);
         }
@@ -139,13 +165,18 @@ public class HomeFragment extends BaseFragment {
             imageView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    //点击事件
-                    //Toast.makeText(view.getContext(), "点击了第" + position + "个", Toast.LENGTH_SHORT).show();
+                    //点击事件,打开活动页
+                    startEventPageActivity(position);
                 }
             });
         }
     }
-
+    private void startEventPageActivity(int position) {
+        Intent intent = new Intent(getActivity(), WebPageActivity.class);
+        intent.putExtra("title",mPromotionList.get(position).name);
+        intent.putExtra("web_addr",mPromotionList.get(position).url);
+        getActivity().startActivity(intent);
+    }
 
     private class CBPageItemSelected implements CBPageChangeListener.OnCBPageSelected {
 

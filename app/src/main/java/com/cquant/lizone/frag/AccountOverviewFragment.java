@@ -182,5 +182,7 @@ public class AccountOverviewFragment extends BaseFragment {
     @Override
     public void onDestroy() {
         super.onDestroy();
+        mWebhelper.cancleRequest();
+        mWebhelper = null;
     }
 }

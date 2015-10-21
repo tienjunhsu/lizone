@@ -1,5 +1,6 @@
 package com.cquant.lizone.frag;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -12,6 +13,7 @@ import android.widget.TextView;
 
 import com.cquant.lizone.LizoneApp;
 import com.cquant.lizone.R;
+import com.cquant.lizone.activity.WebPageActivity;
 import com.cquant.lizone.bean.EventItem;
 import com.cquant.lizone.net.WebHelper;
 import com.cquant.lizone.tool.ACache;
@@ -75,7 +77,7 @@ public class EventFragment extends BaseFragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View root = inflater.inflate(R.layout.default_fragment, container, false);
         mRecyclerView = (RecyclerView)root.findViewById(R.id.recyclerView);
-        mRecyclerView.addItemDecoration(new ItemDivider(getActivity(), R.drawable.dynamic_list_divider));
+        mRecyclerView.addItemDecoration(new ItemDivider(getActivity(), R.drawable.event_list_divider));
         return root;
     }
     @Override
@@ -210,8 +212,15 @@ public class EventFragment extends BaseFragment {
     private OnItemClickListener mOnClickListener = new OnItemClickListener() {
         @Override
         public void onClick(View v,int position) {
-            //startActivity(position);
+            startActivity(position);
         }
     };
+
+    private void startActivity(int position) {
+        Intent intent = new Intent(getActivity(), WebPageActivity.class);
+        intent.putExtra("title",mEventList.get(position).name);
+        intent.putExtra("web_addr",mEventList.get(position).url);
+        getActivity().startActivity(intent);
+    }
 
 }

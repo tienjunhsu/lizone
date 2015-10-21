@@ -167,6 +167,7 @@ public class MainActivity extends BaseActivity implements OnTabChangeListener {
     private void openPonitActivity() {
 
     }
+
     private void openAccountActivity() {
         startActivity(new Intent(this,AccountActivity.class));
         mDrawerLayout.closeDrawers();
