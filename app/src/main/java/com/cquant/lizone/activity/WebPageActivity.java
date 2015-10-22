@@ -4,11 +4,14 @@ import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
+import android.webkit.CookieManager;
+import android.webkit.CookieSyncManager;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 
 import com.cquant.lizone.R;
+import com.cquant.lizone.util.GlobalVar;
 import com.cquant.lizone.util.Utils;
 
 /**
@@ -38,7 +41,19 @@ public class WebPageActivity extends BaseActivity {
 
         initToolBar();
         initWebView();
+        setSession();
         webview.loadUrl(url);
+    }
+
+    private void setSession() {
+        if(GlobalVar.SESSIONID == null) {
+            return;
+        }
+        CookieSyncManager.createInstance(this);
+        CookieManager cookieManager = CookieManager.getInstance();
+        cookieManager.setCookie(url,"PHPSESSID="+GlobalVar.SESSIONID);
+        CookieSyncManager.getInstance().sync();
+
     }
 
     private void initWebView() {

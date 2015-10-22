@@ -7,11 +7,14 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.webkit.CookieManager;
+import android.webkit.CookieSyncManager;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 
 import com.cquant.lizone.R;
+import com.cquant.lizone.util.GlobalVar;
 import com.cquant.lizone.util.Utils;
 
 public class OpenFirmAccountActivity extends BaseActivity {
@@ -32,9 +35,19 @@ public class OpenFirmAccountActivity extends BaseActivity {
 
         initToolBar();
         initWebView();
+        setSession();
         webview.loadUrl(url);
     }
 
+    private void setSession() {
+        if(GlobalVar.SESSIONID == null) {
+            return;
+        }
+        CookieSyncManager.createInstance(this);
+        CookieManager cookieManager = CookieManager.getInstance();
+        cookieManager.setCookie(url, "PHPSESSID=" + GlobalVar.SESSIONID);
+
+    }
     private void initWebView() {
         WebSettings wSettings = webview.getSettings();
         wSettings.setAllowContentAccess(true);

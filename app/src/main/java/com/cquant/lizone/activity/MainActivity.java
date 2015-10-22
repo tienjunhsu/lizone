@@ -10,6 +10,7 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.widget.Toolbar;
 import android.view.Gravity;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -23,13 +24,18 @@ import android.widget.TextView;
 
 import com.cquant.lizone.LizoneApp;
 import com.cquant.lizone.R;
+import com.cquant.lizone.tool.LogTool;
+import com.cquant.lizone.util.GlobalVar;
 import com.cquant.lizone.view.CircleImageView;
 import com.cquant.lizone.view.TabDb;
+import com.nostra13.universalimageloader.core.ImageLoader;
 
 /**
  * Created by asus on 2015/8/30.
  */
 public class MainActivity extends BaseActivity implements OnTabChangeListener {
+
+    private static final String TAG = "MainActivity";
 
     private FragmentTabHost tabHost;
     private DrawerLayout mDrawerLayout;
@@ -40,17 +46,60 @@ public class MainActivity extends BaseActivity implements OnTabChangeListener {
     private CircleImageView mImgLogo;
     private Button mActionMenu;
 
+    //navigation header view
+    private  CircleImageView mNavIvHead;
+    private TextView mNavTvName;
+    private TextView mNavTvSign;
+    private TextView mNavTvSub;
+    private TextView mNavTvFans;
+    private TextView mNavTvView;
+    private TextView mNavTvPoint;
+    private DrawerLayout.DrawerListener mDrawerListener = new DrawerLayout.DrawerListener() {
+
+        @Override
+        public void onDrawerSlide(View drawerView, float slideOffset) {
+            //DO NOTING
+        }
+
+        @Override
+        public void onDrawerOpened(View drawerView) {
+            //refresh info
+            LogTool.d(TAG+"onDrawerOpened");
+            refreshInfo();
+        }
+
+        @Override
+        public void onDrawerClosed(View drawerView) {
+            //DO NOTHING
+        }
+
+        @Override
+        public void onDrawerStateChanged(int newState) {
+            //DO NOTHING
+        }
+    };
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main_activity_new);
 
         mDrawerLayout = (DrawerLayout) findViewById(R.id.id_drawer_layout);
+        mDrawerLayout.setDrawerListener(mDrawerListener);
        // mNavigationView = (NavigationView) findViewById(R.id.id_nv_menu);
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         mTvTitle = (TextView)findViewById(R.id.actionbar_title);
         mImgLogo = (CircleImageView)findViewById(R.id.actionbar_ic);
         mActionMenu = (Button)findViewById(R.id.actionbar_menu);
+
+        mNavIvHead =(CircleImageView)findViewById(R.id.nav_iv_portrait);
+        mNavTvName = (TextView)findViewById(R.id.nav_tv_name);
+        mNavTvSign = (TextView)findViewById(R.id.nav_ev_inf);
+        mNavTvSub = (TextView)findViewById(R.id.nav_tv_sub_num);
+        mNavTvFans = (TextView)findViewById(R.id.nav_tv_fans_num);
+        mNavTvView = (TextView)findViewById(R.id.nav_tv_idear_num);
+        mNavTvPoint = (TextView)findViewById(R.id.nav_menu_tv_point);
         
         tabHost=(FragmentTabHost)super.findViewById(android.R.id.tabhost);
         tabHost.setup(this,super.getSupportFragmentManager()
@@ -247,5 +296,46 @@ public class MainActivity extends BaseActivity implements OnTabChangeListener {
     }
     private void setToolBarTitle(int i) {
         mTvTitle.setText(TabDb.getTabsTxt()[i]);
+    }
+
+    private void refreshInfo() {
+        if(GlobalVar.sAccountInf == null) {
+            return;
+        }
+        LogTool.d(TAG+"refreshInfo:sAccountInf not null");
+        ImageLoader.getInstance().displayImage(GlobalVar.sAccountInf.photo, mNavIvHead);
+        mNavTvName.setText(GlobalVar.sAccountInf.name);
+        mNavTvSign.setText(GlobalVar.sAccountInf.profile);
+        mNavTvSub.setText(GlobalVar.sAccountInf.sub_num);
+        mNavTvFans.setText(GlobalVar.sAccountInf.fans_num);
+        mNavTvView.setText(GlobalVar.sAccountInf.view_num);
+        mNavTvPoint.setText(GlobalVar.sAccountInf.integral);
+
+    }
+    private void refreshLogo() {
+        if(GlobalVar.sAccountInf == null) {
+            LogTool.d(TAG+"refreshLogo:sAccountInf null");
+            mImgLogo.setImageResource(R.drawable.default_head);
+        } else {
+            LogTool.d(TAG+"refreshLogo:sAccountInf not null");
+            ImageLoader.getInstance().displayImage(GlobalVar.sAccountInf.photo,mImgLogo);
+        }
+    }
+    @Override
+    protected void onResume() {
+        super.onResume();
+        refreshLogo();
+    }
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event)  {
+        if (keyCode == KeyEvent.KEYCODE_BACK ) { //按下的如果是BACK，mDrawerLayout是打开的，关闭
+            //do something here
+            if(mDrawerLayout.isDrawerOpen(Gravity.LEFT) ){
+                mDrawerLayout.closeDrawers();
+                return true;
+            }
+        }
+
+        return super.onKeyDown(keyCode, event);
     }
 }
