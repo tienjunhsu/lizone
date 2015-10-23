@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="@color/white_bg">
+
+    <include layout="@layout/toolbar_layout"/>
+
+    <TextView
+        android:id="@+id/personal_center"
+        android:text="个人中心"
+        android:layout_marginTop="20dp"
+        android:drawableRight="@drawable/go"
+        android:background="@drawable/setting_text_layout_bg"
+        style="@style/setting_text_layout_item"
+        />
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:background="@drawable/setting_text_layout_bg"
+        android:orientation="vertical">
+    <TextView
+        android:id="@+id/open_firm"
+        android:text="开通实盘"
+        android:background="@drawable/setting_text_layout_bg_two"
+        android:drawableRight="@drawable/go"
+        style="@style/setting_text_layout_item"
+        />
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_marginLeft="16dp"
+            android:background="@color/white_bg"/>
+    <TextView
+        android:id="@+id/service_call"
+        android:background="@drawable/setting_text_layout_bg_two"
+        android:text="客服热线"
+        android:drawableRight="@drawable/go"
+        style="@style/setting_text_layout_item"
+        />
+    </LinearLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:background="@drawable/setting_text_layout_bg"
+        android:orientation="vertical">
+        <TextView
+            android:id="@+id/use_agreement"
+            android:text="使用协议"
+            android:background="@drawable/setting_text_layout_bg_two"
+            android:drawableRight="@drawable/go"
+            style="@style/setting_text_layout_item"
+            />
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_marginLeft="16dp"
+            android:background="@color/white_bg"/>
+        <TextView
+            android:id="@+id/about_us"
+            android:background="@drawable/setting_text_layout_bg_two"
+            android:text="关于我们"
+            android:drawableRight="@drawable/go"
+            style="@style/setting_text_layout_item"
+            />
+    </LinearLayout>
+
+
+    <RelativeLayout
+        android:id="@+id/check_version"
+        android:layout_marginTop="20dp"
+        android:background="@drawable/setting_text_layout_bg"
+        android:layout_width="match_parent"
+        android:clickable="true"
+        android:onClick="onXmlBtClick"
+        android:layout_height="50dp" >
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:textSize="20sp"
+            android:textColor="@color/black"
+            android:paddingLeft="16dp"
+            android:gravity="left|center_vertical"
+            android:layout_alignParentLeft="true"
+            android:text="版本更新" />
+
+        <TextView
+            android:id="@+id/tv_version"
+            style="@style/setting_text_layout_item"
+            android:layout_height="match_parent"
+            android:layout_width="wrap_content"
+            android:textColor="@color/grey_two"
+            android:text="V1.2.0"
+            android:textSize="16sp"
+            android:layout_marginRight="16dp"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"/>
+    </RelativeLayout>
+
+</LinearLayout>

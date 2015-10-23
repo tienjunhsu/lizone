@@ -7,6 +7,7 @@
     <color name="white_two">#989890</color>
     <color name="black">#000000</color>
     <color name="grey">#454545</color>
+    <color name="grey_two">#989890</color>
     <color name="blue_two">#1a69b4</color>
     <color name="tab_bg">#1a1f23</color>
 
@@ -27,5 +28,6 @@
     <color name="vpi__bright_foreground_inverse_holo_light">@color/vpi__bright_foreground_holo_dark</color>
 
     <color name ="text_orange">#6f232324</color>
+    <color name="white_bg">#f4f4f4</color>
 
 </resources>

@@ -77,6 +77,11 @@
             android:screenOrientation="portrait" >
         </activity>
         <activity
+            android:name=".activity.SettingActivity"
+            android:hardwareAccelerated="true"
+            android:screenOrientation="portrait" >
+        </activity>
+        <activity
             android:name=".activity.TestActivity"
             android:screenOrientation="portrait" >
         </activity>

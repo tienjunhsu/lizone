@@ -203,9 +203,17 @@ public class MainActivity extends BaseActivity implements OnTabChangeListener {
                     gotoLogin();
                 }
                 break;
+            case R.id.nav_lv_setting:
+                openSettingActivity();
+                break;
             default:
                 break;
         }
+    }
+
+    private void openSettingActivity() {
+        startActivity(new Intent(this,SettingActivity.class));
+        mDrawerLayout.closeDrawers();
     }
 
     private void gotoLogin() {
