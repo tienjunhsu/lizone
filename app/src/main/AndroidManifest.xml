@@ -78,7 +78,18 @@
         </activity>
         <activity
             android:name=".activity.SettingActivity"
-            android:hardwareAccelerated="true"
+            android:screenOrientation="portrait" >
+        </activity>
+        <activity
+            android:name=".activity.PersonalActivity"
+            android:screenOrientation="portrait" >
+        </activity>
+        <activity
+            android:name=".activity.MyPointActivity"
+            android:screenOrientation="portrait" >
+        </activity>
+        <activity
+            android:name=".activity.IntegralExchangeActivity"
             android:screenOrientation="portrait" >
         </activity>
         <activity

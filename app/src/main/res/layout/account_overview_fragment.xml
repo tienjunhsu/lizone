@@ -156,6 +156,8 @@
         android:paddingRight="16dp"
         android:layout_width="match_parent"
         android:layout_height="@dimen/default_height"
+        android:clickable="true"
+        android:onClick="onXmlBtClick"
         android:gravity="center_vertical"
         android:orientation="horizontal">
 
@@ -186,6 +188,7 @@
         android:layout_width="match_parent"
         android:layout_height="@dimen/default_height"
         android:gravity="center_vertical"
+        android:clickable="true"
         android:onClick="onXmlBtClick"
         android:orientation="horizontal">
 

@@ -2,7 +2,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
-    android:orientation="vertical" >
+    android:orientation="vertical">
 
     <include layout="@layout/toolbar_layout" />
 
@@ -11,47 +11,71 @@
         android:layout_height="wrap_content"
         android:layout_marginLeft="16dp"
         android:layout_marginRight="16dp"
-        android:layout_marginTop="70dp"
+        android:layout_marginTop="50dp"
         android:gravity="center_horizontal"
-        android:orientation="vertical" >
+        android:orientation="vertical">
 
         <EditText
             android:id="@+id/et_name"
             android:layout_width="match_parent"
-            android:layout_height="42dp"
-            android:paddingLeft="10dp"
+            android:layout_height="48dp"
             android:background="@drawable/default_imput_bg"
             android:drawableLeft="@drawable/ic_login_name"
             android:ems="10"
-            android:hint="@string/hint_user_name"
+            android:hint="请输入注册号码"
             android:inputType="textPersonName"
+            android:paddingLeft="10dp"
             android:textColor="@color/white_two"
-            android:textSize="18sp"
-            />
+            android:textSize="18sp" />
 
         <EditText
             android:id="@+id/et_phone"
             android:layout_width="match_parent"
-            android:layout_height="42dp"
-            android:paddingLeft="10dp"
+            android:layout_height="48dp"
             android:layout_marginTop="6dp"
-            android:drawableLeft="@drawable/ic_login_pass"
             android:background="@drawable/default_imput_bg"
+            android:drawableLeft="@drawable/ic_login_pass"
             android:ems="10"
-            android:hint="@string/hint_password"
+            android:hint="请输入登录密码"
             android:inputType="textPersonName"
+            android:paddingLeft="10dp"
             android:password="true"
-            android:textColor="@color/white_two"
-            />
+            android:textColor="@color/white_two" />
     </LinearLayout>
-        <Button
-            android:id="@+id/bt_login"
-            android:layout_width="match_parent"
+    <Button
+        android:id="@+id/bt_login"
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:layout_marginLeft="16dp"
+        android:layout_marginRight="16dp"
+        android:layout_marginTop="20dp"
+        android:background="@drawable/login_btn_bg"
+        android:onClick="onXmlBtClick"
+        android:text="登录" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:layout_marginLeft="16dp"
+        android:gravity="center_vertical"
+        android:orientation="horizontal">
+
+        <ProgressBar
+            android:id="@+id/pb_progress"
+            android:layout_width="30dip"
+            android:layout_height="30dip"
+            android:layout_gravity="center_vertical" />
+
+        <TextView
+            android:id="@+id/tv_msg"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="15dp"
-            android:layout_marginRight="16dp"
-            android:onClick="onXmlBtClick"
-            android:layout_weight="1"
-            android:minHeight="50dp"
-            android:text="登录" />
+            android:layout_gravity="center_vertical"
+            android:gravity="center_vertical"
+            android:maxWidth="250dp"
+            android:minHeight="30dp"
+            android:minWidth="150dp"
+            android:text="正在初始化..." />
+    </LinearLayout>
 </LinearLayout>

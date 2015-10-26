@@ -17,6 +17,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TabHost;
 import android.widget.TabHost.OnTabChangeListener;
 import android.widget.TabWidget;
@@ -54,6 +55,10 @@ public class MainActivity extends BaseActivity implements OnTabChangeListener {
     private TextView mNavTvFans;
     private TextView mNavTvView;
     private TextView mNavTvPoint;
+
+    private LinearLayout mLyNavNormal;
+    private LinearLayout mLyNavLogin;
+
     private DrawerLayout.DrawerListener mDrawerListener = new DrawerLayout.DrawerListener() {
 
         @Override
@@ -64,8 +69,15 @@ public class MainActivity extends BaseActivity implements OnTabChangeListener {
         @Override
         public void onDrawerOpened(View drawerView) {
             //refresh info
-            LogTool.d(TAG+"onDrawerOpened");
-            refreshInfo();
+            LogTool.d(TAG + "onDrawerOpened");
+            if(LizoneApp.mCanLogin ) {
+                mLyNavLogin.setVisibility(View.GONE);
+                mLyNavNormal.setVisibility(View.VISIBLE);
+                refreshInfo();
+            } else {
+                mLyNavNormal.setVisibility(View.GONE);
+                mLyNavLogin.setVisibility(View.VISIBLE);
+            }
         }
 
         @Override
@@ -86,7 +98,7 @@ public class MainActivity extends BaseActivity implements OnTabChangeListener {
         setContentView(R.layout.main_activity_new);
 
         mDrawerLayout = (DrawerLayout) findViewById(R.id.id_drawer_layout);
-        mDrawerLayout.setDrawerListener(mDrawerListener);
+        //mDrawerLayout.setDrawerListener(mDrawerListener);
        // mNavigationView = (NavigationView) findViewById(R.id.id_nv_menu);
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         mTvTitle = (TextView)findViewById(R.id.actionbar_title);
@@ -102,10 +114,14 @@ public class MainActivity extends BaseActivity implements OnTabChangeListener {
         mNavTvPoint = (TextView)findViewById(R.id.nav_menu_tv_point);
         
         tabHost=(FragmentTabHost)super.findViewById(android.R.id.tabhost);
-        tabHost.setup(this,super.getSupportFragmentManager()
-                ,R.id.contentLayout);
+        tabHost.setup(this, super.getSupportFragmentManager()
+                , R.id.contentLayout);
         tabHost.getTabWidget().setDividerDrawable(null);
         tabHost.setOnTabChangedListener(this);
+
+        mLyNavNormal =(LinearLayout)findViewById(R.id.nav_head_normal);
+        mLyNavLogin =(LinearLayout)findViewById(R.id.nav_head_login);
+
         initToolBar();
         initTab();
        // setupDrawerContent(mNavigationView);
@@ -139,6 +155,14 @@ public class MainActivity extends BaseActivity implements OnTabChangeListener {
 
             @Override
             public void onClick(View view) {
+                if(LizoneApp.mCanLogin ) {
+                    mLyNavLogin.setVisibility(View.GONE);
+                    mLyNavNormal.setVisibility(View.VISIBLE);
+                    refreshInfo();
+                } else {
+                    mLyNavNormal.setVisibility(View.GONE);
+                    mLyNavLogin.setVisibility(View.VISIBLE);
+                }
                 mDrawerLayout.openDrawer(Gravity.LEFT);
             }
         });
@@ -206,6 +230,14 @@ public class MainActivity extends BaseActivity implements OnTabChangeListener {
             case R.id.nav_lv_setting:
                 openSettingActivity();
                 break;
+            case R.id.nav_head_login:
+                gotoLogin();
+                break;
+            case R.id.nav_head_normal:
+                if(LizoneApp.mCanLogin ) {
+                    openAccountActivity();
+                }
+                break;
             default:
                 break;
         }
@@ -222,7 +254,8 @@ public class MainActivity extends BaseActivity implements OnTabChangeListener {
     }
 
     private void openPonitActivity() {
-
+        startActivity(new Intent(this, MyPointActivity.class));
+        mDrawerLayout.closeDrawers();
     }
 
     private void openAccountActivity() {

@@ -103,6 +103,7 @@ public class PositionFragment extends  BaseFragment {
                     JSONObject response = JsnTool.getObject(msg);
                     if ((response != null) && (JsnTool.getInt(response, "status") == 1)) {
                         parsePosition(msg);
+                        mWebhelper.cancleRequest();
                     }
                 }
             }

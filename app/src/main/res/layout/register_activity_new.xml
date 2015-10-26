@@ -1,0 +1,157 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <include layout="@layout/toolbar_layout" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="16dp"
+        android:layout_marginRight="16dp"
+        android:layout_marginTop="25dp"
+        android:orientation="vertical">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:orientation="vertical">
+
+            <EditText
+                android:id="@+id/et_name"
+                android:layout_width="match_parent"
+                android:layout_height="48dp"
+                android:background="@drawable/default_imput_bg"
+                android:ems="10"
+                android:hint="@string/hint_user_name"
+                android:inputType="textPersonName"
+                android:paddingLeft="10dp"
+                android:textColor="@color/white_two" />
+
+            <LinearLayout
+                android:id="@+id/lv_verify"
+                android:layout_width="match_parent"
+                android:layout_height="48dp"
+                android:layout_marginTop="6dp"
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
+
+                <EditText
+                    android:id="@+id/et_verify"
+                    android:layout_width="0.0px"
+                    android:layout_height="match_parent"
+                    android:layout_weight="2"
+                    android:background="@drawable/default_imput_bg"
+                    android:ems="10"
+                    android:hint="请输入验证码"
+                    android:inputType="textPersonName"
+                    android:paddingLeft="10dp"
+                    android:textColor="@color/white_two" />
+
+                <Button
+                    android:id="@+id/getVerify_btn"
+                    android:layout_width="0.0px"
+                    android:layout_height="48dp"
+                    android:layout_marginLeft="12dp"
+                    android:layout_weight="1"
+                    android:background="@drawable/login_btn_bg"
+                    android:onClick="onXmlBtClick"
+                    android:text="获取验证码" />
+            </LinearLayout>
+
+            <EditText
+                android:id="@+id/et_phone"
+                android:layout_width="match_parent"
+                android:layout_height="48dp"
+                android:layout_marginTop="6dp"
+                android:background="@drawable/default_imput_bg"
+                android:ems="10"
+                android:hint="请输入密码"
+                android:paddingLeft="10dp"
+                android:textColor="@color/white_two" />
+        </LinearLayout>
+    </LinearLayout>
+
+    <CheckBox
+        android:id="@+id/checkBox1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="@dimen/text_margin_left"
+        android:layout_marginTop="15dp"
+        android:checked="false"
+        android:background="@null"
+        android:button="@drawable/default_checkbox_bg"
+        android:paddingLeft="5dp"
+        android:text="隐藏密码"
+        android:textColor="@color/white_two"
+        />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="5dp"
+        android:orientation="horizontal">
+
+        <CheckBox
+            android:id="@+id/check_user_agreement"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@null"
+            android:button="@drawable/default_checkbox_bg"
+            android:layout_marginLeft="@dimen/text_margin_left"
+            android:paddingLeft="5dp"
+            android:checked="true"
+            android:text="@string/user_agreement_confirm"
+            android:textColor="@color/white_two" />
+
+        <TextView
+            android:id="@+id/text_user_agreement"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="5dp"
+            android:clickable="true"
+            android:onClick="onXmlBtClick"
+            android:text="@string/user_agreement_title"
+            android:textColor="@color/blue_two" />
+    </LinearLayout>
+
+    <Button
+        android:id="@+id/submit"
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:layout_marginLeft="@dimen/text_margin_left"
+        android:layout_marginRight="@dimen/text_margin_left"
+        android:layout_marginTop="20dp"
+        android:background="@drawable/login_btn_bg"
+        android:onClick="onXmlBtClick"
+        android:text="@string/register" />
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:layout_marginLeft="16dp"
+        android:gravity="center_vertical"
+        android:orientation="horizontal">
+
+        <ProgressBar
+            android:id="@+id/pb_progress"
+            android:layout_width="30dip"
+            android:layout_height="30dip"
+            android:layout_gravity="center_vertical" />
+
+        <TextView
+            android:id="@+id/tv_msg"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:gravity="center_vertical"
+            android:maxWidth="250dp"
+            android:minHeight="30dp"
+            android:minWidth="150dp"
+            android:text="正在初始化..." />
+    </LinearLayout>
+</LinearLayout>
+

@@ -108,6 +108,7 @@ public class DynamicFragment extends BaseFragment {
                     JSONObject response = JsnTool.getObject(msg);
                     if((response != null)&&(JsnTool.getInt(response,"status")==1))  {
                         parseDynamic(msg);
+                        mWebhelper.cancleRequest();
                     }
                 }
             }

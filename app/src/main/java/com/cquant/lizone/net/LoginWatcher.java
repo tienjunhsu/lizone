@@ -24,8 +24,8 @@ public class LoginWatcher {
     private static int referNum = 0;
 
     private static  Timer timer_=null;
-    private  static  String user_id = "18682169419";
-    private static  String pass_word = "nmyzdg21254";
+    private  static  String user_id;//= "18682169419";
+    private static  String pass_word;// = "nmyzdg21254";
 
     private static WebHelper mWebhelper = null;
 
@@ -55,7 +55,7 @@ public class LoginWatcher {
                 Log.d("TianjunXu", " schedule...");
                 mHandler.sendEmptyMessage(0);
             }
-        }, 0,5*60*1000);
+        }, 0,4*60*1000);
     }
     private  static  void stopLoginObserver() {
         Log.d("TianjunXu", " stopLoginObserver....");
@@ -84,6 +84,9 @@ public class LoginWatcher {
         }
     }
     public static void startLogin() {
+        if(!LizoneApp.mCanLogin) {
+            return;
+        }
         if(user_id == null) {
             user_id = SharedPrefsUtil.getStringValue(LizoneApp.getApp(),SharedPrefsUtil.PREFS_USER_ID,null);
         }
@@ -98,8 +101,8 @@ public class LoginWatcher {
             @Override
             public void onWebFinished(boolean success, String msg) {
                 if(success) {
-                    saveAccount();
                     parseAccountInf(msg);
+                    mWebhelper.cancleRequest();
                 }
             }
         });
@@ -115,6 +118,7 @@ public class LoginWatcher {
     private static void parseAccountInf(String msg) {
         JSONObject json = JsnTool.getObject(msg);
         if((json != null)&&(JsnTool.getInt(json,"status")==1)) {
+            //saveAccount();
             GlobalVar.sAccountInf = AccountItem.getItem(json);
             SharedPrefsUtil.putStringValue(LizoneApp.getApp(),SharedPrefsUtil.PREFS_ACCOUNT,msg);
         } else {

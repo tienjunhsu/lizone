@@ -25,8 +25,9 @@
                 android:layout_width="40dp"
                 android:layout_height="40dp"
                 android:src="@drawable/ic_profile"
+                android:layout_gravity="center_vertical"
                 app:border_width="1dp"
-                app:border_color="@color/grey"
+                app:border_color="@color/white"
                 />
              <EditText
                  android:id="@+id/tv_name"
@@ -35,7 +36,7 @@
                  android:textSize="20sp"
                  android:layout_marginLeft="16dp"
                  android:textColor="@color/black"
-                 android:background="null"
+                 android:background="@color/white"
                  android:gravity="left|center_vertical"
                  android:layout_alignParentLeft="true"
                  android:text="li144"
@@ -47,6 +48,9 @@
             android:layout_marginLeft="16dp"
             android:background="@color/white_bg"/>
         <LinearLayout
+            android:id="@+id/ly_sign"
+            android:clickable="true"
+            android:onClick="onXmlBtClick"
             android:layout_width="match_parent"
             android:layout_height="50dp"
             android:paddingLeft="16dp"
@@ -54,18 +58,68 @@
             android:background="@drawable/setting_text_layout_bg_two"
             android:orientation="horizontal">
         <TextView
-            android:text="个性签名"
-            android:drawableRight="@drawable/go"
-            style="@style/setting_text_layout_item"
+            android:text="个性签名:"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:textColor="@color/black"
+            android:textSize="20sp"
+            android:gravity="center_vertical|left"
+
             />
         <TextView
             android:id="@+id/personal_sign"
-            android:background="@drawable/setting_text_layout_bg_two"
             android:text="理财空间"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:textColor="@color/grey"
+            android:textSize="16sp"
+            android:paddingLeft="12dp"
+            android:gravity="center_vertical|left"
             android:drawableRight="@drawable/go"
-            style="@style/setting_text_layout_item"
             />
             </LinearLayout>
     </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:background="@drawable/setting_text_layout_bg"
+        android:orientation="vertical">
+        <TextView
+            android:id="@+id/tv_total_capital"
+            android:text="可用资产:21756"
+            style="@style/personal_text_layout_item"
+            />
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_marginLeft="16dp"
+            android:background="@color/white_bg"/>
+        <TextView
+            android:id="@+id/tv_available_cash"
+            android:text="可用资产:19435"
+            style="@style/personal_text_layout_item"
+            />
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_marginLeft="16dp"
+            android:background="@color/white_bg"/>
+        <TextView
+            android:id="@+id/tv_risk_ratio"
+            android:text="风险率：937.44%"
+            style="@style/personal_text_layout_item"
+            />
+    </LinearLayout>
+
+    <Button
+        android:id="@+id/log_out"
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:text="退出登录"
+        android:layout_marginTop="20dp"
+        android:onClick="onXmlBtClick"
+        />
 
 </LinearLayout>

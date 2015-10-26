@@ -2,6 +2,9 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:id="@+id/nav_head_normal"
+    android:clickable="true"
+    android:onClick="onXmlBtClick"
     android:orientation="vertical"
     android:layout_marginRight="@dimen/text_margin_left"
     android:layout_marginLeft="@dimen/text_margin_left">
@@ -18,7 +21,7 @@
             android:id="@+id/nav_iv_portrait"
             android:layout_width="60dp"
             android:layout_height="60dp"
-            android:src="@drawable/ic_profile"
+            android:src="@drawable/default_head"
             app:border_width="1dp"
             app:border_color="@color/grey"
             />
@@ -26,7 +29,7 @@
             android:id="@+id/nav_tv_name"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Garfield"
+            android:text="li167654897"
             android:textColor="@color/white_two"
             android:layout_marginLeft="10dp"
             android:textStyle="bold"
@@ -65,7 +68,7 @@
                 android:id="@+id/nav_tv_sub_num"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="4"
+                android:text="0"
                 android:textSize="16dp"
                 android:gravity="center"
                 android:textColor="@color/white_two"/>
@@ -93,7 +96,7 @@
                 android:id="@+id/nav_tv_fans_num"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="4"
+                android:text="0"
                 android:textSize="16dp"
                 android:gravity="center"
                 android:textColor="@color/white_two"/>

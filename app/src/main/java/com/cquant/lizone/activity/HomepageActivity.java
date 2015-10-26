@@ -94,6 +94,7 @@ public class HomepageActivity extends BaseActivity {
                     JSONObject response = JsnTool.getObject(msg);
                     if ((response != null) && (JsnTool.getInt(response, "status") == 1)) {
                         parseHeaderData(msg);
+                        mWebhelper.cancleRequest();
                     }
                 }
             }
@@ -115,6 +116,17 @@ public class HomepageActivity extends BaseActivity {
         mSubNum.setText(headerData.sub_num);
         mTradeNum .setText(headerData.trade_num);
         mProfiteRate.setText(headerData.yield);
+
+        if(headerData.gend ==1) {
+            mBtnFollow.setText("取消跟单");
+        } else {
+            mBtnFollow.setText("跟单");
+        }
+        if(headerData.dingys == 1) {
+            mBtnSub.setText("取消订阅");
+        } else {
+            mBtnFollow.setText("+订阅");
+        }
     }
 
     private void initView() {
@@ -142,6 +154,9 @@ public class HomepageActivity extends BaseActivity {
         mBtnSub = (Button)findViewById(R.id.btn_sub);
         mBtnFollow = (Button)findViewById(R.id.btn_follow);
 
+        mBtnSub.setOnClickListener(subBtnOnClickListener);
+        mBtnFollow.setOnClickListener(followBtnOnClickListener);
+
         List<String> titles = new ArrayList<>();
         titles.add("统计");
         titles.add("交易记录");
@@ -166,6 +181,20 @@ public class HomepageActivity extends BaseActivity {
         //
 
     }
+    private View.OnClickListener subBtnOnClickListener =new View.OnClickListener(){
+
+        @Override
+        public void onClick(View view) {
+
+        }
+    };
+    private View.OnClickListener followBtnOnClickListener=new View.OnClickListener(){
+
+        @Override
+        public void onClick(View view) {
+
+        }
+    };
     public class FragmentAdapter extends FragmentStatePagerAdapter {
         private List<Fragment> mFragments;
         private List<String> mTitles;

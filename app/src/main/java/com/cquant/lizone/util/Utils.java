@@ -6,6 +6,7 @@ package com.cquant.lizone.util;
 public class Utils {
 
     public static final int SUPER_CODE = 1729;
+    public static final int LOGIN_CODE = 1730;
 
     public static final String BASE_URL = "http://www.lizone.net/index.php/api/index/";
     public static final String LOGIN_ADDR = "Login/"; //登陆地址

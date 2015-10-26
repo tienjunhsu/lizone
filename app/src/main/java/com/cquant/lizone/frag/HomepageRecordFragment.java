@@ -101,6 +101,7 @@ public class HomepageRecordFragment extends BaseFragment {
                     JSONObject response = JsnTool.getObject(msg);
                     if ((response != null) && (JsnTool.getInt(response, "status") == 1)) {
                         parseRecord(msg);
+                        mWebhelper.cancleRequest();
                     }
                 }
             }

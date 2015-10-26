@@ -1,5 +1,6 @@
 package com.cquant.lizone.activity;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -15,6 +16,7 @@ import com.cquant.lizone.R;
 import com.cquant.lizone.frag.AccountOverviewFragment;
 import com.cquant.lizone.frag.AccountPositionFragment;
 import com.cquant.lizone.frag.AccountRecordFragment;
+import com.cquant.lizone.util.GlobalVar;
 import com.cquant.lizone.util.Utils;
 import com.cquant.lizone.view.TabPageIndicator;
 
@@ -84,12 +86,26 @@ public class AccountActivity extends BaseActivity {
 
     public void onXmlBtClick(View v) {
         switch (v.getId()) {
-            case R.id.btn_get_verify:
+            case R.id.ly_exchange_cash:
+                openPonitActivity();
+                break;
+            case R.id.ly_trade_stat:
+                gotoMyHomepage();
                 break;
             default:
                 break;
         }
     }
+
+    private void gotoMyHomepage() {
+        Intent intent = new Intent(this,HomepageActivity.class);
+        intent.putExtra("user_id", GlobalVar.sAccountInf.id);
+        startActivity(intent);
+    }
+    private void openPonitActivity() {
+        startActivity(new Intent(this, MyPointActivity.class));
+    }
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.

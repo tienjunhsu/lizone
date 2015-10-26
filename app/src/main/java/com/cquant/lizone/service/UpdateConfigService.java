@@ -56,6 +56,7 @@ public class UpdateConfigService extends Service {
                             JSONObject response = JsnTool.getObject(msg);
                             if((response != null)&&(JsnTool.getInt(response,"status")==1))  {
                                 savePromotions(msg);
+                                mWebhelper.cancleRequest();
                             }
                         }
                         stopSelf();

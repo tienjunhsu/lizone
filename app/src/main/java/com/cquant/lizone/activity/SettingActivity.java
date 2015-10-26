@@ -1,5 +1,6 @@
 package com.cquant.lizone.activity;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
@@ -9,6 +10,7 @@ import com.cquant.lizone.LizoneApp;
 import com.cquant.lizone.R;
 import com.cquant.lizone.tool.AppTool;
 import com.cquant.lizone.tool.LogTool;
+import com.cquant.lizone.util.Utils;
 
 /**
  * Created by asus on 2015/10/23.
@@ -23,7 +25,7 @@ public class SettingActivity extends BaseActivity {
         setContentView(R.layout.setting_activity);
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         mTvVersion = (TextView)findViewById(R.id.tv_version);
-        mTvVersion.setText("V"+ AppTool.getVersionName(LizoneApp.getApp()));
+        mTvVersion.setText("V" + AppTool.getVersionName(LizoneApp.getApp()));
         initToolBar();
     }
     @Override
@@ -73,6 +75,10 @@ public class SettingActivity extends BaseActivity {
 
     private void openUserAgreement() {
         LogTool.d(TAG+"openUserAgreement");
+        Intent intent = new Intent(this,WebPageActivity.class);
+        intent.putExtra("title","使用协议");
+        intent.putExtra("web_addr", Utils.BASE_URL+"xieyi/");
+        startActivity(intent);
     }
 
     private void callService() {
@@ -81,9 +87,22 @@ public class SettingActivity extends BaseActivity {
 
     private void openFirmAccount() {
         LogTool.d(TAG+"openFirmAccount");
+        if(LizoneApp.mCanLogin) {
+            startActivity(new Intent(this,OpenFirmAccountActivity.class));
+        } else {
+            gotoLogin();
+        }
     }
 
     private void openPersonalCenter() {
         LogTool.d(TAG+"openPersonalCenter");
+        if(LizoneApp.mCanLogin) {
+            startActivity(new Intent(this,PersonalActivity.class));
+        } else {
+            gotoLogin();
+        }
+    }
+    private void gotoLogin() {
+        startActivity(new Intent(this, LoginActivity.class));
     }
 }

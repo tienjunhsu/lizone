@@ -847,6 +847,16 @@ public class StrTool {
 		//Log.d("TianjunXu", "getDouble:str=" + str+",num="+num );
 		return num;
 	}
+	public static int getInt(String str) {
+		int num = 0;
+		try{
+			num =Integer.parseInt(str);
+		} catch (NumberFormatException e) {
+			Log.d("TianjunXu", "NumberFormatException:str=" + str + "," + e.getMessage());
+		}
+		//Log.d("TianjunXu", "getDouble:str=" + str+",num="+num );
+		return num;
+	}
 	public static double sum(double d1,double d2) {
 		BigDecimal bd1 = new BigDecimal(Double.toString(d1));
 		BigDecimal bd2 = new BigDecimal(Double.toString(d2));
