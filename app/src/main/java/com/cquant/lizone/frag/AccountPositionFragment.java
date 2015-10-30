@@ -1,6 +1,9 @@
 package com.cquant.lizone.frag;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.os.Bundle;
+//import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -9,9 +12,11 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.cquant.lizone.LizoneApp;
 import com.cquant.lizone.R;
+import com.cquant.lizone.activity.BaseActivity;
 import com.cquant.lizone.bean.PositionItem;
 import com.cquant.lizone.net.WebHelper;
 import com.cquant.lizone.tool.ACache;
@@ -98,6 +103,10 @@ public class AccountPositionFragment extends BaseFragment {
         mPositionList = new ArrayList<PositionItem>();
     }
     private void getPosition() {
+        if(!((BaseActivity)getActivity()).isNetAvailable()) {
+            popMsg("网络不可用");
+            return;
+        }
         Log.d("TianjunXu", " getPosition:url = " + url);
         mWebhelper.doLoadGet(url, null, new WebHelper.OnWebFinished() {
 
@@ -200,8 +209,61 @@ public class AccountPositionFragment extends BaseFragment {
     private OnItemClickListener mOnClickListener = new OnItemClickListener() {
         @Override
         public void onClick(View v,int position) {
-            //startActivity(position);
+            tipsDialog(position);
         }
     };
+    private void tipsDialog(final int position) {
+        new AlertDialog.Builder(getActivity())
+                .setMessage("确定平仓么？")
+                .setNegativeButton("取消",new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        //dissmiss
+                    }
+                })
+                .setPositiveButton(R.string.ok_msg,new DialogInterface.OnClickListener(){
+
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        closePosition(position);
+                    }
+                })
+                .setCancelable(false)
+                .create()
+                .show();
+
+    }
+    private void closePosition(int position) {
+        if(!((BaseActivity)getActivity()).isNetAvailable()) {
+            popMsg("网络不可用");
+            return;
+        }
+            mWebhelper.doLoadGet(Utils.BASE_URL+"/Ex_EndDeal/id/"+mPositionList.get(position).id+"/number/"+mPositionList.get(position).ex_number, null, new WebHelper.OnWebFinished() {
+
+                @Override
+                public void onWebFinished(boolean success, String msg) {
+                    if (success) {
+                        JSONObject response = JsnTool.getObject(msg);
+                        if (response != null) {
+                            if(StrTool.areNotEmpty(JsnTool.getString(response, "msg"))) {
+                                popMsg(JsnTool.getString(response, "msg"));
+
+                            } else {
+                                if(JsnTool.getInt(response, "status") == 1) {
+                                    popMsg("平仓成功");
+                                } else {
+                                    popMsg("平仓失败");
+                                }
+                            }
+                        }
+                        mWebhelper.cancleRequest();
+                        getPosition();
+                    }
+                }
+            });
+    }
+    protected void popMsg(String msg) {
+        Toast.makeText(getActivity(), msg, Toast.LENGTH_SHORT).show();
+    }
 
 }

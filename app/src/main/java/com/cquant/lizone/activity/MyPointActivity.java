@@ -132,8 +132,11 @@ public class MyPointActivity extends BaseActivity {
         });
     }
     private void startExchangeActivity(int position) {
-        Intent intent = new Intent(this, IntegralExchangeActivity.class);
-        intent.putExtra("gid", mGiftList.get(position).id);
+        //Intent intent = new Intent(this, IntegralExchangeActivity.class);
+        //intent.putExtra("gid", mGiftList.get(position).id);
+        Intent intent = new Intent(this,WebPageActivity.class);
+        intent.putExtra("title","礼品兑换");
+        intent.putExtra("web_addr",Utils.BASE_URL+"jifen_more/gid/"+mGiftList.get(position).id);
         startActivity(intent);
     }
     private void parseGifts(String msg) {

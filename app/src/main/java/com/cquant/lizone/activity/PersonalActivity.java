@@ -115,6 +115,9 @@ public class PersonalActivity extends BaseActivity {
         }
     }
     private void refreshInfo() {
+        if(GlobalVar.sAccountInf == null) {
+            return;
+        }
         ImageLoader.getInstance().displayImage(GlobalVar.sAccountInf.photo, mImgHead);
         mEditName.setText(GlobalVar.sAccountInf.name);
         mTvSign.setText(GlobalVar.sAccountInf.profile);

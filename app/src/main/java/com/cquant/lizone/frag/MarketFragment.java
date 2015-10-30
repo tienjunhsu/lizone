@@ -14,20 +14,21 @@ import android.widget.TextView;
 
 import com.cquant.lizone.LizoneApp;
 import com.cquant.lizone.R;
-import com.cquant.lizone.activity.EventActivity;
 import com.cquant.lizone.activity.KPointActivity;
 import com.cquant.lizone.bean.MarketDataItem;
 import com.cquant.lizone.net.WebHelper;
 import com.cquant.lizone.tool.ACache;
+import com.cquant.lizone.tool.JsnTool;
 import com.cquant.lizone.tool.LogTool;
 import com.cquant.lizone.tool.Md5FileNameGenerator;
 import com.cquant.lizone.tool.StrTool;
 import com.cquant.lizone.util.Utils;
-import com.cquant.lizone.view.OptLayout;
+import com.cquant.lizone.view.OptListView;
 
+import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -71,10 +72,12 @@ public class MarketFragment extends BaseFragment {
     private TextView mFixVarAmp03;
 
     private ArrayList<MarketDataItem> mFixHeaderData;
+
+    private OptListView mOptListView;
+    private Map<String,MarketDataItem> mOptDataList = new HashMap<String,MarketDataItem>();
+    private ArrayList<String> mOptId = new ArrayList<String>();
     //
     private WebHelper mWebhelper;
-
-    private OptLayout optView;
 
     private int red ;
     private int green;
@@ -97,6 +100,9 @@ public class MarketFragment extends BaseFragment {
                 ArrayList list = new ArrayList<MarketDataItem>();
                 list.add(item);
                 mGroup.put(item.excode,list);
+            }
+            if(mOptDataList.containsKey(item.id+"")) {//自选合约
+                mOptDataList.put(item.id+"",item);
             }
         }
     }
@@ -136,8 +142,8 @@ public class MarketFragment extends BaseFragment {
         mFixVarAmp02 = (TextView)header.findViewById(R.id.amp_usd);
         mFixVarAmp03 = (TextView)header.findViewById(R.id.amp_conc);
 
-        //optView = (OptLayout)header.findViewById(R.id.opt_list);
-        //optView.initView();
+        mOptListView = (OptListView)header.findViewById(R.id.opt_list);
+        mOptListView.setSize(mOptId.size());
 
         return header;
     }
@@ -294,8 +300,47 @@ public class MarketFragment extends BaseFragment {
             @Override
             public void onWebFinished(boolean success, String msg) {
                 LogTool.d("getOptList:success = " + success + ",msg =" + msg);
+                if(success) {
+                    parseOptList(msg);
+                }else {
+                    parseOptListFromCache();
+                }
             }
         });
+    }
+
+    private void parseOptList(String msg) {
+        mOptId.clear();
+        JSONObject json = JsnTool.getObject(msg);
+        try {
+            if((json != null)&&(json.getInt("status") ==1)&&(json.getJSONArray("data")!=null)) {
+                JSONArray ary = json.getJSONArray("data");
+                for(int i=0;i<ary.length();i++) {
+                    JSONObject obj = ary.getJSONObject(i);
+                    mOptId.add(JsnTool.getString(obj,"quoteid"));
+                }
+            } else {
+                parseOptListFromCache();
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+            parseOptListFromCache();
+        }
+        initOptDataListKey();
+    }
+    private void parseOptListFromCache() {
+        // now do nothing
+        mOptId.clear();
+        initOptDataListKey();
+    }
+    private void initOptDataListKey() {
+        for(String str:mOptId) {
+            mOptDataList.clear();
+            mOptDataList.put(str,null);
+        }
+        if(mOptListView != null) {
+            mOptListView.setSize(mOptId.size());
+        }
     }
     @Override
     public void onResume() {

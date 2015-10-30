@@ -4,6 +4,8 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
@@ -38,6 +40,15 @@ import com.cquant.lizone.view.TabLayout;
 import com.tencent.smtt.sdk.WebSettings;
 import com.tencent.smtt.sdk.WebView;
 import com.tencent.smtt.sdk.WebViewClient;
+
+import org.json.JSONObject;
+
+import java.net.URISyntaxException;
+import java.util.ArrayList;
+
+import io.socket.client.IO;
+import io.socket.client.Socket;
+import io.socket.emitter.Emitter;
 
 /**
  * Created by PC on 2015/10/9.
@@ -85,6 +96,9 @@ public class KPointActivity extends BaseActivity implements RadioGroup.OnChecked
 
     private int mCurSelected = 0;
 
+    private Socket socket;
+    private String socket_url = "http://1-yj.com:3000";
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -130,6 +144,13 @@ public class KPointActivity extends BaseActivity implements RadioGroup.OnChecked
         initWebView();
         webview.loadUrl(url);
 
+        try {
+            socket = IO.socket(socket_url);
+        } catch (URISyntaxException e) {
+            LogTool.e(TAG+" URISyntaxException");
+            e.printStackTrace();
+        }
+
         refreshHeadView(dataItem, true);
     }
 
@@ -137,6 +158,7 @@ public class KPointActivity extends BaseActivity implements RadioGroup.OnChecked
     public void onResume() {
         super.onResume();
         LogTool.d(TAG + ":onResume");
+        connect();
     }
 
     @Override
@@ -144,9 +166,87 @@ public class KPointActivity extends BaseActivity implements RadioGroup.OnChecked
         super.onPause();
         //disconnected();//比较耗时，测试一下
         LogTool.d(TAG + ":onPause");
+        disconnected();
+    }
+    private void connect() {
+        LogTool.e(TAG+"connect");
+        if(socket == null) {
+            return;
+        }
+        if(socket.connected()) {
+            return;
+        }
+        socket.on(Socket.EVENT_CONNECT, new Emitter.Listener() {
+
+            @Override
+            public void call(Object... args) {
+                //LogTool.e(TAG+"connect:EVENT_CONNECT");
+            }
+
+        }).on(Socket.EVENT_DISCONNECT, new Emitter.Listener() {
+
+            @Override
+            public void call(Object... args) {
+                //LogTool.e(TAG+"connect:EVENT_DISCONNECT");
+            }
+
+        }).on("notification", new Emitter.Listener() {
+            @Override
+            public void call(Object... args) {
+                //Message msg = new Message();
+                Message msg = mHanler.obtainMessage();
+                msg.what = 2;
+                msg.obj = args[0];
+                msg.sendToTarget();
+                LogTool.e(TAG+" notification call");
+            }
+        });;
+        socket.connect();
     }
 
+    private void disconnected() {
+        if((socket != null)&&socket.connected()) {
+            socket.disconnect();
+        }
+
+    }
+    private Handler mHanler = new Handler() {
+        @Override
+        public void handleMessage(Message msg) {
+            if (msg.what == 1) {
+            } else if (msg.what == 2) {
+                JSONObject data = (JSONObject)msg.obj;
+                if(data != null) {
+                    parseMarketData(data);
+                }
+
+            }else if(msg.what==3){
+                connect();
+            }
+            super.handleMessage(msg);
+        }
+
+    };
+    int time = 0;
+    private void parseMarketData(JSONObject obj) {
+        time++;
+        if(time%5 != 0) { //降低刷新频率
+            return;
+        }
+        //LogTool.e(TAG+"parseMarketData");
+        ArrayList<MarketDataItem> mDataList = MarketDataItem.getItemList(obj);
+        if((mDataList == null)||(mDataList.size() <=0)) {
+            return;
+        }
+        for(MarketDataItem item:mDataList) {
+            if(item.label.equals(dataItem.label)) {
+                refreshHeadView(item,false);
+            }
+        }
+
+    }
     private void refreshHeadView(MarketDataItem dataItem, boolean isInit) {
+        LogTool.e(TAG+" refreshHeadView:"+dataItem.newprice);
         calculateAmp(dataItem);
         mTvPrice.setText(dataItem.newprice + "");
         mTvAmp.setText(ampDelta + " " + ampPercent);
@@ -430,6 +530,13 @@ public class KPointActivity extends BaseActivity implements RadioGroup.OnChecked
 
     @Override
     public void onDestroy() {
+        if(socket != null) {
+            if(socket.connected()) {
+                socket.disconnect();
+                socket.close();
+            }
+            socket = null;
+        }
         super.onDestroy();
         //android.os.Process.killProcess(android.os.Process.myPid());
     }

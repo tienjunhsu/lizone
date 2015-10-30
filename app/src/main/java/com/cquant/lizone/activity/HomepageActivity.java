@@ -26,6 +26,7 @@ import com.cquant.lizone.frag.HomepageViewFragment;
 import com.cquant.lizone.net.WebHelper;
 import com.cquant.lizone.tool.JsnTool;
 import com.cquant.lizone.tool.LogTool;
+import com.cquant.lizone.tool.StrTool;
 import com.cquant.lizone.util.Utils;
 import com.nostra13.universalimageloader.core.ImageLoader;
 
@@ -125,7 +126,7 @@ public class HomepageActivity extends BaseActivity {
         if(headerData.dingys == 1) {
             mBtnSub.setText("取消订阅");
         } else {
-            mBtnFollow.setText("+订阅");
+            mBtnSub.setText("+订阅");
         }
     }
 
@@ -185,9 +186,79 @@ public class HomepageActivity extends BaseActivity {
 
         @Override
         public void onClick(View view) {
-
+            subOrCancleSub();
         }
     };
+
+    private void subOrCancleSub() {
+        mWebhelper.doLoadGet(Utils.BASE_URL+"Dingyue/sub_id/"+user_id, null, new WebHelper.OnWebFinished() {
+
+            @Override
+            public void onWebFinished(boolean success, String msg) {
+                LogTool.e(" subOrCancleSub :msg="+msg+",id="+user_id);
+                if (success) {
+                    JSONObject response = JsnTool.getObject(msg);
+                    if((response != null)) {
+                    if (JsnTool.getInt(response, "status") == 1) {
+                        mWebhelper.cancleRequest();
+                        if (StrTool.areNotEmpty(JsnTool.getString(response, "msg"))) {
+                            popMsg(JsnTool.getString(response, "msg"));
+                        }else {
+                            if (headerData.dingys == 1) {
+                                popMsg("取消订阅成功");
+                            } else {
+                                popMsg("订阅成功");
+                            }
+                        }
+                        if (headerData.dingys == 1) {
+                            headerData.dingys = 0;
+                        } else if (headerData.dingys == 0) {
+                            headerData.dingys = 1;
+                        }
+                        setSubBtnText();
+                    } else {
+                        if (StrTool.areNotEmpty(JsnTool.getString(response, "msg"))) {
+                            popMsg(JsnTool.getString(response, "msg"));
+                        } else {
+                            if (headerData.dingys == 1) {
+                                popMsg("取消订阅失败");
+                            } else {
+                                popMsg("订阅失败");
+                            }
+                        }
+                    }
+                    } else {
+                        if (headerData.dingys == 1) {
+                            popMsg("取消订阅失败");
+                        } else {
+                            popMsg("订阅失败");
+                        }
+                    }
+                } else {
+                    if (headerData.dingys == 1) {
+                        popMsg("取消订阅失败");
+                    } else {
+                        popMsg("订阅失败");
+                    }
+                }
+            }
+        });
+    }
+
+    private void setSubBtnText() {
+        if(headerData.dingys == 1) {
+            mBtnSub.setText("取消订阅");
+        } else {
+            mBtnSub.setText("+订阅");
+        }
+    }
+    private void setFollowBtnText() {
+        if(headerData.gend ==1) {
+            mBtnFollow.setText("取消跟单");
+        } else {
+            mBtnFollow.setText("跟单");
+        }
+    }
     private View.OnClickListener followBtnOnClickListener=new View.OnClickListener(){
 
         @Override

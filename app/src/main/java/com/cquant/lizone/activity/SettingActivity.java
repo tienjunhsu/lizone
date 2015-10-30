@@ -1,6 +1,9 @@
 package com.cquant.lizone.activity;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
@@ -82,7 +85,32 @@ public class SettingActivity extends BaseActivity {
     }
 
     private void callService() {
-        LogTool.d(TAG+"callService");
+        LogTool.d(TAG + "callService");
+        new AlertDialog.Builder(this)
+                .setTitle("拨打热线")
+                .setMessage("立即拨打客服热线021-61119485")
+                .setNegativeButton("取消",new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        //dissmiss
+                    }
+                })
+                .setPositiveButton(R.string.ok_msg,new DialogInterface.OnClickListener(){
+
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        startCall();
+                    }
+                })
+                .setCancelable(false)
+                .create()
+                .show();
+    }
+
+    private void startCall() {
+        Intent intent = new Intent(Intent.ACTION_CALL);
+        intent.setData(Uri.parse("tel:021-6119485"));
+        startActivity(intent);
     }
 
     private void openFirmAccount() {

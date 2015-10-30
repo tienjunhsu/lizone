@@ -60,7 +60,7 @@ public class BaseActivity extends AppCompatActivity {
         LoginWatcher.unregister(this);
     }
 
-    protected boolean isNetAvailable() {
+    public boolean isNetAvailable() {
         ConnectivityManager connManager = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo networkInfo = connManager.getActiveNetworkInfo();
         if ((networkInfo != null) && networkInfo.isAvailable()) {

@@ -41,7 +41,7 @@
                     android:id="@+id/name"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="Garfield"
+                    android:text="User"
                     android:gravity="left|center_vertical"
                     android:textColor="@color/white_two"
                     android:textSize="20sp"
@@ -52,6 +52,7 @@
                     android:layout_height="wrap_content"
                     android:text="简介:任何时候都不要跟趋势做对"
                     android:gravity="left|center_vertical"
+                    android:singleLine="true"
                     android:textColor="@color/white_two"
                     android:textSize="18sp"
                     />

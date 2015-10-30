@@ -46,7 +46,7 @@ public class OpenFirmAccountActivity extends BaseActivity {
         CookieSyncManager.createInstance(this);
         CookieManager cookieManager = CookieManager.getInstance();
         cookieManager.setCookie(url, "PHPSESSID=" + GlobalVar.SESSIONID);
-
+        CookieSyncManager.getInstance().sync();
     }
     private void initWebView() {
         WebSettings wSettings = webview.getSettings();

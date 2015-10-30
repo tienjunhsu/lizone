@@ -43,12 +43,14 @@ public class OpenPositionActivity extends BaseActivity  {
         if(GlobalVar.SESSIONID == null) {
             return;
         }
-       if(CookieSyncManager.getInstance() == null) {
+       //if(CookieSyncManager.getInstance() == null) {
            CookieSyncManager.createInstance(this);
-       }
+      // } else {
+
+      // }
         CookieManager cookieManager = CookieManager.getInstance();
         cookieManager.setCookie(url, "PHPSESSID=" + GlobalVar.SESSIONID);
-        CookieSyncManager.getInstance().sync();
+        //CookieSyncManager.getInstance().sync();
 
     }
     private void initWebView() {
@@ -74,7 +76,7 @@ public class OpenPositionActivity extends BaseActivity  {
                 /*if (url.contains("login")) {
                     startLogin();
                 }*/
-                return true;
+                return false;
             }
             public void onPageFinished(WebView view, String url) {
                 super.onPageFinished(view, url);
