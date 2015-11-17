@@ -9,6 +9,9 @@
     <View
         android:layout_width="match_parent"
         android:layout_height="2dp"/>
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
     <com.cquant.lizone.view.MyScrollview
         android:id="@+id/scrollView"
         android:layout_width="match_parent"
@@ -388,4 +391,35 @@
                 android:text="To be,or not to be:that is the question;whether it's noblber in the mind to suffer;the slings and arrows of out" />
         </LinearLayout>
     </com.cquant.lizone.view.MyScrollview>
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:background="@color/style_color_primary"
+            android:layout_gravity="bottom">
+
+            <TextView
+                android:id="@+id/tv_message"
+                android:layout_width="120dp"
+                android:layout_marginLeft="30dp"
+                android:text="23条观点"
+                android:textSize="16sp"
+                android:textColor="@color/white"
+                android:gravity="center_vertical|left"
+                android:clickable="true"
+                android:onClick="onXmlBtClick"
+                android:layout_height="match_parent" />
+            <TextView
+                android:id="@+id/tv_trade"
+                android:layout_width="120dp"
+                android:layout_marginRight="30dp"
+                android:text="145条交易"
+                android:textSize="16sp"
+                android:textColor="@color/white"
+                android:gravity="center_vertical|right"
+                android:layout_alignParentRight="true"
+                android:clickable="true"
+                android:onClick="onXmlBtClick"
+                android:layout_height="match_parent" />
+        </RelativeLayout>
+    </FrameLayout>
 </LinearLayout>

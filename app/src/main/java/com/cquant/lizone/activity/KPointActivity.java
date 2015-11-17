@@ -32,7 +32,9 @@ import android.widget.TextView;
 import com.cquant.lizone.R;
 import com.cquant.lizone.bean.MarketDataItem;
 import com.cquant.lizone.frag.NewsFragment;
+import com.cquant.lizone.net.WebHelper;
 import com.cquant.lizone.tool.DlgTool;
+import com.cquant.lizone.tool.JsnTool;
 import com.cquant.lizone.tool.LogTool;
 import com.cquant.lizone.tool.StrTool;
 import com.cquant.lizone.util.Utils;
@@ -99,6 +101,8 @@ public class KPointActivity extends BaseActivity implements RadioGroup.OnChecked
     private Socket socket;
     private String socket_url = "http://1-yj.com:3000";
 
+    private WebHelper mWebHelper;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -152,6 +156,8 @@ public class KPointActivity extends BaseActivity implements RadioGroup.OnChecked
         }
 
         refreshHeadView(dataItem, true);
+
+        mWebHelper = new WebHelper(this);
     }
 
     @Override
@@ -167,6 +173,7 @@ public class KPointActivity extends BaseActivity implements RadioGroup.OnChecked
         //disconnected();//比较耗时，测试一下
         LogTool.d(TAG + ":onPause");
         disconnected();
+        mWebHelper.cancleRequest();
     }
     private void connect() {
         LogTool.e(TAG+"connect");
@@ -537,10 +544,28 @@ public class KPointActivity extends BaseActivity implements RadioGroup.OnChecked
             }
             socket = null;
         }
+        mWebHelper = null;
         super.onDestroy();
         //android.os.Process.killProcess(android.os.Process.myPid());
     }
 
+    private int viewNum = 0;
+    private int tradeNum = 0;
+    private void getViewNumAndTradeNum() {
+        mWebHelper.doLoadGet(Utils.BASE_URL + "GuandSum/ex_id/" + dataItem.id, null, new WebHelper.OnWebFinished() {
+            @Override
+            public void onWebFinished(boolean success, String msg) {
+                if(success) {
+                    JSONObject obj = JsnTool.getObject(msg);
+                    if((obj != null)&&(JsnTool.getInt(obj,"status")==1)) {
+                        JSONObject data = JsnTool.getObject(obj,"data");
+                        viewNum = Integer.parseInt(JsnTool.getString(data,"GDcount"));
+                        tradeNum = Integer.parseInt(JsnTool.getString(data,"JYcount"));
+                    }
+                }
+            }
+        });
+    }
     private RadioGroup.OnCheckedChangeListener onCycleChangeListener = new RadioGroup.OnCheckedChangeListener() {
 
         @Override
