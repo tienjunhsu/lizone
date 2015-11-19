@@ -157,6 +157,9 @@ public class MyPointActivity extends BaseActivity {
         mTvNum.setText(num + "");
     }
     private void refreshPoint(){
+        if(GlobalVar.sAccountInf == null) {
+            return;
+        }
         mTvPoint.setText(GlobalVar.sAccountInf.integral);
     }
 

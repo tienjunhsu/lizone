@@ -76,6 +76,7 @@ public class MarketFragment extends BaseFragment {
     private OptListView mOptListView;
     private Map<String,MarketDataItem> mOptDataList = new HashMap<String,MarketDataItem>();
     private ArrayList<String> mOptId = new ArrayList<String>();
+	private ArrayList<String> mOptNames = new ArrayList<String>();
     //
     private WebHelper mWebhelper;
 
@@ -143,7 +144,8 @@ public class MarketFragment extends BaseFragment {
         mFixVarAmp03 = (TextView)header.findViewById(R.id.amp_conc);
 
         mOptListView = (OptListView)header.findViewById(R.id.opt_list);
-        mOptListView.setSize(mOptId.size());
+        mOptListView.setOptName(null);
+        //mOptListView.setOptName(mOptNames);
 
         return header;
     }
@@ -311,6 +313,7 @@ public class MarketFragment extends BaseFragment {
 
     private void parseOptList(String msg) {
         mOptId.clear();
+		mOptNames.clear();//hsu
         JSONObject json = JsnTool.getObject(msg);
         try {
             if((json != null)&&(json.getInt("status") ==1)&&(json.getJSONArray("data")!=null)) {
@@ -318,6 +321,7 @@ public class MarketFragment extends BaseFragment {
                 for(int i=0;i<ary.length();i++) {
                     JSONObject obj = ary.getJSONObject(i);
                     mOptId.add(JsnTool.getString(obj,"quoteid"));
+					mOptNames.add(JsnTool.getString(obj,"name"));//hsu
                 }
             } else {
                 parseOptListFromCache();

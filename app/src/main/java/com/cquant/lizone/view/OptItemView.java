@@ -67,6 +67,16 @@ public class OptItemView extends LinearLayout {
         }
 
     }
+	//begin add by hsu
+	public void setItemName(String name) {
+        mTvName.setText(name);
+        mTvPrice.setText("--");
+        mTvAmp.setText("--");
+        mTvPrice.setTextColor(white);
+        mTvAmp.setTextColor(white);
+
+    }
+	//end add by hsu
     public void setAddSymbol() {
         mTvName.setText("");
         mTvPrice.setText("十");

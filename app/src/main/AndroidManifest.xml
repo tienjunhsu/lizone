@@ -101,6 +101,10 @@
         <service android:name=".service.UpdateConfigService" />
 
         <meta-data android:name="QBSDKAppKey" android:value="1pwEXxdWSzlp5JEiEcxwE/DS"/>
+
+        <meta-data android:value="564bd6f2e0f55a8c8000b66b" android:name="UMENG_APPKEY"></meta-data>
+        <meta-data android:value="ME" android:name="UMENG_CHANNEL"/>
+
     </application>
 
 </manifest>
