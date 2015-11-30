@@ -363,7 +363,7 @@ public class MainActivity extends BaseActivity implements OnTabChangeListener {
         }
     }
     @Override
-    protected void onResume() {
+    public void onResume() {
         super.onResume();
         refreshLogo();
     }

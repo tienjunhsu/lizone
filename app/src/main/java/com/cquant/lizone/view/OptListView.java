@@ -10,6 +10,8 @@ import com.cquant.lizone.bean.MarketDataItem;
 import com.cquant.lizone.tool.LogTool;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Created by asus on 2015/10/26.
@@ -18,7 +20,9 @@ public class OptListView extends LinearLayout {
 
     private static final String TAG = "OptListView";
 
-	private ArrayList<MarketDataItem> mOptList;//hsu
+	//private ArrayList<MarketDataItem> mOptList;//hsu
+	private Map<String,MarketDataItem> mOptList = new HashMap<String,MarketDataItem>();
+    private ArrayList<String> mOptId = new ArrayList<String>();
 	private int optSize = 0;
 
     public OptListView(Context context) {
@@ -35,6 +39,14 @@ public class OptListView extends LinearLayout {
     }
     private void initView(Context context) {
         View.inflate(context, R.layout.opt_list_view, this);
+        /*LinearLayout child = (LinearLayout)getChildAt(0);
+        for(int i=0;i<=1;i++) {
+            LinearLayout ly_child =(LinearLayout) child.getChildAt(i);
+            for(int j=0;j<=2;j++) {
+                OptItemView item = (OptItemView)ly_child.getChildAt(j);
+                item.setOnClickListener(mAddOptListener);
+            }
+        }*/
     }
     public void setSize(int len) {
         LogTool.e(TAG+"setSize len="+len+",count ="+getChildCount()+",count2="+((LinearLayout)getChildAt(0)).getChildCount());
@@ -55,6 +67,54 @@ public class OptListView extends LinearLayout {
     }
 
     //begin add by hsu
+	public void setOptInitData(ArrayList<String> ids,Map<String,MarketDataItem> list) {
+        LogTool.e("setOptInitData");
+		int len = 0;
+	    if(list != null) {
+            len = list.size();
+			mOptId = ids;
+			mOptList = list;
+		}
+        optSize = len;
+        LinearLayout child = (LinearLayout)getChildAt(0);
+	    if(len < 3) {
+           child.getChildAt(1).setVisibility(GONE);
+           LinearLayout layOne = (LinearLayout)child.getChildAt(0);
+           for(int i=2;i>len;i--) {
+               layOne.getChildAt(i).setVisibility(INVISIBLE);
+           }
+        } else {
+            LinearLayout layTwo = (LinearLayout)child.getChildAt(1);
+            for(int i=5;i>len;i--) {
+                layTwo.getChildAt(i-3).setVisibility(INVISIBLE);
+            }
+        }
+
+		for(int i=0;i <= optSize;i++) {
+            if(i==optSize ) {
+                int k = i;
+                if(i >=3 ) {
+                    k = i % 3;
+                    OptItemView item = (OptItemView)((LinearLayout)child.getChildAt(1)).getChildAt(k);
+					item.setAddSymbol();
+                } else {
+                    OptItemView item = (OptItemView)((LinearLayout)child.getChildAt(0)).getChildAt(k);
+					item.setAddSymbol();
+				}
+            } else if(i < 3) {
+                OptItemView item = (OptItemView)((LinearLayout)child.getChildAt(0)).getChildAt(i);
+				//item.setItemName(names.get(i));
+				item.setMarketItem(list.get(mOptId.get(i)));
+			} else {
+				int j = i %3;
+                OptItemView item = (OptItemView)((LinearLayout)child.getChildAt(1)).getChildAt(j);
+				//item.setItemName(names.get(i));
+				item.setMarketItem(list.get(mOptId.get(i)));
+			}
+		}
+	  
+	}
+
 	public void setOptName(ArrayList<String> names) {
 		int len = 0;
 	    if(names != null) {
@@ -80,8 +140,12 @@ public class OptListView extends LinearLayout {
                 int k = i;
                 if(i >=3 ) {
                     k = i % 3;
-                    ((LinearLayout)child.getChildAt(0)).getChildAt(k).setOnClickListener(mAddOptListener);
-                }
+                    OptItemView item = (OptItemView)((LinearLayout)child.getChildAt(1)).getChildAt(k);
+					item.setAddSymbol();
+                } else {
+                    OptItemView item = (OptItemView)((LinearLayout)child.getChildAt(0)).getChildAt(k);
+					item.setAddSymbol();
+				}
             } else if(i < 3) {
                 OptItemView item = (OptItemView)((LinearLayout)child.getChildAt(0)).getChildAt(i);
 				item.setItemName(names.get(i));
@@ -94,7 +158,7 @@ public class OptListView extends LinearLayout {
 	  
 	}
 
-	public void setOptData(ArrayList<MarketDataItem> mOptList) {
+	public void setOptData(Map<String,MarketDataItem> list) {
 		if(optSize <1) {
 			return;
 		}
@@ -102,20 +166,14 @@ public class OptListView extends LinearLayout {
         for(int i=0;i < mOptList.size();i++) {
             if(i < 3) {
                 OptItemView item = (OptItemView)((LinearLayout)child.getChildAt(0)).getChildAt(i);
-				item.setMarketItem(mOptList.get(i));
+				item.setMarketItem(list.get(mOptId.get(i)));
 			} else {
 				int j = i %3;
                 OptItemView item = (OptItemView)((LinearLayout)child.getChildAt(1)).getChildAt(j);
-				item.setMarketItem(mOptList.get(i));
+				item.setMarketItem(list.get(mOptId.get(i)));
 			}
 		}
 
 	}
-    private OnClickListener mAddOptListener = new OnClickListener() {
-        @Override
-        public void onClick(View view) {
-            LogTool.d(TAG+",mAddOptListener");
-        }
-    };
 	//end add by hsu
 }

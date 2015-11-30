@@ -14,6 +14,7 @@ import com.cquant.lizone.R;
 import com.cquant.lizone.tool.AppTool;
 import com.cquant.lizone.tool.LogTool;
 import com.cquant.lizone.util.Utils;
+import com.umeng.update.UmengUpdateAgent;
 
 /**
  * Created by asus on 2015/10/23.
@@ -70,6 +71,7 @@ public class SettingActivity extends BaseActivity {
 
     private void checkVersion() {
         LogTool.d(TAG+"checkVersion");
+        UmengUpdateAgent.forceUpdate(this);//友盟更新
     }
 
     private void openAboutUs() {

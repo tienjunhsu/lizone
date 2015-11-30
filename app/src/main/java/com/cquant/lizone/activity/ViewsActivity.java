@@ -50,11 +50,14 @@ public class ViewsActivity extends BaseActivity {
     private int longViewsNum =0;//看多人数
     private int shortViewsNum= 0;//看空人数
 
+    private int type;//0,交易观点；1，交易
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         label = getIntent().getStringExtra("label");
+        type = getIntent().getIntExtra("type",0);
 
         setContentView(R.layout.views_activity);
 
@@ -96,20 +99,41 @@ public class ViewsActivity extends BaseActivity {
         mWebHelper.doLoadGet(Utils.BASE_URL + "duokong_sum/label/" + label, null, new WebHelper.OnWebFinished() {
             @Override
             public void onWebFinished(boolean success, String msg) {
-                if(success) {
+                if (success) {
                     JSONObject obj = JsnTool.getObject(msg);
                     try {
-                        if((obj != null)&&(obj.getInt("status")==1)) {
+                        if ((obj != null) && (obj.getInt("status") == 1)) {
                             longViewsNum = Integer.parseInt(obj.getJSONObject("data").getString("kanduo"));
                             shortViewsNum = Integer.parseInt(obj.getJSONObject("data").getString("kankong"));
                         }
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
+                    mWebHelper.cancleRequest();
                 }
             }
         });
     }
+
+    private void addOrDelFocus(String uid) {
+        mWebHelper.doLoadGet(Utils.BASE_URL + "add_guanzhu/uid/" + uid, null, new WebHelper.OnWebFinished() {
+            @Override
+            public void onWebFinished(boolean success, String msg) {
+                if (success) {
+                    JSONObject obj = JsnTool.getObject(msg);
+                    try {
+                        if ((obj != null) && (obj.getInt("status") == 1)) {
+                           //Toast
+                        }
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                    mWebHelper.cancleRequest();
+                }
+            }
+        });
+    }
+
     public void onXmlBtClick(View v) {
 
     }

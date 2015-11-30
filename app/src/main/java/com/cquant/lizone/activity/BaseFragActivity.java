@@ -6,6 +6,7 @@ import android.util.TypedValue;
 import android.view.View;
 
 import com.cquant.lizone.R;
+import com.umeng.analytics.MobclickAgent;
 
 /**
  * Created by PC on 2015/8/24.
@@ -33,4 +34,15 @@ public class BaseFragActivity extends FragmentActivity {
     protected  void initToolBar() {
 
     };
+    @Override
+    public void onResume() {
+        super.onResume();
+        MobclickAgent.onResume(this);
+    }
+    @Override
+    public void onPause() {
+        super.onPause();
+        MobclickAgent.onPause(this);
+    }
+
 }

@@ -1,8 +1,23 @@
 apply plugin: 'com.android.application'
 
 android {
+    lintOptions{
+        abortOnError false
+    }
+}
+
+android {
     compileSdkVersion 22
     buildToolsVersion "22.0.1"
+
+    signingConfigs {
+        myConfig{
+            storeFile file("lizone.keystore")
+            storePassword "cquant"
+            keyAlias "lizone.keystore"
+            keyPassword "cquant"
+        }
+    }
 
     defaultConfig {
         applicationId "com.cquant.lizone"
@@ -14,7 +29,16 @@ android {
     buildTypes {
         release {
             minifyEnabled false
+            signingConfig signingConfigs.myConfig
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+        debug {
+           signingConfig signingConfigs.myConfig
+       }
+    }
+    productFlavors {
+        //product name must start with a char,such as c100,c101,c102
+       cqq{
         }
     }
 }
@@ -27,8 +51,18 @@ dependencies {
     compile 'com.android.support:appcompat-v7:22.2.0'
     compile 'com.android.support:design:22.2.0'
     compile 'in.srain.cube:ultra-ptr:1.0.10'
-    compile 'com.google.android.gms:play-services:7.5.0'
     compile 'com.android.support:recyclerview-v7:22.2.+'
     compile 'io.socket:socket.io-client:0.6.1'
     compile files('libs/tbs_sdk_v1.4.1.1085_25433_obfs_20150917_114640.jar')
+    compile files('libs/umeng-analytics-v5.6.1.jar')
+    compile files('libs/umeng-update-v2.6.0.1.jar')
 }
+/*android.applicationVariants.all{variant->
+    variant.processManifest.doLast{
+        def manifestFile = "${buildDir}/intermediates/manifests/${variant.dirName}/AndroidManifest.xml"
+        def updatedContent = new File(manifestFile).getText('UTF-8').replaceAll("CHANNEL_VALUE", "${variant.productFlavors[0].name}")
+        new File(manifestFile).write(updatedContent, 'UTF-8')
+
+        variant.processResources.manifestFile = file("${buildDir}/intermediates/manifests/${variant.dirName}/AndroidManifest.xml")
+    }
+}*/

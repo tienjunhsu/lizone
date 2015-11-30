@@ -10,6 +10,7 @@ import com.cquant.lizone.R;
 import com.cquant.lizone.service.UpdateConfigService;
 import com.cquant.lizone.tool.LogTool;
 import com.tencent.smtt.sdk.QbSdk;
+import com.umeng.update.UmengUpdateAgent;
 
 /**
  * Created by PC on 2015/8/24.
@@ -32,6 +33,7 @@ public class SplashActivity extends BaseActivity implements Animation.AnimationL
             QbSdk.preInit(this, myCallback);
         }
         startService(new Intent(this,UpdateConfigService.class));
+        UmengUpdateAgent.update(this); //友盟自动更新
     }
     private QbSdk.PreInitCallback myCallback=new QbSdk.PreInitCallback() {
 

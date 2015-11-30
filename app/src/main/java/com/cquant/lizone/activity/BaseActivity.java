@@ -12,6 +12,7 @@ import android.widget.Toast;
 
 import com.cquant.lizone.R;
 import com.cquant.lizone.net.LoginWatcher;
+import com.umeng.analytics.MobclickAgent;
 
 /**
  * Created by PC on 2015/8/24.
@@ -58,6 +59,16 @@ public class BaseActivity extends AppCompatActivity {
     protected void onStop() {
         super.onStop();
         LoginWatcher.unregister(this);
+    }
+    @Override
+    public void onResume() {
+        super.onResume();
+        MobclickAgent.onResume(this);
+    }
+    @Override
+    public void onPause() {
+        super.onPause();
+        MobclickAgent.onPause(this);
     }
 
     public boolean isNetAvailable() {

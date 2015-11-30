@@ -4,6 +4,7 @@ import android.os.Parcel;
 import android.os.Parcelable;
 
 import com.cquant.lizone.tool.JsnTool;
+import com.cquant.lizone.tool.StrTool;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -20,16 +21,16 @@ public class MarketDataItem implements Parcelable {
     //private static final long serialVersionUID = -7060210544600464481L;
 
     public int id;
-    public double  open;
-    public String excode;
-    public double sell;
-    public double buy;
+    public double  open =0;
+    public String excode ="";
+    public double sell = 0;
+    public double buy = 0;
     public String name;
-    public double newprice;
+    public double newprice = 0;
     public String label;
-    public double high;
-    public double low;
-    public double close;
+    public double high = 0;
+    public double low = 0;
+    public double close = 0;
 
     public MarketDataItem(int id,double open,String excode,double sell,double buy,String name,double newprice,String label,double high,double low,double close) {
         this.id=id;
@@ -45,6 +46,13 @@ public class MarketDataItem implements Parcelable {
         this.close = close;
 
     }
+
+	public MarketDataItem(String id,String name,String label) { //简化构造函数，用于自选，把id、label和name以外的东西全部设置为0
+        this.id= StrTool.getInt(id);
+        this.name = name;
+        this.label = label;
+	}
+
     public static MarketDataItem getItem(JSONObject obj) {
         int id = JsnTool.getInt(obj, "id");
         double  open = JsnTool.getDouble(obj, "open");

@@ -126,13 +126,13 @@ public class PersonalActivity extends BaseActivity {
         mTvRisk.setText("账户风险率:"+mOverView.risk_rate);
     }
     @Override
-    protected void onResume() {
+    public void onResume() {
         super.onResume();
         getOverView();
     }
 
     @Override
-    protected void onPause() {
+    public void onPause() {
         super.onPause();
         mWebhelper.cancleRequest();
     }

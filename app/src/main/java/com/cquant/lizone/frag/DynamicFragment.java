@@ -1,5 +1,6 @@
 package com.cquant.lizone.frag;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.text.TextUtils;
@@ -16,6 +17,8 @@ import android.support.v7.widget.RecyclerView;
 
 import com.cquant.lizone.LizoneApp;
 import com.cquant.lizone.R;
+import com.cquant.lizone.activity.LoginActivity;
+import com.cquant.lizone.activity.OpenPositionActivity;
 import com.cquant.lizone.bean.DynamicItem;
 import com.cquant.lizone.net.WebHelper;
 import com.cquant.lizone.tool.ACache;
@@ -28,12 +31,17 @@ import com.nostra13.universalimageloader.core.ImageLoader;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.regex.Pattern;
+import java.util.regex.Matcher;
 
 /**
  * Created by PC on 2015/9/7.
  */
 public class DynamicFragment extends BaseFragment {
     private static final String KEY_CONTENT = "DynamicFragment:Content";
+
+	private static final String REGEX = "#.+#$";//匹配以#中新油100手#这样介绍的
+	private Pattern mPattern = Pattern.compile(REGEX);
 
     public static DynamicFragment newInstance(String content) {
         DynamicFragment fragment = new DynamicFragment();
@@ -168,15 +176,40 @@ public class DynamicFragment extends BaseFragment {
         @Override
         public void onBindViewHolder(RecyclerView.ViewHolder viewHolder, int i) {
             DynamicViewHolder holder = (DynamicViewHolder) viewHolder;
-            holder.mLyPick.setVisibility(View.GONE);
             holder.mTvName.setText(mDynamicList.get(i).name);
             holder.mTvTime.setText(mDynamicList.get(i).time);
             holder.mTvText.setText(mDynamicList.get(i).text);
             if(!TextUtils.isEmpty(mDynamicList.get(i).photo_url)) {
                 ImageLoader.getInstance().displayImage(mDynamicList.get(i).photo_url,holder.mPhoto);
             }
+
+			Matcher matcher = mPattern.matcher(mDynamicList.get(i).text);
+			if(matcher.find()) {
+                holder.mLyPick.setVisibility(View.VISIBLE);
+                holder.mTvPickText.setText(matcher.group());
+			} else {
+                holder.mLyPick.setVisibility(View.GONE);
+			}
+            holder.mBtnOrder.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    if(LizoneApp.mCanLogin ) {
+                        openPosition();
+                    } else {
+                        gotoLogin();
+                    }
+                }
+            });
+
         }
 
+        private void openPosition() {
+            Intent intent = new Intent(getActivity(), OpenPositionActivity.class);
+            getActivity().startActivity(intent);
+        }
+        private void gotoLogin() {
+            getActivity().startActivity(new Intent(getActivity(),LoginActivity.class));
+        }
         @Override
         public int getItemCount() {
             return mDynamicList.size();

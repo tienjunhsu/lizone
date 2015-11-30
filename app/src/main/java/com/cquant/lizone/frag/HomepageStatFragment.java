@@ -30,7 +30,7 @@ public class HomepageStatFragment extends BaseFragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View root = inflater.inflate(R.layout.homepage_stat_frag, container, false);
         webview = (WebView)root.findViewById(R.id.webview);
-        url = Utils.BASE_URL +"/UserHome/uid/"+((HomepageActivity)getActivity()).getUserId();
+        url = Utils.BASE_URL +"UserHome/uid/"+((HomepageActivity)getActivity()).getUserId();
         return root;
     }
     @Override

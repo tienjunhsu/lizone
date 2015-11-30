@@ -88,13 +88,13 @@ public class MyPointActivity extends BaseActivity {
         refreshPoint();
     }
     @Override
-    protected void onResume() {
+    public void onResume() {
         super.onResume();
         getGifts();
     }
 
     @Override
-    protected void onPause() {
+    public void onPause() {
         super.onPause();
         mWebhelper.cancleRequest();
     }

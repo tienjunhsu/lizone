@@ -13,10 +13,10 @@ import java.util.ArrayList;
  */
 public class OptItem {
 
-    public String id;
+    public String id="";
     public String name;
-    public String section;
-    public String row;
+    public String section="";
+    public String row="";
     public String quoteid;
     public String label;
 
@@ -28,6 +28,12 @@ public class OptItem {
         this.quoteid = quoteid;
         this.label = label;
     }
+	public OptItem(String name,String quoteid,String label) {
+		this.name=name;
+		this.quoteid = quoteid;
+        this.label = label;
+
+	}
     public static OptItem getItem(JSONObject obj) {
         String id = JsnTool.getString(obj, "id");
         String name = JsnTool.getString(obj, "name");

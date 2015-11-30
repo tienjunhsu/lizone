@@ -170,7 +170,7 @@ public class LoginActivity extends BaseActivity implements View.OnFocusChangeLis
         super.onStop();
     }
     @Override
-    protected void onPause() {
+    public void onPause() {
         super.onPause();
         mWebhelper.cancleRequest();
     }

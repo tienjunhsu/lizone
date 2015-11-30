@@ -167,7 +167,7 @@ public class RegisterActivity extends BaseActivity {
     }
 
     @Override
-    protected void onPause() {
+    public void onPause() {
         super.onPause();
         mWebhelper.cancleRequest();
     }
