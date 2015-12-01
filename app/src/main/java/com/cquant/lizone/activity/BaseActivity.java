@@ -19,6 +19,10 @@ import com.umeng.analytics.MobclickAgent;
  */
 public class BaseActivity extends AppCompatActivity {
 
+	public static final int FOLLOW_SETTING_CODE = 1112;
+	public static final int EDIT_OPT_CODE = 1113;
+
+
     public void onXmlBtClick(View v) {
 
     }

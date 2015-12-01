@@ -98,6 +98,10 @@
             android:screenOrientation="portrait" >
         </activity>
         <activity
+            android:name=".activity.FollowSettingActivity"
+            android:screenOrientation="portrait" >
+        </activity>
+        <activity
             android:name=".activity.TestActivity"
             android:screenOrientation="portrait" >
         </activity>

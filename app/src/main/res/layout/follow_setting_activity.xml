@@ -2,29 +2,95 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="#f4f4f4"
     android:orientation="vertical">
 
     <include layout="@layout/toolbar_layout" />
 
     <View
         android:layout_width="match_parent"
-        android:layout_height="2dp"/>
-    <EditText
-        android:id="@+id/number"
+        android:layout_height="2dp" />
+
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:digits="true"
-        android:text="1000"
-        />
-    <ProgressB
-        android:id="@+id/progress"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
+        android:layout_marginLeft="16dp"
+        android:layout_marginRight="16dp"
+        android:layout_marginTop="12dp"
+        android:background="@color/white"
+        android:orientation="vertical">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <ImageView
+                android:id="@+id/photo"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:src="@drawable/default_head" />
+
+            <TextView
+                android:id="@+id/name"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="16dp"
+                android:text="li12345"
+                android:textColor="@color/black" />
+        </LinearLayout>
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:layout_marginTop="12dp">
+
+            <TextView
+                android:id="@+id/tv_setting_title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="设置金额(元) ："
+                android:textColor="@color/black"
+                android:textSize="16sp" />
+
+            <TextView
+                android:id="@+id/tv_available"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/grey_two"
+                android:textSize="16sp"
+                android:text="可用资金：32567"
+                android:layout_alignParentRight="true"
+                />
+        </RelativeLayout>
+
+        <EditText
+            android:id="@+id/number"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:gravity="center"
+            android:background="@color/white"
+            android:textColor="@color/black"
+            android:textSize="20sp"
+            android:digits="true"
+            android:text="1000" />
+
+        <SeekBar
+            android:id="@+id/progress"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            />
+    </LinearLayout>
+
     <Button
         android:id="@+id/submit"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="立即跟单"
-        />
+        android:layout_marginLeft="16dp"
+        android:layout_marginRight="16dp"
+        android:text="立即跟单" />
 
 </LinearLayout>

@@ -1,5 +1,6 @@
 package com.cquant.lizone.activity;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.TabLayout;
@@ -158,6 +159,9 @@ public class HomepageActivity extends BaseActivity {
         mBtnSub.setOnClickListener(subBtnOnClickListener);
         mBtnFollow.setOnClickListener(followBtnOnClickListener);
 
+        setSubBtnText();
+        setFollowBtnText();
+
         List<String> titles = new ArrayList<>();
         titles.add("统计");
         titles.add("交易记录");
@@ -263,9 +267,51 @@ public class HomepageActivity extends BaseActivity {
 
         @Override
         public void onClick(View view) {
-
+            if(headerData.gend ==1) {
+                cancleFollow();
+            } else {
+                startFollow();
+            }
         }
     };
+
+    private void startFollow() {
+        Intent intent = new Intent(this,FollowSettingActivity.class);
+        intent.putExtra("uid", user_id);
+        //startActivity(intent);
+        startActivityForResult(intent,FOLLOW_SETTING_CODE);
+    }
+
+
+    private void cancleFollow() {
+        mWebhelper.doLoadGet(Utils.BASE_URL + "Cancel_Gend/gend_id/" + user_id, null, new WebHelper.OnWebFinished() {
+
+            @Override
+            public void onWebFinished(boolean success, String msg) {
+                if (success) {
+                    JSONObject response = JsnTool.getObject(msg);
+                    if ((response != null) && (JsnTool.getInt(response, "status") == 1)) {
+                        mWebhelper.cancleRequest();
+                        headerData.gend = 0;
+                        setFollowBtnText();
+                    } else {
+                        popMsg("取消跟单失败");
+                    }
+                } else {
+                    popMsg("取消跟单失败");
+                }
+            }
+        });
+    }
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if(requestCode == FOLLOW_SETTING_CODE) {
+            if(resultCode == RESULT_OK) {
+                headerData.gend = 1;
+                setFollowBtnText();
+            }
+        }
+    }
     public class FragmentAdapter extends FragmentStatePagerAdapter {
         private List<Fragment> mFragments;
         private List<String> mTitles;

@@ -131,6 +131,7 @@ public class OptItemView extends LinearLayout {
 	private void startEditOptActivity(){
 		Intent intent = new Intent(getContext(),EditOptActivity.class);
 		//intent.putExtras();
-		getContext().startActivity(intent);
+		//getContext().startActivity(intent);
+		getContext().startActivityForResult(intent,BaseActivity.EDIT_OPT_CODE);//hsu
 	}
 }

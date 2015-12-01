@@ -84,7 +84,11 @@ public class ViewsActivity extends BaseActivity {
     }
     @Override
     protected void initToolBar() {
-        toolbar.setTitle("讨论观点");
+		if(type == 0){
+            toolbar.setTitle("讨论观点");
+		} else {
+            toolbar.setTitle("交易");
+		}
         toolbar.setNavigationIcon(R.drawable.ic_back);
         super.initToolBar(toolbar);
         toolbar.setNavigationOnClickListener(new View.OnClickListener() {
