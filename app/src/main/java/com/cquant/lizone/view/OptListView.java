@@ -57,10 +57,19 @@ public class OptListView extends LinearLayout {
             for(int i=2;i>len;i--) {
                 layOne.getChildAt(i).setVisibility(INVISIBLE);
             }
+            if(layOne.getChildAt(len).getVisibility() == INVISIBLE) {
+                layOne.getChildAt(len).setVisibility(VISIBLE);
+            }
         } else {
             LinearLayout layTwo = (LinearLayout)child.getChildAt(1);
             for(int i=5;i>len;i--) {
                 layTwo.getChildAt(i-3).setVisibility(INVISIBLE);
+            }
+            if(layTwo.getChildAt(len-3).getVisibility() == INVISIBLE){
+                layTwo.getChildAt(len-3).setVisibility(VISIBLE);
+            }
+            if(layTwo.getVisibility() == GONE) {
+                layTwo.setVisibility(VISIBLE);
             }
         }
 
@@ -68,7 +77,6 @@ public class OptListView extends LinearLayout {
 
     //begin add by hsu
 	public void setOptInitData(ArrayList<String> ids,Map<String,MarketDataItem> list) {
-        LogTool.e("setOptInitData");
 		int len = 0;
 	    if(list != null) {
             len = list.size();
@@ -76,6 +84,7 @@ public class OptListView extends LinearLayout {
 			mOptList = list;
 		}
         optSize = len;
+        LogTool.e("setOptInitData,len ="+len);
         LinearLayout child = (LinearLayout)getChildAt(0);
 	    if(len < 3) {
            child.getChildAt(1).setVisibility(GONE);

@@ -16,6 +16,7 @@ import com.cquant.lizone.LizoneApp;
 import com.cquant.lizone.R;
 import com.cquant.lizone.activity.BaseActivity;
 import com.cquant.lizone.activity.KPointActivity;
+import com.cquant.lizone.activity.MainActivity;
 import com.cquant.lizone.bean.MarketDataItem;
 import com.cquant.lizone.net.WebHelper;
 import com.cquant.lizone.tool.ACache;
@@ -45,7 +46,7 @@ import io.socket.emitter.Emitter;
 /**
  * Created by asus on 2015/8/30.
  */
-public class MarketFragment extends BaseFragment {
+public class MarketFragment extends BaseFragment implements MainActivity.OnActivityResultObserver {
 
     private static final int GROUP_COUNT = 3;
     private String[] ex_label = new String[] {"XHPEC","TJPME","SZPEC"};
@@ -138,7 +139,7 @@ public class MarketFragment extends BaseFragment {
         listView = (ExpandableListView)root.findViewById(R.id.market_list);
         listView.addHeaderView(getHeaderView());
         //listView.setGroupIndicator(getActivity().getResources().getDrawable(R.drawable.expand_list_indicator));
-        LogTool.e("MarketFragment:onCreateView");//hsu
+        LogTool.e("MarketFragment:onCreateView,size ="+mOptId.size());//hsu
         return root;
     }
     private View getHeaderView() {
@@ -233,6 +234,7 @@ public class MarketFragment extends BaseFragment {
         initView();
         initMarketData();
         getOptList();
+        setActivityResultObserver();
     }
     public void connect() {
         if(socket == null) {
@@ -320,20 +322,21 @@ public class MarketFragment extends BaseFragment {
                     }else {
                         parseOptListFromCache();
                     }
+                    resizeOptListView();//hsu
                 }
             });
 		} else {
              parseOptListFromCache();
-		}
-		if(mOptListView != null) {
-            LogTool.e("MarketFragment:getOptList");
-		    mOptListView.setOptInitData(mOptId,mOptDataList);
-            mOptListView.requestLayout();
-            mOptListView.invalidate();
-            listView.requestLayout();//hsu,2015/11/27
+              resizeOptListView();//hsu
 		}
     }
 
+    private void resizeOptListView() {
+        if(mOptListView != null) {
+            LogTool.e("MarketFragment:getOptList,size ="+mOptId.size());
+            mOptListView.setOptInitData(mOptId, mOptDataList);
+        }
+    }
     private void parseOptList(String msg) {
         mOptId.clear();
 		mOptNames.clear();//hsu
@@ -406,12 +409,14 @@ public class MarketFragment extends BaseFragment {
             mOptListView.setSize(mOptId.size());
         }
     }
+
     @Override
     public void onResume() {
         super.onResume();
         connect();
         expandListView();
         LogTool.d(".......MarketFragment:onResume");
+
     }
 
     private void expandListView() {
@@ -500,6 +505,14 @@ public class MarketFragment extends BaseFragment {
         //getActivity().startActivity(new Intent(getActivity(),EventActivity.class));
     }
 
+    @Override
+    public void onResult() {
+        LogTool.d("MarketFragment:onResult.....");
+    }
+
+    private void setActivityResultObserver() {
+        ((MainActivity) getActivity()).setActivityResultObserver(this);
+    }
     class MarketAdapter extends BaseExpandableListAdapter {
 
         @Override

@@ -112,7 +112,7 @@ public class EditOptActivity extends BaseActivity {
                 mOptStr =mOptStr+","+item.id+"#"+item.label+"#"+item.name;
             }
         }
-        SharedPrefsUtil.putStringValue(LizoneApp.getApp(),SharedPrefsUtil.PREFS_OPT,mOptStr);
+        SharedPrefsUtil.putStringValue(LizoneApp.getApp(), SharedPrefsUtil.PREFS_OPT, mOptStr);
     }
 
     class MarketAdapter extends BaseExpandableListAdapter {
@@ -188,11 +188,11 @@ public class EditOptActivity extends BaseActivity {
                 public void onCheckedChanged(CompoundButton compoundButton, boolean checked) {
                     if (checked) {
                         //set as selected
-                        if (mOptId.size() >= 5) {
-                            compoundButton.setChecked(false);
-                            popMsg("自选最多5个");
-                        } else {
-                            if (!mOptId.contains(item.id + "")) {
+                        if (!mOptId.contains(item.id + "")) {
+                            if (mOptId.size() >= 5) {
+                                compoundButton.setChecked(false);
+                                popMsg("自选最多5个");
+                            } else {
                                 mOptId.add(item.id + "");
                                 mOptDataList.put(item.id + "", item);
                                 saveOptStr();

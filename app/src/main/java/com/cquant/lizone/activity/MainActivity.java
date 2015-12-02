@@ -1,13 +1,11 @@
 package com.cquant.lizone.activity;
 
 import android.content.Intent;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.FragmentTabHost;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
-import android.support.v7.app.ActionBar;
 import android.support.v7.widget.Toolbar;
 import android.view.Gravity;
 import android.view.KeyEvent;
@@ -113,8 +111,8 @@ public class MainActivity extends BaseActivity implements OnTabChangeListener {
         mNavTvView = (TextView)findViewById(R.id.nav_tv_idear_num);
         mNavTvPoint = (TextView)findViewById(R.id.nav_menu_tv_point);
         
-        tabHost=(FragmentTabHost)super.findViewById(android.R.id.tabhost);
-        tabHost.setup(this, super.getSupportFragmentManager()
+        tabHost=(FragmentTabHost)findViewById(android.R.id.tabhost);
+        tabHost.setup(this, getSupportFragmentManager()
                 , R.id.contentLayout);
         tabHost.getTabWidget().setDividerDrawable(null);
         tabHost.setOnTabChangedListener(this);
@@ -378,5 +376,27 @@ public class MainActivity extends BaseActivity implements OnTabChangeListener {
         }
 
         return super.onKeyDown(keyCode, event);
+    }
+
+	@Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        LogTool.d("MainActivity:onActivityResult");
+        if(requestCode == EDIT_OPT_CODE) {
+            if(mActivityResultObserver != null) {
+                mActivityResultObserver.onResult();
+            }
+            if(resultCode == RESULT_OK) {
+                /*android.support.v4.app.FragmentManager manager = getSupportFragmentManager();
+                manager.getFragments().size();*/
+            }
+        }
+    }
+
+    private OnActivityResultObserver mActivityResultObserver;
+    public void setActivityResultObserver(OnActivityResultObserver observer) {
+        mActivityResultObserver = observer;
+    }
+    public interface OnActivityResultObserver{
+        public void onResult();
     }
 }

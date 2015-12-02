@@ -10,8 +10,10 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.cquant.lizone.R;
+import com.cquant.lizone.activity.BaseActivity;
 import com.cquant.lizone.activity.EditOptActivity;
 import com.cquant.lizone.activity.KPointActivity;
+import com.cquant.lizone.activity.MainActivity;
 import com.cquant.lizone.bean.MarketDataItem;
 import com.cquant.lizone.tool.LogTool;
 import com.cquant.lizone.tool.StrTool;
@@ -96,6 +98,9 @@ public class OptItemView extends LinearLayout {
     }
 	//end add by hsu
     public void setAddSymbol() {
+        if(dataItem != null) {
+            clearData();
+        }
         mTvName.setText("");
         mTvPrice.setText("十");
         mTvPrice.setTextColor(getContext().getResources().getColor(R.color.blue_two));
@@ -104,6 +109,11 @@ public class OptItemView extends LinearLayout {
         mTvAmp.setText("添加自选");
         mTvAmp.setTextColor(white);
     }
+
+    public void clearData() {
+        dataItem = null;
+    }
+
     private String formatAmp(double amp,double amppercent) {
         return amp +" "+String.format("%.2f",amppercent)+"%";
     }
@@ -132,6 +142,7 @@ public class OptItemView extends LinearLayout {
 		Intent intent = new Intent(getContext(),EditOptActivity.class);
 		//intent.putExtras();
 		//getContext().startActivity(intent);
-		getContext().startActivityForResult(intent,BaseActivity.EDIT_OPT_CODE);//hsu
+
+        ((MainActivity)getContext()).startActivityForResult(intent, BaseActivity.EDIT_OPT_CODE);//hsu
 	}
 }
