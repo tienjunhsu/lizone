@@ -394,14 +394,14 @@
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="48dp"
-            android:background="@color/style_color_primary"
+            android:background="#1d2228"
             android:layout_gravity="bottom">
 
             <TextView
                 android:id="@+id/tv_message"
                 android:layout_width="120dp"
                 android:layout_marginLeft="30dp"
-                android:text="23条观点"
+                android:text="0条观点"
                 android:textSize="16sp"
                 android:textColor="@color/white"
                 android:gravity="center_vertical|left"
@@ -412,7 +412,7 @@
                 android:id="@+id/tv_trade"
                 android:layout_width="120dp"
                 android:layout_marginRight="30dp"
-                android:text="145条交易"
+                android:text="0条交易"
                 android:textSize="16sp"
                 android:textColor="@color/white"
                 android:gravity="center_vertical|right"

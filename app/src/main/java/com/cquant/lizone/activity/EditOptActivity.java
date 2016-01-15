@@ -14,10 +14,15 @@ import android.widget.TextView;
 import com.cquant.lizone.LizoneApp;
 import com.cquant.lizone.R;
 import com.cquant.lizone.bean.MarketDataItem;
+import com.cquant.lizone.net.WebHelper;
+import com.cquant.lizone.tool.JsnTool;
 import com.cquant.lizone.tool.LogTool;
 import com.cquant.lizone.tool.StrTool;
 import com.cquant.lizone.util.GlobalVar;
 import com.cquant.lizone.util.SharedPrefsUtil;
+import com.cquant.lizone.util.Utils;
+
+import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -47,6 +52,8 @@ public class EditOptActivity extends BaseActivity {
 
 	private Map<String,ArrayList<MarketDataItem>> mGroup = new HashMap<String,ArrayList<MarketDataItem>>();
 
+    private WebHelper mWebhelper = null;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -58,6 +65,8 @@ public class EditOptActivity extends BaseActivity {
         if(GlobalVar.sGroup != null){
             mGroup = GlobalVar.sGroup;
         }
+
+        mWebhelper = new WebHelper(this);
 
         initToolBar();
 
@@ -80,6 +89,28 @@ public class EditOptActivity extends BaseActivity {
         });
     }
 
+    private void updateToNet(int id) {
+        if(!isNetAvailable()) {
+            return;
+        }
+        mWebhelper.doLoadGet(Utils.BASE_URL + "AddOptional/id/" + id, null, new WebHelper.OnWebFinished() {
+            @Override
+            public void onWebFinished(boolean success, String msg) {
+                //LogTool.e("EditOptActivity:updateToNet-->success ="+success+",msg="+msg);
+                if(success) {
+                    JSONObject response = JsnTool.getObject(msg);
+                    if ((response != null) && (JsnTool.getInt(response, "status") == 1)) {
+                        //toast success
+                    } else {
+                        //toast failed
+                    }
+                } else {
+                    //maybe should toast
+                }
+                mWebhelper.cancleRequest();
+            }
+        });
+    }
     private void parseOptListFromCache() {
 
         mOptId.clear();
@@ -87,12 +118,20 @@ public class EditOptActivity extends BaseActivity {
 
         String mOptStr = SharedPrefsUtil.getStringValue(LizoneApp.getApp(), SharedPrefsUtil.PREFS_OPT, null);
         LogTool.e("parseOptListFromCache:mOptStr =" + mOptStr);
-        if(mOptStr == null) {
+        if(StrTool.areEmpty(mOptStr)) {
             return;
         }
         String items[] = mOptStr.split(",");
         for(int i=0;i<items.length;i++) {
             String attrs[] = items[i].split("#");
+
+            //begin add by hsu.2015/12/23
+            //对自选进行校订，防止无效的数据（因为服务器允许无效的数据上传上去）
+            if(StrTool.areEmpty(attrs[1])||attrs[1].equals("null")) {
+                continue;
+            }
+            //end add by hsu
+
             mOptId.add(attrs[0]);
 
             MarketDataItem dataItem = new MarketDataItem(attrs[0],attrs[2],attrs[1]);//attrs[0]是id,attrs[1]是label,attrs[2]是name
@@ -106,11 +145,19 @@ public class EditOptActivity extends BaseActivity {
         for(int i =0;i < mOptId.size();i++) {
             MarketDataItem item = mOptDataList.get(mOptId.get(i));
             LogTool.e("saveOptStr:length ="+mOptId.size()+",item="+item+",id="+mOptId.get(i));
-            if(i ==0) {
+            //begin mod by Tianjunhsu,2015/12/23
+            //防止mOptStr以","开头
+            /*if(i ==0) {
+                mOptStr = item.id+"#"+item.label+"#"+item.name;
+            } else {
+                mOptStr =mOptStr+","+item.id+"#"+item.label+"#"+item.name;
+            }*/
+            if(mOptStr.trim().isEmpty()) {
                 mOptStr = item.id+"#"+item.label+"#"+item.name;
             } else {
                 mOptStr =mOptStr+","+item.id+"#"+item.label+"#"+item.name;
             }
+            //end add by hsu
         }
         SharedPrefsUtil.putStringValue(LizoneApp.getApp(), SharedPrefsUtil.PREFS_OPT, mOptStr);
     }
@@ -195,8 +242,8 @@ public class EditOptActivity extends BaseActivity {
                             } else {
                                 mOptId.add(item.id + "");
                                 mOptDataList.put(item.id + "", item);
+                                updateToNet(item.id);
                                 saveOptStr();
-                                updateToServer(item.id);
                             }
                         }
                     } else {
@@ -204,6 +251,7 @@ public class EditOptActivity extends BaseActivity {
                         if (mOptId.contains(item.id + "")) {
                             mOptId.remove(item.id + "");
                             mOptDataList.remove(item.id + "");
+                            updateToNet(item.id);
                             popMsg("取消选择");
                             saveOptStr();
                         }
@@ -220,9 +268,6 @@ public class EditOptActivity extends BaseActivity {
 			}
 
             return convertView;
-        }
-
-        private void updateToServer(int id) {
         }
 
         @Override

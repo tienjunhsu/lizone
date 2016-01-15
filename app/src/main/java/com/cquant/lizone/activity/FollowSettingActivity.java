@@ -13,6 +13,7 @@ import android.widget.TextView;
 import com.cquant.lizone.R;
 import com.cquant.lizone.net.WebHelper;
 import com.cquant.lizone.tool.JsnTool;
+import com.cquant.lizone.tool.LogTool;
 import com.cquant.lizone.tool.StrTool;
 import com.cquant.lizone.util.Utils;
 import com.nostra13.universalimageloader.core.ImageLoader;
@@ -67,7 +68,7 @@ public class FollowSettingActivity extends BaseActivity {
         progress.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
-                mCaptical = i*mTotalCaptical/100;
+                mCaptical = i * mTotalCaptical / 100;
                 setCapticalText();
             }
 
@@ -85,6 +86,12 @@ public class FollowSettingActivity extends BaseActivity {
         initToolBar();
 
         mWebhelper = new WebHelper(this);
+        if(isNetAvailable()) {
+            getFollowData();
+        } else {
+            popMsg("网络不可用，请检查您的网络设置");
+            finish();
+        }
 
     }
 
@@ -116,17 +123,22 @@ public class FollowSettingActivity extends BaseActivity {
    }
 
    private void setViewData() {
-       mTvName.setText(name);
-       ImageLoader.getInstance().displayImage(photo, mIvPhoto);
+       //mTvName.setText(name);
+       //ImageLoader.getInstance().displayImage(photo, mIvPhoto);//hsu,2015/12/21，暂时把跟单用户信息去掉，这个好像没有任何意义
        mTvAvailable.setText("可用资金："+mAvailableCaptical);
 
    }
 
     private void setFollow() {
+        if(!isNetAvailable()) {
+            popMsg("网络不可用，请检查您的网络设置");
+            return;
+        }
         mWebhelper.doLoadGet(Utils.BASE_URL + "SetGend/gend_id/" + uid + "/money/" + mEditNum.getText().toString().trim(), null, new WebHelper.OnWebFinished() {
 
             @Override
             public void onWebFinished(boolean success, String msg) {
+                LogTool.d("FollowSettingActivity:onWebFinished,success ="+success+",msg="+msg);
                 if(success) {
                     JSONObject response = JsnTool.getObject(msg);
                     if ((response != null) && (JsnTool.getInt(response, "status") == 1)) {
@@ -136,7 +148,12 @@ public class FollowSettingActivity extends BaseActivity {
                         setResult(RESULT_OK);//设置结果OK
                         finish();
                     } else {
-                        popMsg("跟单失败");
+                        String tips = JsnTool.getString(response, "msg");
+                        if(StrTool.areNotEmpty(tips)) {
+                            popMsg(tips);
+                        } else {
+                            popMsg("跟单失败");
+                        }
                     }
                 } else {
                    popMsg("跟单失败");

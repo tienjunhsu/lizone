@@ -25,11 +25,13 @@
             android:layout_width="0.0px"
             android:layout_weight="1"
             android:layout_marginRight="5dp"
+            android:visibility="invisible"
             android:layout_height="wrap_content"/>
         <com.cquant.lizone.view.OptItemView
             android:id="@+id/opt_item_3"
             android:layout_width="0.0px"
             android:layout_weight="1"
+            android:visibility="invisible"
             android:layout_height="wrap_content"/>
     </LinearLayout>
     <LinearLayout
@@ -39,6 +41,7 @@
         android:layout_marginLeft="5dp"
         android:layout_marginRight="5dp"
         android:layout_marginTop="5dp"
+        android:visibility="gone"
         android:orientation="horizontal">
 
         <com.cquant.lizone.view.OptItemView

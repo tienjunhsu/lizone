@@ -1,6 +1,7 @@
 package com.cquant.lizone.activity;
 
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
@@ -47,6 +48,7 @@ import org.json.JSONObject;
 
 import java.net.URISyntaxException;
 import java.util.ArrayList;
+import java.util.Random;
 
 import io.socket.client.IO;
 import io.socket.client.Socket;
@@ -103,6 +105,9 @@ public class KPointActivity extends BaseActivity implements RadioGroup.OnChecked
 
     private WebHelper mWebHelper;
 
+	private TextView mTvNumMessage;
+	private TextView mTvNumTrade;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -124,6 +129,9 @@ public class KPointActivity extends BaseActivity implements RadioGroup.OnChecked
         mTvOpen = (TextView) findViewById(R.id.tv_open);
         mTvClose = (TextView) findViewById(R.id.tv_close);
         mTvPercent = (TextView) findViewById(R.id.tv_percent);
+
+		mTvNumMessage = (TextView)findViewById(R.id.tv_message);
+		mTvNumTrade = (TextView)findViewById(R.id.tv_trade);
 
         mRadioMoney = (RadioGroup) findViewById(R.id.rg_money);
         mRadioCycle = (RadioGroup) findViewById(R.id.rg_cycle);
@@ -165,6 +173,7 @@ public class KPointActivity extends BaseActivity implements RadioGroup.OnChecked
         super.onResume();
         LogTool.d(TAG + ":onResume");
         connect();
+		getViewNumAndTradeNum();//hsu,2016/01/14
     }
 
     @Override
@@ -254,6 +263,12 @@ public class KPointActivity extends BaseActivity implements RadioGroup.OnChecked
     }
     private void refreshHeadView(MarketDataItem dataItem, boolean isInit) {
         LogTool.e(TAG+" refreshHeadView:"+dataItem.newprice);
+
+        /*Random random = new Random();
+        int s = random.nextInt(10);
+        dataItem.newprice = dataItem.newprice +s;
+        LogTool.e(TAG+" refreshHeadView2:"+dataItem.newprice);*/ //用随机数测试，证明socket库更新有问题
+
         calculateAmp(dataItem);
         mTvPrice.setText(dataItem.newprice + "");
         mTvAmp.setText(ampDelta + " " + ampPercent);
@@ -272,6 +287,8 @@ public class KPointActivity extends BaseActivity implements RadioGroup.OnChecked
             mTvPrice.setFocusableInTouchMode(true);
             mTvPrice.requestFocus();
         }
+
+       // mTvPrice.invalidate();//hsu
     }
 
     private void setHeadColor(MarketDataItem dataItem) {
@@ -411,27 +428,30 @@ public class KPointActivity extends BaseActivity implements RadioGroup.OnChecked
     }
 
     public void onXmlBtClick(View v) {
-        /*switch (v.getId()) {
-            case R.id.btn_time_chart:
-                loadTimeChart();
+        switch (v.getId()) {
+            case R.id.tv_message:
+                openMessageViewActivity();
                 break;
-            case R.id.btn_d:
-                loadBarsChart("D");
-                break;
-            case R.id.btn_w:
-                loadBarsChart("W");
-                break;
-            case R.id.btn_m:
-                loadBarsChart("W");
-                break;
-            case R.id.btn_bs60:
-                //loadBSChart();
-                LogTool.d("CLICK btn_bs60");
-                popSelectExchange(v);
+            case R.id.tv_trade:
+                openTradeViewActivity();
                 break;
             default:
                 break;
-        }*/
+        }
+    }
+
+    private void openTradeViewActivity() {
+        Intent intent = new Intent(this,ViewsActivity.class);
+        intent.putExtra("label",dataItem.label);
+        intent.putExtra("type",1);
+        startActivity(intent);
+    }
+
+    private void openMessageViewActivity() {
+        Intent intent = new Intent(this,ViewsActivity.class);
+        intent.putExtra("label",dataItem.label);
+        intent.putExtra("type",0);
+        startActivity(intent);
     }
 
     private View.OnClickListener mBSRadioOnclickListener = new View.OnClickListener() {
@@ -561,11 +581,16 @@ public class KPointActivity extends BaseActivity implements RadioGroup.OnChecked
                         JSONObject data = JsnTool.getObject(obj,"data");
                         viewNum = Integer.parseInt(JsnTool.getString(data,"GDcount"));
                         tradeNum = Integer.parseInt(JsnTool.getString(data,"JYcount"));
+						refreshNumView();
                     }
                 }
             }
         });
     }
+	private void refreshNumView(){
+		mTvNumMessage.setText(viewNum + "条观点");
+		mTvNumTrade.setText(viewNum + "条交易");
+	}
     private RadioGroup.OnCheckedChangeListener onCycleChangeListener = new RadioGroup.OnCheckedChangeListener() {
 
         @Override

@@ -15,5 +15,4 @@
         <attr name="auto_select_effect" format="boolean"></attr>
         <attr name="max_select" format="integer"></attr>
     </declare-styleable>
-
 </resources>

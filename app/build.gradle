@@ -52,7 +52,11 @@ dependencies {
     compile 'com.android.support:design:22.2.0'
     compile 'in.srain.cube:ultra-ptr:1.0.10'
     compile 'com.android.support:recyclerview-v7:22.2.+'
-    compile 'io.socket:socket.io-client:0.6.1'
+    //compile 'io.socket:socket.io-client:0.6.1'
+    compile ('io.socket:socket.io-client:0.6.3') {
+        // excluding org.json which is provided by Android
+        exclude group: 'org.json', module: 'json'
+    } 
     compile files('libs/tbs_sdk_v1.4.1.1085_25433_obfs_20150917_114640.jar')
     compile files('libs/umeng-analytics-v5.6.1.jar')
     compile files('libs/umeng-update-v2.6.0.1.jar')

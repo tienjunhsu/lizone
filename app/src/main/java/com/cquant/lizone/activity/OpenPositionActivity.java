@@ -8,11 +8,13 @@ import android.view.MenuItem;
 import android.view.View;
 import android.webkit.CookieManager;
 import android.webkit.CookieSyncManager;
+import android.webkit.ValueCallback;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 
 import com.cquant.lizone.R;
+import com.cquant.lizone.tool.LogTool;
 import com.cquant.lizone.util.GlobalVar;
 import com.cquant.lizone.util.Utils;
 
@@ -36,7 +38,6 @@ public class OpenPositionActivity extends BaseActivity  {
 
         initToolBar();
         initWebView();
-        setSession();
         webview.loadUrl(url);
     }
     private void setSession() {
@@ -44,43 +45,59 @@ public class OpenPositionActivity extends BaseActivity  {
             return;
         }
        //if(CookieSyncManager.getInstance() == null) {
-           CookieSyncManager.createInstance(this);
+           CookieSyncManager.createInstance(webview.getContext());
       // } else {
 
       // }
         CookieManager cookieManager = CookieManager.getInstance();
+        cookieManager.setAcceptCookie(true);
+        cookieManager.removeSessionCookie();
+        cookieManager.removeAllCookie();
         cookieManager.setCookie(url, "PHPSESSID=" + GlobalVar.SESSIONID);
-        //CookieSyncManager.getInstance().sync();
+        LogTool.e("OpenPositionActivity:setSession-->PHPSESSID="+GlobalVar.SESSIONID);
+        String cookie = cookieManager.getCookie(url);
+        LogTool.e("OpenPositionActivity:setSession-->cookie="+cookie);
+        CookieSyncManager.getInstance().sync();
 
     }
     private void initWebView() {
         WebSettings wSettings = webview.getSettings();
         wSettings.setAllowContentAccess(true);
         wSettings.setAllowFileAccess(true);
-        wSettings.setAllowFileAccessFromFileURLs(true);
-        wSettings.setAllowUniversalAccessFromFileURLs(true);
+        //wSettings.setAllowFileAccessFromFileURLs(true);
+       // wSettings.setAllowUniversalAccessFromFileURLs(true);
         wSettings.setAppCacheEnabled(true);
+        wSettings.setCacheMode(WebSettings.LOAD_NO_CACHE);
         wSettings.setBlockNetworkImage(false);
         wSettings.setBlockNetworkLoads(false);
         wSettings.setDomStorageEnabled(true);
         wSettings.setJavaScriptEnabled(true);
-        wSettings.setDefaultTextEncodingName("UTF -8") ;
+        wSettings.setDefaultTextEncodingName("UTF -8");
         wSettings.setJavaScriptCanOpenWindowsAutomatically(true);
         wSettings.setLoadsImagesAutomatically(true);
+
+        setSession();
+
         webview.setWebViewClient(new WebViewClient() {
 
             public void onPageStarted(WebView view, String url, Bitmap favicon) {
                 //startLoadingAnim();
+                CookieManager cookieManager = CookieManager.getInstance();
+                String cookie = cookieManager.getCookie(url);
+                LogTool.e("OpenPositionActivity:onPageStarted-->cookie="+cookie);
             }
             public boolean shouldOverrideUrlLoading(WebView view, String url) {
                 /*if (url.contains("login")) {
                     startLogin();
                 }*/
-                return false;
+                return true;
             }
             public void onPageFinished(WebView view, String url) {
                 super.onPageFinished(view, url);
                 // stopLoadingAnim();
+                CookieManager cookieManager = CookieManager.getInstance();
+                String cookie = cookieManager.getCookie(url);
+                LogTool.e("OpenPositionActivity:onPageFinished-->cookie="+cookie);
             }
         });
     }

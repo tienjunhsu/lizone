@@ -16,6 +16,7 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.cquant.lizone.LizoneApp;
 import com.cquant.lizone.R;
 import com.cquant.lizone.bean.HomepageHeadItem;
 import com.cquant.lizone.frag.AccountPositionFragment;
@@ -119,6 +120,9 @@ public class HomepageActivity extends BaseActivity {
         mTradeNum .setText(headerData.trade_num);
         mProfiteRate.setText(headerData.yield);
 
+        setSubBtnText();
+        setFollowBtnText();
+
         if(headerData.gend ==1) {
             mBtnFollow.setText("取消跟单");
         } else {
@@ -159,9 +163,6 @@ public class HomepageActivity extends BaseActivity {
         mBtnSub.setOnClickListener(subBtnOnClickListener);
         mBtnFollow.setOnClickListener(followBtnOnClickListener);
 
-        setSubBtnText();
-        setFollowBtnText();
-
         List<String> titles = new ArrayList<>();
         titles.add("统计");
         titles.add("交易记录");
@@ -190,7 +191,12 @@ public class HomepageActivity extends BaseActivity {
 
         @Override
         public void onClick(View view) {
-            subOrCancleSub();
+            if(LizoneApp.mCanLogin ) {
+                subOrCancleSub();
+            }  else {
+                gotoLogin();
+            }
+
         }
     };
 
@@ -267,10 +273,14 @@ public class HomepageActivity extends BaseActivity {
 
         @Override
         public void onClick(View view) {
-            if(headerData.gend ==1) {
-                cancleFollow();
-            } else {
-                startFollow();
+            if(LizoneApp.mCanLogin ) {
+                if (headerData.gend == 1) {
+                    cancleFollow();
+                } else {
+                    startFollow();
+                }
+            }else {
+                gotoLogin();
             }
         }
     };
@@ -302,6 +312,9 @@ public class HomepageActivity extends BaseActivity {
                 }
             }
         });
+    }
+    private void gotoLogin() {
+        startActivity(new Intent(this,LoginActivity.class));
     }
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {

@@ -69,7 +69,13 @@ public class OptItemView extends LinearLayout {
         mTvName.setText(item.name);
         mTvPrice.setText(item.newprice+"");
         double amp = StrTool.sub(item.newprice, item.close);
-        double amppercent = amp*100.0/item.close;
+        double amppercent ;
+        if(item.close != 0) {
+            amppercent = amp*100.0/item.close;
+        }else {
+            amppercent =0;
+        }
+
         LogTool.d("setMarketItem:amp="+formatAmp(amp, amppercent));
         mTvAmp.setText(formatAmp(amp, amppercent));
         if(amp > 0) {
@@ -98,9 +104,11 @@ public class OptItemView extends LinearLayout {
     }
 	//end add by hsu
     public void setAddSymbol() {
+        LogTool.e("setAddSymbol");
         if(dataItem != null) {
             clearData();
         }
+
         mTvName.setText("");
         mTvPrice.setText("十");
         mTvPrice.setTextColor(getContext().getResources().getColor(R.color.blue_two));
@@ -108,10 +116,16 @@ public class OptItemView extends LinearLayout {
         tp.setFakeBoldText(true);
         mTvAmp.setText("添加自选");
         mTvAmp.setTextColor(white);
+        invalidate();//add by hsu,2015/12/21
+        LogTool.e("setAddSymbol:symbol ="+mTvPrice.getText());
     }
 
     public void clearData() {
         dataItem = null;
+    }
+
+    public boolean isSymbol() {
+        return dataItem == null;
     }
 
     private String formatAmp(double amp,double amppercent) {

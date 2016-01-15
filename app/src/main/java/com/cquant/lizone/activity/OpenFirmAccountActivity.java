@@ -14,6 +14,7 @@ import android.webkit.WebView;
 import android.webkit.WebViewClient;
 
 import com.cquant.lizone.R;
+import com.cquant.lizone.tool.LogTool;
 import com.cquant.lizone.util.GlobalVar;
 import com.cquant.lizone.util.Utils;
 
@@ -46,7 +47,10 @@ public class OpenFirmAccountActivity extends BaseActivity {
         CookieSyncManager.createInstance(this);
         CookieManager cookieManager = CookieManager.getInstance();
         cookieManager.setCookie(url, "PHPSESSID=" + GlobalVar.SESSIONID);
+        LogTool.e("OpenFirmAccountActivity:setSession-->PHPSESSID=" + GlobalVar.SESSIONID);
         CookieSyncManager.getInstance().sync();
+        //String cookie = cookieManager.getCookie(url);
+        //LogTool.e("OpenFirmAccountActivity:setSession-->cookie=" + cookie);
     }
     private void initWebView() {
         WebSettings wSettings = webview.getSettings();
@@ -76,6 +80,9 @@ public class OpenFirmAccountActivity extends BaseActivity {
             public void onPageFinished(WebView view, String url) {
                 super.onPageFinished(view, url);
                // stopLoadingAnim();
+                //CookieManager cookieManager = CookieManager.getInstance();
+                //String cookie = cookieManager.getCookie(url);
+               // LogTool.e("OpenFirmAccountActivity:onPageFinished-->cookie=" + cookie+",url="+url);
             }
         });
     }

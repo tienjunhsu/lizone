@@ -94,31 +94,59 @@ public class OptListView extends LinearLayout {
            }
         } else {
             LinearLayout layTwo = (LinearLayout)child.getChildAt(1);
+            //begin add by hsu,2015/12/21
+            if(layTwo.getVisibility() == GONE) {
+                layTwo.setVisibility(VISIBLE);
+            }
+            //end add by hsu
             for(int i=5;i>len;i--) {
                 layTwo.getChildAt(i-3).setVisibility(INVISIBLE);
             }
         }
 
 		for(int i=0;i <= optSize;i++) {
+            LogTool.e("111: i="+i+",optSize ="+optSize);
             if(i==optSize ) {
+                LogTool.e("222: i="+i+",optSize ="+optSize);
                 int k = i;
                 if(i >=3 ) {
                     k = i % 3;
                     OptItemView item = (OptItemView)((LinearLayout)child.getChildAt(1)).getChildAt(k);
 					item.setAddSymbol();
+                    //begin add by hsu,2015/12/21
+                    if(item.getVisibility() != VISIBLE) {
+                        item.setVisibility(VISIBLE);
+                    }
+                    //end add by hsu
                 } else {
                     OptItemView item = (OptItemView)((LinearLayout)child.getChildAt(0)).getChildAt(k);
 					item.setAddSymbol();
+
+                    //begin add by hsu,2015/12/21
+                    if(item.getVisibility() != VISIBLE) {
+                        item.setVisibility(VISIBLE);
+                    }
+                    //end add by hsu
 				}
             } else if(i < 3) {
                 OptItemView item = (OptItemView)((LinearLayout)child.getChildAt(0)).getChildAt(i);
 				//item.setItemName(names.get(i));
 				item.setMarketItem(list.get(mOptId.get(i)));
+                //begin add by hsu,2015/12/21
+                if(item.getVisibility() != VISIBLE) {
+                    item.setVisibility(VISIBLE);
+                }
+                //end add by hsu
 			} else {
 				int j = i %3;
                 OptItemView item = (OptItemView)((LinearLayout)child.getChildAt(1)).getChildAt(j);
 				//item.setItemName(names.get(i));
 				item.setMarketItem(list.get(mOptId.get(i)));
+                //begin add by hsu,2015/12/21
+                if(item.getVisibility() != VISIBLE) {
+                    item.setVisibility(VISIBLE);
+                }
+                //end add by hsu
 			}
 		}
 	  
@@ -171,10 +199,12 @@ public class OptListView extends LinearLayout {
 		if(optSize <1) {
 			return;
 		}
+        LogTool.e("setOptData,optSize ="+optSize);
         LinearLayout child = (LinearLayout)getChildAt(0);
         for(int i=0;i < mOptList.size();i++) {
             if(i < 3) {
                 OptItemView item = (OptItemView)((LinearLayout)child.getChildAt(0)).getChildAt(i);
+                LogTool.e("setOptData,isSymbol ="+item.isSymbol());
 				item.setMarketItem(list.get(mOptId.get(i)));
 			} else {
 				int j = i %3;

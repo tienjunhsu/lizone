@@ -132,6 +132,7 @@ public class MarketFragment extends BaseFragment implements MainActivity.OnActiv
             Log.d("TianjunXu","connect:URISyntaxException "+e.getMessage());
         }
         expandedPositions.put(0, 0);//hsu,2015/10/19,默认打开第一组
+        LogTool.v("MarketFragment:onCreate");//hsu
     }
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -231,10 +232,11 @@ public class MarketFragment extends BaseFragment implements MainActivity.OnActiv
     @Override
     public void onStart() {
         super.onStart();;
+        LogTool.v("MarketFragment:onStart");//hsu
         initView();
         initMarketData();
         getOptList();
-        setActivityResultObserver();
+        //setActivityResultObserver();
     }
     public void connect() {
         if(socket == null) {
@@ -333,7 +335,7 @@ public class MarketFragment extends BaseFragment implements MainActivity.OnActiv
 
     private void resizeOptListView() {
         if(mOptListView != null) {
-            LogTool.e("MarketFragment:getOptList,size ="+mOptId.size());
+            //LogTool.e("MarketFragment:getOptList,size ="+mOptId.size());
             mOptListView.setOptInitData(mOptId, mOptDataList);
         }
     }
@@ -353,17 +355,33 @@ public class MarketFragment extends BaseFragment implements MainActivity.OnActiv
 					String label = JsnTool.getString(obj,"label");
 					String name = JsnTool.getString(obj,"name");
 
+                    //begin add by hsu.2015/12/23
+                    //对自选进行校订，防止无效的数据（因为服务器允许无效的数据上传上去）
+                    //LogTool.e("MarketFragment:parseOptList,i ="+i+",label="+label);
+                    if(StrTool.areEmpty(label)||label.equals("null")) {
+                        continue;
+                    }
+                    //end add by hsu
+
                     mOptId.add(id);
 					mOptNames.add(name);//hsu
 
 					MarketDataItem dataItem = new MarketDataItem(id,name,label);
 					mOptDataList.put(id,dataItem);
 
-					if(i == 0) {
+					//begin mod by Tianjunhsu,2015/12/23
+                    //防止mOptStr以","开头
+                    /*if(i == 0) {
 					    mOptStr = id+"#"+label+"#"+name;
 					} else {
                         mOptStr = mOptStr+","+id+"#"+label+"#"+name;
-					}
+					}*/
+                    if(mOptStr.trim().isEmpty()) {
+                        mOptStr = id+"#"+label+"#"+name;
+                    } else {
+                        mOptStr = mOptStr+","+id+"#"+label+"#"+name;
+                    }
+                    //end add by hsu
                 }
 				saveOptStr();
             } else {
@@ -382,12 +400,24 @@ public class MarketFragment extends BaseFragment implements MainActivity.OnActiv
         
 		//begin,add by hsu
 		mOptStr = SharedPrefsUtil.getStringValue(LizoneApp.getApp(), SharedPrefsUtil.PREFS_OPT, null);
-        if(mOptStr == null) {
+        LogTool.e("mOptStr ="+mOptStr);
+        if(StrTool.areEmpty(mOptStr)) {
             return;
         }
         String items[] = mOptStr.split(",");
+        LogTool.e("items.length ="+items.length);
         for(int i=0;i<items.length;i++) {
+            LogTool.e("items[i]:"+i+","+items[i]);
             String attrs[] = items[i].split("#");
+
+            //begin add by hsu.2015/12/23
+            //对自选进行校订，防止无效的数据（因为服务器允许无效的数据上传上去）
+            //LogTool.e("MarketFragment:parseOptListFromCache,i ="+i+",label="+attrs[1]);
+            if(StrTool.areEmpty(attrs[1])||attrs[1].equals("null")) {
+                continue;
+            }
+            //end add by hsu
+
 			mOptId.add(attrs[0]);
 
 			MarketDataItem dataItem = new MarketDataItem(attrs[0],attrs[2],attrs[1]);//attrs[0]是id,attrs[1]是label,attrs[2]是name
@@ -400,22 +430,14 @@ public class MarketFragment extends BaseFragment implements MainActivity.OnActiv
 	private void saveOptStr() {
         SharedPrefsUtil.putStringValue(LizoneApp.getApp(),SharedPrefsUtil.PREFS_OPT,mOptStr);
 	}
-    private void initOptDataListKey() {
-        for(String str:mOptId) {
-            mOptDataList.clear();
-            mOptDataList.put(str,null);
-        }
-        if(mOptListView != null) {
-            mOptListView.setSize(mOptId.size());
-        }
-    }
+
 
     @Override
     public void onResume() {
         super.onResume();
         connect();
         expandListView();
-        LogTool.d(".......MarketFragment:onResume");
+        LogTool.v("MarketFragment:onResume");
 
     }
 
@@ -431,16 +453,17 @@ public class MarketFragment extends BaseFragment implements MainActivity.OnActiv
     public void onPause() {
         super.onPause();
         //disconnected();//比较耗时，测试一下
-        LogTool.d(".......MarketFragment:onPause");
+        LogTool.v("MarketFragment:onPause");
     }
     @Override
     public void onStop() {
         super.onStop();
-        LogTool.d(".......MarketFragment:onStop");
+        LogTool.v("MarketFragment:onStop");
     }
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
+        LogTool.v("MarketFragment:onActivityCreated");
         mCache = LizoneApp.getACache();
         mWebhelper = new WebHelper(getActivity());
         red = getActivity().getResources().getColor(R.color.red_two);

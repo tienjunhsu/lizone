@@ -2,12 +2,14 @@ package com.cquant.lizone.activity;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.cquant.lizone.LizoneApp;
@@ -21,6 +23,7 @@ import com.cquant.lizone.tool.Md5FileNameGenerator;
 import com.cquant.lizone.util.Utils;
 import com.cquant.lizone.view.ItemDivider;
 import com.cquant.lizone.view.OnItemClickListener;
+import com.cquant.lizone.view.RecyclerViewHeader;
 import com.nostra13.universalimageloader.core.ImageLoader;
 
 import org.json.JSONException;
@@ -44,6 +47,7 @@ public class ViewsActivity extends BaseActivity {
     private String mFileName;
 
     private RecyclerView mRecyclerView;
+    private ViewsAdapter mAdapter;
 
     private ArrayList<ViewsItem> mViewsList;
 
@@ -51,6 +55,13 @@ public class ViewsActivity extends BaseActivity {
     private int shortViewsNum= 0;//看空人数
 
     private int type;//0,交易观点；1，交易
+
+    private String url;
+
+    private TextView mTvLongNum;
+    private TextView mTvShortNum;
+
+    private ProgressBar mProgress;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -66,15 +77,51 @@ public class ViewsActivity extends BaseActivity {
         mRecyclerView = (RecyclerView)findViewById(R.id.recyclerView);
         //mRecyclerView.addItemDecoration(new ItemDivider(this, R.drawable.event_list_divider));
 
+        if(type == 0) {
+            url = Utils.BASE_URL + "Guand_list/label/";
+        } else {
+            url = Utils.BASE_URL + "Jiaoyi_list/label/";
+        }
+
         initToolBar();
         mWebHelper = new WebHelper(this);
-        //mFileName = Md5FileNameGenerator.generate(url);
+        mFileName = Md5FileNameGenerator.generate(url);
         mACache = LizoneApp.getACache();
+
+        initList();
+        initReRecyclerView();
+
+        setRecylcerViewHeader();
+    }
+
+    private void setRecylcerViewHeader() {
+
+        RecyclerViewHeader header = RecyclerViewHeader.fromXml(this, R.layout.view_activity_header);
+
+        mTvLongNum = (TextView) header.findViewById(R.id.tv_num_long);
+        mTvShortNum  = (TextView)header.findViewById(R.id.tv_num_short);
+
+        mProgress = (ProgressBar)header.findViewById(R.id.progress);
+        mProgress.setMax(100);
+
+        header.attachTo(mRecyclerView);
+    }
+
+    private void initReRecyclerView() {
+        LinearLayoutManager layoutManager = new LinearLayoutManager(this);
+        mRecyclerView.setLayoutManager(layoutManager);
+
+        mRecyclerView.addItemDecoration(new ItemDivider(this, R.drawable.views_list_divider));
+
+        mAdapter = new ViewsAdapter();
+        mRecyclerView.setAdapter(mAdapter);
+        //mRecyclerView.addItemDecoration(new ItemDivider(this,R.drawable.default_recylerview_divider));
     }
 
     @Override
     public void onResume() {
         super.onResume();
+        getViews();
     }
 
     @Override
@@ -87,7 +134,7 @@ public class ViewsActivity extends BaseActivity {
 		if(type == 0){
             toolbar.setTitle("讨论观点");
 		} else {
-            toolbar.setTitle("交易");
+            toolbar.setTitle("交易动态");
 		}
         toolbar.setNavigationIcon(R.drawable.ic_back);
         super.initToolBar(toolbar);
@@ -98,6 +145,40 @@ public class ViewsActivity extends BaseActivity {
             }
         });
     }
+
+    private void initList() {
+        String list_str = mACache.getAsString(mFileName);
+        if( list_str !=null) {
+            mViewsList =ViewsItem.getItemList(list_str);
+        } else {
+            mViewsList = new ArrayList<ViewsItem>();
+        }
+    }
+    private void getViews() {
+        if(!isNetAvailable()) {
+            popMsg("连接不可用，请检查您的网络设置");
+            return;
+        }
+        mWebHelper.doLoadGet(url + label, null, new WebHelper.OnWebFinished() {
+            @Override
+            public void onWebFinished(boolean success, String msg) {
+                if (success) {
+                    JSONObject obj = JsnTool.getObject(msg);
+                    if ((obj != null) && (JsnTool.getInt(obj, "status") == 1)) {
+                        parseViews(msg);
+                    }
+                    mWebHelper.cancleRequest();
+                }
+            }
+        });
+    }
+
+    private void parseViews(String msg) {
+        mViewsList =ViewsItem.getItemList(msg);
+        mAdapter.notifyDataSetChanged();
+        mACache.put(mFileName, msg);
+    }
+
     private void getLongAndShortNum() {
         //获取多空观点数量
         mWebHelper.doLoadGet(Utils.BASE_URL + "duokong_sum/label/" + label, null, new WebHelper.OnWebFinished() {
@@ -109,6 +190,9 @@ public class ViewsActivity extends BaseActivity {
                         if ((obj != null) && (obj.getInt("status") == 1)) {
                             longViewsNum = Integer.parseInt(obj.getJSONObject("data").getString("kanduo"));
                             shortViewsNum = Integer.parseInt(obj.getJSONObject("data").getString("kankong"));
+
+                            //刷新界面
+                            refreshNumView();
                         }
                     } catch (JSONException e) {
                         e.printStackTrace();
@@ -119,7 +203,16 @@ public class ViewsActivity extends BaseActivity {
         });
     }
 
+   private void refreshNumView() {
+       mTvLongNum.setText(longViewsNum+"");
+       mTvShortNum.setText(shortViewsNum+"");
+       mProgress.setProgress(longViewsNum * 100 / (longViewsNum + shortViewsNum));
+   }
     private void addOrDelFocus(String uid) {
+        if(!isNetAvailable()) {
+            popMsg("连接不可用，请检查您的网络设置");
+            return;
+        }
         mWebHelper.doLoadGet(Utils.BASE_URL + "add_guanzhu/uid/" + uid, null, new WebHelper.OnWebFinished() {
             @Override
             public void onWebFinished(boolean success, String msg) {
@@ -127,7 +220,30 @@ public class ViewsActivity extends BaseActivity {
                     JSONObject obj = JsnTool.getObject(msg);
                     try {
                         if ((obj != null) && (obj.getInt("status") == 1)) {
-                           //Toast
+                            //Toast
+                        }
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                    mWebHelper.cancleRequest();
+                }
+            }
+        });
+    }
+
+    private void addAgree(String id) {
+        if(!isNetAvailable()) {
+            popMsg("连接不可用，请检查您的网络设置");
+            return;
+        }
+        mWebHelper.doLoadGet(Utils.BASE_URL + "add_zan/id/" + id, null, new WebHelper.OnWebFinished() {
+            @Override
+            public void onWebFinished(boolean success, String msg) {
+                if (success) {
+                    JSONObject obj = JsnTool.getObject(msg);
+                    try {
+                        if ((obj != null) && (obj.getInt("status") == 1)) {
+                            //Toast
                         }
                     } catch (JSONException e) {
                         e.printStackTrace();
@@ -139,8 +255,31 @@ public class ViewsActivity extends BaseActivity {
     }
 
     public void onXmlBtClick(View v) {
+        switch (v.getId()) {
+            case R.id.img_long:
+                agreeWithLong();
+                break;
+            case R.id.img_short:
+                agreeWithShort();
+                break;
+            default:
+                break;
+        }
 
     }
+
+    private void agreeWithShort() {
+		shortViewsNum++;
+        //update to net
+        refreshNumView();
+    }
+
+    private void agreeWithLong() {
+        longViewsNum++;
+        //update to net
+        refreshNumView();
+    }
+
     @Override
     public void onDestroy() {
         mWebHelper = null;
@@ -159,7 +298,7 @@ public class ViewsActivity extends BaseActivity {
 
         @Override
         public void onBindViewHolder(RecyclerView.ViewHolder viewHolder, int i) {
-            ViewsViewHolder holder = (ViewsViewHolder) viewHolder;
+            final ViewsViewHolder holder = (ViewsViewHolder) viewHolder;
             ImageLoader.getInstance().displayImage(mViewsList.get(i).photo, holder.mImgHead);
              holder.mTvName.setText(mViewsList.get(i).name);
             holder.mTvTime.setText(mViewsList.get(i).time);
@@ -171,6 +310,13 @@ public class ViewsActivity extends BaseActivity {
                 @Override
                 public void onClick(View view) {
                     mOnFocusClickListener.onClick(view,position);
+                    if(mViewsList.get(position).focus.equals("N")){
+                        mViewsList.get(position).focus = "Y";
+                        holder.mImgFocus.setSelected(true);
+                    } else {
+                        mViewsList.get(position).focus = "N";
+                        holder.mImgFocus.setSelected(false);
+                    }
                 }
             });
             holder.mTvText.setText(mViewsList.get(i).text);
@@ -178,6 +324,8 @@ public class ViewsActivity extends BaseActivity {
                 @Override
                 public void onClick(View view) {
                     mOnAgreeClickListener.onClick(view, position);
+                    mViewsList.get(position).agree_num = (Integer.getInteger(mViewsList.get(position).agree_num,0)+1)+"";
+                    holder.mTvAgreeNum.setText(mViewsList.get(position).agree_num);
                 }
             });
             holder.mTvAgreeNum.setText(mViewsList.get(i).agree_num);
@@ -217,7 +365,7 @@ public class ViewsActivity extends BaseActivity {
             mTvTime = (TextView) itemView.findViewById(R.id.tv_time);
             mImgFocus = (ImageView) itemView.findViewById(R.id.img_focus);
             mTvText = (TextView) itemView.findViewById(R.id.tv_text);
-            mImgAgree = (ImageView) itemView.findViewById(R.id.iv_img);
+            mImgAgree = (ImageView) itemView.findViewById(R.id.img_vote);
             mTvAgreeNum = (TextView) itemView.findViewById(R.id.tv_agree_num);
             mImgMessage = (ImageView) itemView.findViewById(R.id.img_message);
             mTvMessage = (TextView) itemView.findViewById(R.id.tv_message_num);
@@ -227,17 +375,28 @@ public class ViewsActivity extends BaseActivity {
     private OnItemClickListener mOnAgreeClickListener = new OnItemClickListener() {
         @Override
         public void onClick(View v, int position) {
+            addAgree(mViewsList.get(position).viewid);
         }
     };
     private OnItemClickListener mOnMessageClickListener = new OnItemClickListener() {
         @Override
         public void onClick(View v, int position) {
+            startDetailActivity(position);
         }
     };
+
+    private void startDetailActivity(int position) {
+        String mUrl = Utils.BASE_URL+"GuandXq/gid/"+mViewsList.get(position).viewid;
+        Intent intent = new Intent(this,WebPageActivity.class);
+        intent.putExtra("title","详情");
+        intent.putExtra("web_addr",mUrl);
+        startActivity(intent);
+    }
+
     private OnItemClickListener mOnFocusClickListener = new OnItemClickListener() {
         @Override
         public void onClick(View v, int position) {
-            startActivity(position);
+            addOrDelFocus(mViewsList.get(position).userid);
         }
     };
 

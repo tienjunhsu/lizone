@@ -16,7 +16,7 @@
         android:layout_height="wrap_content"
         android:layout_marginLeft="16dp"
         android:layout_marginRight="16dp"
-        android:layout_marginTop="12dp"
+        android:layout_marginTop="32dp"
         android:background="@color/white"
         android:orientation="vertical">
 
@@ -24,6 +24,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="center_vertical"
+            android:visibility="gone"
             android:orientation="horizontal">
 
             <ImageView
@@ -40,7 +41,16 @@
                 android:text="li12345"
                 android:textColor="@color/black" />
         </LinearLayout>
-
+        <TextView
+              android:id="@+id/tv_available"
+              android:layout_width="wrap_content"
+              android:layout_height="wrap_content"
+              android:textColor="@color/grey_two"
+              android:textSize="20sp"
+              android:layout_marginTop="12dp"
+              android:layout_marginBottom="12dp"
+              android:text="可用资金：0"
+              />
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -52,10 +62,10 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="设置金额(元) ："
-                android:textColor="@color/black"
+                android:textColor="@color/grey"
                 android:textSize="16sp" />
 
-            <TextView
+            <!--TextView
                 android:id="@+id/tv_available"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -63,20 +73,22 @@
                 android:textSize="16sp"
                 android:text="可用资金：32567"
                 android:layout_alignParentRight="true"
-                />
+                /-->
         </RelativeLayout>
 
         <EditText
             android:id="@+id/number"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="48dp"
             android:layout_marginTop="16dp"
+            android:layout_marginRight="12dp"
+            android:layout_marginLeft="12dp"
             android:gravity="center"
-            android:background="@color/white"
+            android:background="@drawable/follow_setting_edt_bg"
             android:textColor="@color/black"
             android:textSize="20sp"
             android:digits="true"
-            android:text="1000" />
+            android:text="0" />
 
         <SeekBar
             android:id="@+id/progress"
@@ -91,6 +103,7 @@
         android:layout_height="wrap_content"
         android:layout_marginLeft="16dp"
         android:layout_marginRight="16dp"
+        android:onClick="onXmlBtClick"
         android:text="立即跟单" />
 
 </LinearLayout>

@@ -183,11 +183,14 @@ public class DynamicFragment extends BaseFragment {
                 ImageLoader.getInstance().displayImage(mDynamicList.get(i).photo_url,holder.mPhoto);
             }
 
-			Matcher matcher = mPattern.matcher(mDynamicList.get(i).text);
+			Matcher matcher = mPattern.matcher(mDynamicList.get(i).text.trim());
+            //Log.d("temp","str ="+mDynamicList.get(i).text+",find ="+matcher.find());
 			if(matcher.find()) {
+                Log.d("temp","find");
                 holder.mLyPick.setVisibility(View.VISIBLE);
                 holder.mTvPickText.setText(matcher.group());
 			} else {
+                Log.d("temp","else");
                 holder.mLyPick.setVisibility(View.GONE);
 			}
             holder.mBtnOrder.setOnClickListener(new View.OnClickListener() {
