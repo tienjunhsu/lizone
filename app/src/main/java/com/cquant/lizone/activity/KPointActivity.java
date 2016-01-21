@@ -101,7 +101,8 @@ public class KPointActivity extends BaseActivity implements RadioGroup.OnChecked
     private int mCurSelected = 0;
 
     private Socket socket;
-    private String socket_url = "http://1-yj.com:3000";
+    //private String socket_url = "http://1-yj.com:3000";
+    private String socket_url = "http://q.lizone.net:3000";//api 2.0
 
     private WebHelper mWebHelper;
 
@@ -222,6 +223,7 @@ public class KPointActivity extends BaseActivity implements RadioGroup.OnChecked
 
     private void disconnected() {
         if((socket != null)&&socket.connected()) {
+            socket.off();
             socket.disconnect();
         }
 
@@ -246,9 +248,10 @@ public class KPointActivity extends BaseActivity implements RadioGroup.OnChecked
     int time = 0;
     private void parseMarketData(JSONObject obj) {
         time++;
-        if(time%5 != 0) { //降低刷新频率
+        if(time%2 != 0) { //降低刷新频率
             return;
         }
+        time =0;
         //LogTool.e(TAG+"parseMarketData");
         ArrayList<MarketDataItem> mDataList = MarketDataItem.getItemList(obj);
         if((mDataList == null)||(mDataList.size() <=0)) {
@@ -346,15 +349,18 @@ public class KPointActivity extends BaseActivity implements RadioGroup.OnChecked
     }
 
     private void buildTimeChartUrl() {
-        url = "http://www.1-yj.com/Kline/index.php/Index/Fenshi/label/" + dataItem.label + "/";
+        //url = "http://www.1-yj.com/Kline/index.php/Index/Fenshi/label/" + dataItem.label + "/";
+        url = "http://q.lizone.net/index/index/fenshi/label/" + dataItem.label + "/";//api 2.0
     }
 
     private void buildKLineUrl(String cycle) {
-        url = "http://www.1-yj.com/Kline/index.php/Index/Kline/label/" + dataItem.label + "/res/" + cycle;
+        //url = "http://www.1-yj.com/Kline/index.php/Index/Kline/label/" + dataItem.label + "/res/" + cycle;
+        url = "http://q.lizone.net/index/index/Kline/label/" + dataItem.label + "/res/" + cycle;//api 2.0
     }
 
     private void buildBS60Url() {
-        url = "http://www.1-yj.com/Kline/index.php/Index/BSline/res/60/label/" + dataItem.label;
+        //url = "http://www.1-yj.com/Kline/index.php/Index/BSline/res/60/label/" + dataItem.label;
+        url = "http://q.lizone.net/index/index/BSline/res/60/label/" + dataItem.label;//API 2.0
     }
 
     private void initWebView() {
@@ -589,7 +595,7 @@ public class KPointActivity extends BaseActivity implements RadioGroup.OnChecked
     }
 	private void refreshNumView(){
 		mTvNumMessage.setText(viewNum + "条观点");
-		mTvNumTrade.setText(viewNum + "条交易");
+		mTvNumTrade.setText(tradeNum + "条交易");
 	}
     private RadioGroup.OnCheckedChangeListener onCycleChangeListener = new RadioGroup.OnCheckedChangeListener() {
 

@@ -62,7 +62,8 @@ public class MyPointActivity extends BaseActivity {
     private String mFileName;
     private int num = 0;//可以兑换的礼品数
 
-    private String url = "http://www.lizone.net/index.php/api/index/gift_list/sel_id/0/";
+    //private String url = "http://www.lizone.net/index.php/api/index/gift_list/sel_id/0/";
+	private String url = Utils.BASE_URL+"gift_list/sel_id/0/";//hsu
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

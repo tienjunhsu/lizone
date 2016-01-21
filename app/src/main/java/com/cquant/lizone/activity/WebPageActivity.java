@@ -1,5 +1,6 @@
 package com.cquant.lizone.activity;
 
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
@@ -11,6 +12,7 @@ import android.webkit.WebView;
 import android.webkit.WebViewClient;
 
 import com.cquant.lizone.R;
+import com.cquant.lizone.net.LoginWatcher;
 import com.cquant.lizone.util.GlobalVar;
 import com.cquant.lizone.util.Utils;
 
@@ -40,9 +42,11 @@ public class WebPageActivity extends BaseActivity {
         //url = Utils.BASE_URL + web_addr;
 
         initToolBar();
+
         initWebView();
         setSession();
         webview.loadUrl(url);
+        webLogin();
     }
 
     private void setSession() {
@@ -51,9 +55,14 @@ public class WebPageActivity extends BaseActivity {
         }
         CookieSyncManager.createInstance(this);
         CookieManager cookieManager = CookieManager.getInstance();
-        cookieManager.setCookie(url,"PHPSESSID="+GlobalVar.SESSIONID);
+        cookieManager.setCookie(url, "PHPSESSID=" + GlobalVar.SESSIONID);
         CookieSyncManager.getInstance().sync();
+        cookieManager.setAcceptCookie(true);
 
+    }
+    private void webLogin(){
+        WebView mWebView = new WebView(this);
+        mWebView.loadUrl(Utils.BASE_URL + "Login?"+ LoginWatcher.getLoginStr());
     }
 
     private void initWebView() {
@@ -77,7 +86,12 @@ public class WebPageActivity extends BaseActivity {
             }
 
             public boolean shouldOverrideUrlLoading(WebView view, String url) {
-                return false;
+                if (url.contains("Login")) {
+                    startLogin();
+                } else {
+                    webview.loadUrl(url);
+                }
+                return true;
             }
 
             public void onPageFinished(WebView view, String url) {
@@ -85,6 +99,10 @@ public class WebPageActivity extends BaseActivity {
                 // stopLoadingAnim();
             }
         });
+    }
+
+    private void startLogin() {
+        startActivity(new Intent(this,LoginActivity.class));
     }
 
     @Override

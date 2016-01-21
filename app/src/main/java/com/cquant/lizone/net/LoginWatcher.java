@@ -83,6 +83,9 @@ public class LoginWatcher {
             saveAccount();
         }
     }
+    public static String getLoginStr() {
+        return "name="+user_id+"&pwd="+pass_word;
+    }
     public static void startLogin() {
         if(!LizoneApp.mCanLogin) {
             return;

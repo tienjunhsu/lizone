@@ -49,14 +49,20 @@ import io.socket.emitter.Emitter;
 public class MarketFragment extends BaseFragment implements MainActivity.OnActivityResultObserver {
 
     private static final int GROUP_COUNT = 3;
-    private String[] ex_label = new String[] {"XHPEC","TJPME","SZPEC"};
-    private String[] ex_name = new String[] {"新华商品现货合约交易中心","天津贵金属交易所","深圳石油化工交易所"};
+
+     //mod by hsu,api 2.0,2016/01/15
+    // private String[] ex_label = new String[] {"XHPEC","TJPME","SZPEC"};
+    //private String[] ex_name = new String[] {"新华商品现货合约交易中心","天津贵金属交易所","深圳石油化工交易所"};
+    //private String url = "http://1-yj.com:3000";
+     private String[] ex_label = new String[] {"DJS","TJPME","XHPEC"};
+     private String[] ex_name = new String[] {"天津电子材料与产品交易所","天津贵金属交易所","新华商品现货合约交易中心"};
+     private String url = "http://q.lizone.net:3000";
+    //end mod by hsu
 
     private Socket socket;
     private ACache mCache;
     private String mFileName;
 
-    private String url = "http://1-yj.com:3000";
     private ExpandableListView listView;
     private MarketAdapter marketAdapter;
 
@@ -290,6 +296,7 @@ public class MarketFragment extends BaseFragment implements MainActivity.OnActiv
 
     public void disconnected() {
         if((socket != null)&&socket.connected()) {
+            socket.off();//add by hsu,2016/01/15
             socket.disconnect();
         }
 
@@ -452,7 +459,7 @@ public class MarketFragment extends BaseFragment implements MainActivity.OnActiv
     @Override
     public void onPause() {
         super.onPause();
-        //disconnected();//比较耗时，测试一下
+        disconnected();//比较耗时，测试一下
         LogTool.v("MarketFragment:onPause");
     }
     @Override

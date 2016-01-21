@@ -9,11 +9,13 @@ import android.view.MenuItem;
 import android.view.View;
 import android.webkit.CookieManager;
 import android.webkit.CookieSyncManager;
+import android.webkit.WebChromeClient;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 
 import com.cquant.lizone.R;
+import com.cquant.lizone.net.LoginWatcher;
 import com.cquant.lizone.tool.LogTool;
 import com.cquant.lizone.util.GlobalVar;
 import com.cquant.lizone.util.Utils;
@@ -35,20 +37,29 @@ public class OpenFirmAccountActivity extends BaseActivity {
         webview = (WebView)findViewById(R.id.webview);
 
         initToolBar();
+
         initWebView();
         setSession();
         webview.loadUrl(url);
+        webLogin();
     }
-
+    private void webLogin(){
+        WebView mWebView = new WebView(this);
+        mWebView.loadUrl(Utils.BASE_URL+"Login?"+ LoginWatcher.getLoginStr());
+    }
     private void setSession() {
         if(GlobalVar.SESSIONID == null) {
             return;
         }
         CookieSyncManager.createInstance(this);
         CookieManager cookieManager = CookieManager.getInstance();
+        cookieManager.removeSessionCookie();
         cookieManager.setCookie(url, "PHPSESSID=" + GlobalVar.SESSIONID);
         LogTool.e("OpenFirmAccountActivity:setSession-->PHPSESSID=" + GlobalVar.SESSIONID);
         CookieSyncManager.getInstance().sync();
+        cookieManager.setAcceptCookie(true);//hsu
+        //cookieManager.setAcceptThirdPartyCookies(webview, true);
+
         //String cookie = cookieManager.getCookie(url);
         //LogTool.e("OpenFirmAccountActivity:setSession-->cookie=" + cookie);
     }
@@ -71,18 +82,31 @@ public class OpenFirmAccountActivity extends BaseActivity {
             public void onPageStarted(WebView view, String url, Bitmap favicon) {
                 //startLoadingAnim();
             }
+
             public boolean shouldOverrideUrlLoading(WebView view, String url) {
                 /*if (url.contains("login")) {
                     startLogin();
                 }*/
                 return true;
             }
+
             public void onPageFinished(WebView view, String url) {
                 super.onPageFinished(view, url);
-               // stopLoadingAnim();
-                //CookieManager cookieManager = CookieManager.getInstance();
-                //String cookie = cookieManager.getCookie(url);
-               // LogTool.e("OpenFirmAccountActivity:onPageFinished-->cookie=" + cookie+",url="+url);
+                // stopLoadingAnim();
+                CookieManager cookieManager = CookieManager.getInstance();
+                String cookie = cookieManager.getCookie(url);
+                LogTool.e("OpenFirmAccountActivity:onPageFinished-->cookie=" + cookie + ",url=" + url);
+            }
+        });
+        webview.setWebChromeClient(new WebChromeClient(){
+            @Override
+            public void onShowCustomView(View view, CustomViewCallback callback) {
+                super.onShowCustomView(view,callback);
+            }
+            @Override
+            public void onShowCustomView(View view, int requestedOrientation,
+                                         CustomViewCallback callback) {
+                super.onShowCustomView(view, requestedOrientation, callback);
             }
         });
     }

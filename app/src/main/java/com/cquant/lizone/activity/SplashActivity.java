@@ -30,7 +30,7 @@ public class SplashActivity extends BaseActivity implements Animation.AnimationL
         mAnimaInit.setAnimationListener(this);
         mIvSplash.startAnimation(mAnimaInit);
         if(!QbSdk.isTbsCoreInited()){
-            QbSdk.preInit(this, myCallback);
+            QbSdk.preInit(getApplicationContext(), myCallback);
         }
         startService(new Intent(this,UpdateConfigService.class));
         UmengUpdateAgent.update(this); //友盟自动更新

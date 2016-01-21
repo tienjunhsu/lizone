@@ -238,18 +238,18 @@ public class AccountPositionFragment extends BaseFragment {
             popMsg("网络不可用");
             return;
         }
-            mWebhelper.doLoadGet(Utils.BASE_URL+"/Ex_EndDeal/id/"+mPositionList.get(position).id+"/number/"+mPositionList.get(position).ex_number, null, new WebHelper.OnWebFinished() {
+            mWebhelper.doLoadGet(Utils.BASE_URL + "/Ex_EndDeal/id/" + mPositionList.get(position).id + "/number/" + mPositionList.get(position).ex_number, null, new WebHelper.OnWebFinished() {
 
                 @Override
                 public void onWebFinished(boolean success, String msg) {
                     if (success) {
                         JSONObject response = JsnTool.getObject(msg);
                         if (response != null) {
-                            if(StrTool.areNotEmpty(JsnTool.getString(response, "msg"))) {
+                            if (StrTool.areNotEmpty(JsnTool.getString(response, "msg"))) {
                                 popMsg(JsnTool.getString(response, "msg"));
 
                             } else {
-                                if(JsnTool.getInt(response, "status") == 1) {
+                                if (JsnTool.getInt(response, "status") == 1) {
                                     popMsg("平仓成功");
                                 } else {
                                     popMsg("平仓失败");
@@ -265,5 +265,10 @@ public class AccountPositionFragment extends BaseFragment {
     protected void popMsg(String msg) {
         Toast.makeText(getActivity(), msg, Toast.LENGTH_SHORT).show();
     }
-
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        mWebhelper.cancleRequest();
+        mWebhelper = null;
+    }
 }

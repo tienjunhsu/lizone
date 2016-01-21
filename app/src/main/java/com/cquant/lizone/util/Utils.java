@@ -8,7 +8,8 @@ public class Utils {
     public static final int SUPER_CODE = 1729;
     public static final int LOGIN_CODE = 1730;
 
-    public static final String BASE_URL = "http://www.lizone.net/index.php/api/index/";
+    //public static final String BASE_URL = "http://www.lizone.net/index.php/api/index/";
+    public static final String BASE_URL = "http://www.lizone.net/index.php/api1.3.1/index/";//api 2.0
     public static final String LOGIN_ADDR = "Login/"; //登陆地址
     public static final String PARA_NAME = "name";    //用户名参数
     public static final String PARA_PASS = "pwd";    //密码参数

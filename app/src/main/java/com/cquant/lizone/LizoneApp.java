@@ -11,8 +11,8 @@ import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
 import com.nostra13.universalimageloader.core.assist.QueueProcessingType;
-import com.squareup.leakcanary.LeakCanary;
-import com.squareup.leakcanary.RefWatcher;
+//import com.squareup.leakcanary.LeakCanary;
+//import com.squareup.leakcanary.RefWatcher;
 
 /**
  * Created by PC on 2015/8/24.
@@ -20,7 +20,7 @@ import com.squareup.leakcanary.RefWatcher;
 
 public class LizoneApp extends Application {
 
-    private RefWatcher refWatcher;
+    //private RefWatcher refWatcher;
 
     private static LizoneApp app;
     private static ACache mACache;
@@ -33,7 +33,7 @@ public class LizoneApp extends Application {
         app= (LizoneApp) getApplicationContext();
         mACache = ACache.get(app,1024*1024*20,200);
         initImageLoader();
-        refWatcher = LeakCanary.install(this);
+        //refWatcher = LeakCanary.install(this);
         checkLogin();
     }
     private  void checkLogin(){
@@ -45,10 +45,10 @@ public class LizoneApp extends Application {
             mCanLogin = true;
         }
     }
-    public static RefWatcher getRefWatcher(Context context) {
+    /*public static RefWatcher getRefWatcher(Context context) {
         LizoneApp application = (LizoneApp) context.getApplicationContext();
         return application.refWatcher;
-    }
+    }*/
     public static LizoneApp getApp() {
         return app;
     }
