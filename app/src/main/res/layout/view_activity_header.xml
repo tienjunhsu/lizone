@@ -61,7 +61,7 @@
                     android:layout_weight="1"
                     android:layout_height="match_parent"
                     android:textColor="@color/grey"
-                    android:text="看多"
+                    android:text="看空"
                     android:textSize="20sp"
                     android:gravity="center"
                     />

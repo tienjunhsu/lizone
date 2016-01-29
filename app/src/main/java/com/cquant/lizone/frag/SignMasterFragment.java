@@ -2,6 +2,8 @@ package com.cquant.lizone.frag;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
@@ -17,7 +19,6 @@ import com.cquant.lizone.R;
 import com.cquant.lizone.activity.HomepageActivity;
 import com.cquant.lizone.activity.TestActivity;
 import com.cquant.lizone.bean.ExploreListItem;
-import com.cquant.lizone.net.WebHelper;
 import com.cquant.lizone.tool.ACache;
 import com.cquant.lizone.tool.JsnTool;
 import com.cquant.lizone.tool.Md5FileNameGenerator;
@@ -28,9 +29,13 @@ import com.cquant.lizone.view.FullyLinearLayoutManager;
 import com.cquant.lizone.view.ItemDivider;
 import com.cquant.lizone.view.OnItemClickListener;
 import com.nostra13.universalimageloader.core.ImageLoader;
+import com.squareup.okhttp.Callback;
+import com.squareup.okhttp.Request;
+import com.squareup.okhttp.Response;
 
 import org.json.JSONObject;
 
+import java.io.IOException;
 import java.util.ArrayList;
 
 /**
@@ -41,7 +46,6 @@ public class SignMasterFragment extends  BaseFragment{
     private static final String TAG = " SignMasterFragment ";
 
     protected String url = Utils.BASE_URL+"Faxian_list/aid/0";
-    protected WebHelper mWebhelper = null;
 
     protected ACache mACache;
 
@@ -60,7 +64,6 @@ public class SignMasterFragment extends  BaseFragment{
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        mWebhelper = new WebHelper(getActivity());
         mACache = LizoneApp.getACache();
         initList();
         initReRecyclerView();
@@ -110,22 +113,46 @@ public class SignMasterFragment extends  BaseFragment{
     }
     private void getMaster() {
         Log.d("TianjunXu", " getMaster:url = " + url);
-        mWebhelper.doLoadGet(url, null, new WebHelper.OnWebFinished() {
+        Request request = new Request.Builder().url(url).tag(TAG).build();
+        LizoneApp.getOkHttpClient().newCall(request).enqueue(new Callback() {
+            @Override
+            public void onFailure(Request request, IOException e) {
+            }
 
             @Override
-            public void onWebFinished(boolean success, String msg) {
-                Log.d("TianjunXu", " gonWebFinished:success = " + success + ",msg =" + msg);
-                if (success) {
-                    JSONObject response = JsnTool.getObject(msg);
-                    if ((response != null) && (JsnTool.getInt(response, "status") == 1)) {
-                        parseMaster(msg);
-                        mWebhelper.cancleRequest();
+            public void onResponse(Response response) throws IOException {
+                if (response.isSuccessful()) {
+                    String msg = response.body().string();
+                    JSONObject obj = JsnTool.getObject(msg);
+                    if ((obj != null) && (JsnTool.getInt(obj, "status") == 1)) {
+                        Message message = mHandler.obtainMessage();
+                        message.what = MSG_PARSE_DATA;
+                        message.obj = msg;
+                        message.sendToTarget();
                     }
                 }
             }
         });
     }
-
+    private static final int MSG_PARSE_DATA = 21;
+    private Handler mHandler = new Handler() {
+        @Override
+        public void handleMessage(Message msg) {
+            switch(msg.what){
+                case MSG_PARSE_DATA:{
+                    parseMaster((String) msg.obj);
+                    break;
+                }
+                default:break;
+            }
+            super.handleMessage(msg);
+        }
+    };
+    @Override
+    public void onDestroy() {
+        LizoneApp.getOkHttpClient().cancel(TAG);
+        super.onDestroy();
+    }
     private void parseMaster(String msg) {
         mMasterList =ExploreListItem.getItemList(msg);
         mAdapter.notifyDataSetChanged();

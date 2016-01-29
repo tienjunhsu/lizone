@@ -1,6 +1,7 @@
 package com.cquant.lizone.activity;
 
 import android.os.Bundle;
+import android.os.Message;
 import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -14,16 +15,20 @@ import android.widget.TextView;
 import com.cquant.lizone.LizoneApp;
 import com.cquant.lizone.R;
 import com.cquant.lizone.bean.MarketDataItem;
-import com.cquant.lizone.net.WebHelper;
 import com.cquant.lizone.tool.JsnTool;
 import com.cquant.lizone.tool.LogTool;
 import com.cquant.lizone.tool.StrTool;
 import com.cquant.lizone.util.GlobalVar;
 import com.cquant.lizone.util.SharedPrefsUtil;
 import com.cquant.lizone.util.Utils;
+import com.squareup.okhttp.Callback;
+import com.squareup.okhttp.Request;
+import com.squareup.okhttp.Response;
 
+import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -52,8 +57,6 @@ public class EditOptActivity extends BaseActivity {
 
 	private Map<String,ArrayList<MarketDataItem>> mGroup = new HashMap<String,ArrayList<MarketDataItem>>();
 
-    private WebHelper mWebhelper = null;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -65,8 +68,6 @@ public class EditOptActivity extends BaseActivity {
         if(GlobalVar.sGroup != null){
             mGroup = GlobalVar.sGroup;
         }
-
-        mWebhelper = new WebHelper(this);
 
         initToolBar();
 
@@ -93,21 +94,29 @@ public class EditOptActivity extends BaseActivity {
         if(!isNetAvailable()) {
             return;
         }
-        mWebhelper.doLoadGet(Utils.BASE_URL + "AddOptional/id/" + id, null, new WebHelper.OnWebFinished() {
+        Request request = new Request.Builder().url(Utils.BASE_URL + "AddOptional/id/" + id).tag(TAG).build();
+        LizoneApp.getOkHttpClient().newCall(request).enqueue(new Callback() {
             @Override
-            public void onWebFinished(boolean success, String msg) {
-                //LogTool.e("EditOptActivity:updateToNet-->success ="+success+",msg="+msg);
-                if(success) {
-                    JSONObject response = JsnTool.getObject(msg);
-                    if ((response != null) && (JsnTool.getInt(response, "status") == 1)) {
-                        //toast success
-                    } else {
-                        //toast failed
-                    }
-                } else {
-                    //maybe should toast
+            public void onFailure(Request request, IOException e) {
+                if (e != null) {
+                    e.printStackTrace();
                 }
-                mWebhelper.cancleRequest();
+            }
+
+            @Override
+            public void onResponse(Response response) throws IOException {
+                if (response.isSuccessful()) {
+                    String msg = response.body().string();
+                    LogTool.e("updateToNet:onResponse->msg=" + msg);
+                    /*JSONObject obj = JsnTool.getObject(msg);
+                    try {
+                        if ((obj != null) && (obj.getInt("status") == 1)) {
+                            //toast success
+                        }
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }*/
+                }
             }
         });
     }
@@ -160,6 +169,12 @@ public class EditOptActivity extends BaseActivity {
             //end add by hsu
         }
         SharedPrefsUtil.putStringValue(LizoneApp.getApp(), SharedPrefsUtil.PREFS_OPT, mOptStr);
+    }
+
+    @Override
+    public void onDestroy() {
+        LizoneApp.getOkHttpClient().cancel(TAG);
+        super.onDestroy();
     }
 
     class MarketAdapter extends BaseExpandableListAdapter {

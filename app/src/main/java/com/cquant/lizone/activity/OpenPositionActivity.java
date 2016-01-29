@@ -48,9 +48,9 @@ public class OpenPositionActivity extends BaseActivity  {
 
         initToolBar();
         initWebView();
-        setSession();
-        webview.loadUrl(url);
+        //setSession();
         webLogin();//hsu
+        webview.loadUrl(url);
         //displayDataBase();
     }
     private void webLogin(){

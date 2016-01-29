@@ -11,7 +11,7 @@ import java.util.Map;
  */
 public class GlobalVar {
 
-    public static String SESSIONID;
+    public static String SESSIONID="";
 
     public static AccountItem sAccountInf;
 

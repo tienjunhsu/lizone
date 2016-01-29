@@ -58,12 +58,14 @@
             android:layout_width="match_parent"
             android:layout_height="1dp"
             android:layout_marginLeft="16dp"
+            android:visibility="gone"
             android:background="@color/white_bg"/>
         <TextView
             android:id="@+id/about_us"
             android:background="@drawable/setting_text_layout_bg_two"
             android:text="关于我们"
             android:drawableRight="@drawable/go"
+            android:visibility="gone"
             style="@style/setting_text_layout_item"
             />
     </LinearLayout>

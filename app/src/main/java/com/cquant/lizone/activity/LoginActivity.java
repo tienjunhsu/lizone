@@ -5,31 +5,30 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
-import android.support.design.widget.TextInputLayout;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.Toolbar;
-import android.text.Editable;
-import android.text.TextUtils;
-import android.text.TextWatcher;
-import android.view.Gravity;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.cquant.lizone.LizoneApp;
 import com.cquant.lizone.R;
 import com.cquant.lizone.bean.AccountItem;
-import com.cquant.lizone.net.WebHelper;
 import com.cquant.lizone.tool.JsnTool;
-import com.cquant.lizone.tool.LogTool;
 import com.cquant.lizone.tool.StrTool;
 import com.cquant.lizone.util.GlobalVar;
 import com.cquant.lizone.util.SharedPrefsUtil;
 import com.cquant.lizone.util.Utils;
+import com.squareup.okhttp.Callback;
+import com.squareup.okhttp.FormEncodingBuilder;
+import com.squareup.okhttp.Request;
+import com.squareup.okhttp.RequestBody;
+import com.squareup.okhttp.Response;
 
 import org.json.JSONObject;
+
+import java.io.IOException;
 
 /**
  * Created by asus on 2015/9/8.
@@ -50,8 +49,6 @@ public class LoginActivity extends BaseActivity implements View.OnFocusChangeLis
 
     private EditText mEtUser;
     private EditText mEtPassword;
-
-    private WebHelper mWebhelper = null;
 
     private View mPbProgress = null;
     private TextView mTvMsg = null;
@@ -76,6 +73,14 @@ public class LoginActivity extends BaseActivity implements View.OnFocusChangeLis
                 }
                 case 2:{
                     mPbProgress.setVisibility(View.GONE);
+                    break;
+                }
+                case 7:{
+                    parseAccountInf((String) msg.obj);
+                    break;
+                }
+                case 8:{
+                    popMsg((String) msg.obj);
                     break;
                 }
                 default:finish();
@@ -110,7 +115,6 @@ public class LoginActivity extends BaseActivity implements View.OnFocusChangeLis
         initToolBar();
         mEtUser.setOnFocusChangeListener(this);
         mEtPassword.setOnFocusChangeListener(this);
-        mWebhelper = new WebHelper(this);
         mEtUser.setText(SharedPrefsUtil.getStringValue(LizoneApp.getApp(), SharedPrefsUtil.PREFS_USER_ID, ""));
     }
     @Override
@@ -172,13 +176,12 @@ public class LoginActivity extends BaseActivity implements View.OnFocusChangeLis
     @Override
     public void onPause() {
         super.onPause();
-        mWebhelper.cancleRequest();
     }
 
     @Override
     public void onDestroy() {
+        LizoneApp.getOkHttpClient().cancel(TAG);
         super.onDestroy();
-        mWebhelper = null;
     }
     @Override
     public void onFocusChange(View v, boolean hasFocus) {
@@ -252,24 +255,41 @@ public class LoginActivity extends BaseActivity implements View.OnFocusChangeLis
         if (isNetAvailable()) {
             user_enable = false;
             sendStateMsg("正在登录...", true);
-            String params = "name="+mEtUser.getText().toString().trim()+"&pwd="+mEtPassword.getText().toString().trim();
-            mWebhelper.doLoadPost(url, params,
-                    new WebHelper.OnWebFinished() {
-                        @Override
-                        public void onWebFinished(boolean success,
-                                                  String msg) {
-                            if (success) {
-                                parseAccountInf(msg);
-                                mWebhelper.cancleRequest();
-                                //LogTool.d(TAG+" login success:"+msg);
-                            } else {
-                                //tipsNetError("登陆失败，请重试");
-                                popMsg("登陆失败，请重试");
-                            }
-                            sendStateMsg("", false);
-                            user_enable = true;
-                        }
-                    });
+            RequestBody body = new FormEncodingBuilder().add("name",mEtUser.getText().toString().trim())
+                                 .add("pwd",mEtPassword.getText().toString().trim()).build();
+            Request request = new Request.Builder().url(Utils.BASE_URL + "Login/").post(body).tag(TAG).build();
+            LizoneApp.getOkHttpClient().newCall(request).enqueue(new Callback() {
+                @Override
+                public void onFailure(Request request, IOException e) {
+                    if (e != null) {
+                        e.printStackTrace();
+                    }
+                    Message message = mHander.obtainMessage();
+                    message.what = 8;
+                    message.obj = "登陆失败，请重试";
+                    message.sendToTarget();
+                    sendStateMsg("", false);
+                    user_enable = true;
+                }
+
+                @Override
+                public void onResponse(Response response) throws IOException {
+                    if (response.isSuccessful()) {
+                        String msg = response.body().string();
+                        Message message = mHander.obtainMessage();
+                        message.what = 7;
+                        message.obj = msg;
+                        message.sendToTarget();
+                    } else {
+                        Message message = mHander.obtainMessage();
+                        message.what = 8;
+                        message.obj = "登陆失败，请重试";
+                        message.sendToTarget();
+                    }
+                    sendStateMsg("", false);
+                    user_enable = true;
+                }
+            });
         } else {
             popMsg("网络不可用");
         }

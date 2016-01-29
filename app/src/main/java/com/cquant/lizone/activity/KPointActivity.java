@@ -30,22 +30,26 @@ import android.widget.RadioGroup;
 import android.widget.ScrollView;
 import android.widget.TextView;
 
+import com.cquant.lizone.LizoneApp;
 import com.cquant.lizone.R;
 import com.cquant.lizone.bean.MarketDataItem;
 import com.cquant.lizone.frag.NewsFragment;
-import com.cquant.lizone.net.WebHelper;
 import com.cquant.lizone.tool.DlgTool;
 import com.cquant.lizone.tool.JsnTool;
 import com.cquant.lizone.tool.LogTool;
 import com.cquant.lizone.tool.StrTool;
 import com.cquant.lizone.util.Utils;
 import com.cquant.lizone.view.TabLayout;
+import com.squareup.okhttp.Callback;
+import com.squareup.okhttp.Request;
+import com.squareup.okhttp.Response;
 import com.tencent.smtt.sdk.WebSettings;
 import com.tencent.smtt.sdk.WebView;
 import com.tencent.smtt.sdk.WebViewClient;
 
 import org.json.JSONObject;
 
+import java.io.IOException;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Random;
@@ -104,10 +108,8 @@ public class KPointActivity extends BaseActivity implements RadioGroup.OnChecked
     //private String socket_url = "http://1-yj.com:3000";
     private String socket_url = "http://q.lizone.net:3000";//api 2.0
 
-    private WebHelper mWebHelper;
-
-	private TextView mTvNumMessage;
-	private TextView mTvNumTrade;
+    private TextView mTvNumMessage;
+    private TextView mTvNumTrade;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -131,8 +133,8 @@ public class KPointActivity extends BaseActivity implements RadioGroup.OnChecked
         mTvClose = (TextView) findViewById(R.id.tv_close);
         mTvPercent = (TextView) findViewById(R.id.tv_percent);
 
-		mTvNumMessage = (TextView)findViewById(R.id.tv_message);
-		mTvNumTrade = (TextView)findViewById(R.id.tv_trade);
+        mTvNumMessage = (TextView) findViewById(R.id.tv_message);
+        mTvNumTrade = (TextView) findViewById(R.id.tv_trade);
 
         mRadioMoney = (RadioGroup) findViewById(R.id.rg_money);
         mRadioCycle = (RadioGroup) findViewById(R.id.rg_cycle);
@@ -160,13 +162,11 @@ public class KPointActivity extends BaseActivity implements RadioGroup.OnChecked
         try {
             socket = IO.socket(socket_url);
         } catch (URISyntaxException e) {
-            LogTool.e(TAG+" URISyntaxException");
+            LogTool.e(TAG + " URISyntaxException");
             e.printStackTrace();
         }
 
         refreshHeadView(dataItem, true);
-
-        mWebHelper = new WebHelper(this);
     }
 
     @Override
@@ -174,7 +174,7 @@ public class KPointActivity extends BaseActivity implements RadioGroup.OnChecked
         super.onResume();
         LogTool.d(TAG + ":onResume");
         connect();
-		getViewNumAndTradeNum();//hsu,2016/01/14
+        getViewNumAndTradeNum();//hsu,2016/01/14
     }
 
     @Override
@@ -183,14 +183,14 @@ public class KPointActivity extends BaseActivity implements RadioGroup.OnChecked
         //disconnected();//比较耗时，测试一下
         LogTool.d(TAG + ":onPause");
         disconnected();
-        mWebHelper.cancleRequest();
     }
+
     private void connect() {
-        LogTool.e(TAG+"connect");
-        if(socket == null) {
+        LogTool.e(TAG + "connect");
+        if (socket == null) {
             return;
         }
-        if(socket.connected()) {
+        if (socket.connected()) {
             return;
         }
         socket.on(Socket.EVENT_CONNECT, new Emitter.Listener() {
@@ -215,57 +215,63 @@ public class KPointActivity extends BaseActivity implements RadioGroup.OnChecked
                 msg.what = 2;
                 msg.obj = args[0];
                 msg.sendToTarget();
-                LogTool.e(TAG+" notification call");
+                LogTool.e(TAG + " notification call");
             }
-        });;
+        });
+        ;
         socket.connect();
     }
 
     private void disconnected() {
-        if((socket != null)&&socket.connected()) {
+        if ((socket != null) && socket.connected()) {
             socket.off();
             socket.disconnect();
         }
 
     }
+
     private Handler mHanler = new Handler() {
         @Override
         public void handleMessage(Message msg) {
             if (msg.what == 1) {
             } else if (msg.what == 2) {
-                JSONObject data = (JSONObject)msg.obj;
-                if(data != null) {
+                JSONObject data = (JSONObject) msg.obj;
+                if (data != null) {
                     parseMarketData(data);
                 }
 
-            }else if(msg.what==3){
+            } else if (msg.what == 3) {
                 connect();
+            } else if (msg.what == 19) {
+                pareseViewAndTradeNum((JSONObject) msg.obj);
             }
             super.handleMessage(msg);
         }
 
     };
     int time = 0;
+
     private void parseMarketData(JSONObject obj) {
         time++;
-        if(time%2 != 0) { //降低刷新频率
+        if (time % 2 != 0) { //降低刷新频率
             return;
         }
-        time =0;
+        time = 0;
         //LogTool.e(TAG+"parseMarketData");
         ArrayList<MarketDataItem> mDataList = MarketDataItem.getItemList(obj);
-        if((mDataList == null)||(mDataList.size() <=0)) {
+        if ((mDataList == null) || (mDataList.size() <= 0)) {
             return;
         }
-        for(MarketDataItem item:mDataList) {
-            if(item.label.equals(dataItem.label)) {
-                refreshHeadView(item,false);
+        for (MarketDataItem item : mDataList) {
+            if (item.label.equals(dataItem.label)) {
+                refreshHeadView(item, false);
             }
         }
 
     }
+
     private void refreshHeadView(MarketDataItem dataItem, boolean isInit) {
-        LogTool.e(TAG+" refreshHeadView:"+dataItem.newprice);
+        LogTool.e(TAG + " refreshHeadView:" + dataItem.newprice);
 
         /*Random random = new Random();
         int s = random.nextInt(10);
@@ -291,7 +297,7 @@ public class KPointActivity extends BaseActivity implements RadioGroup.OnChecked
             mTvPrice.requestFocus();
         }
 
-       // mTvPrice.invalidate();//hsu
+        // mTvPrice.invalidate();//hsu
     }
 
     private void setHeadColor(MarketDataItem dataItem) {
@@ -447,16 +453,16 @@ public class KPointActivity extends BaseActivity implements RadioGroup.OnChecked
     }
 
     private void openTradeViewActivity() {
-        Intent intent = new Intent(this,ViewsActivity.class);
-        intent.putExtra("label",dataItem.label);
-        intent.putExtra("type",1);
+        Intent intent = new Intent(this, ViewsActivity.class);
+        intent.putExtra("label", dataItem.label);
+        intent.putExtra("type", 1);
         startActivity(intent);
     }
 
     private void openMessageViewActivity() {
-        Intent intent = new Intent(this,ViewsActivity.class);
-        intent.putExtra("label",dataItem.label);
-        intent.putExtra("type",0);
+        Intent intent = new Intent(this, ViewsActivity.class);
+        intent.putExtra("label", dataItem.label);
+        intent.putExtra("type", 0);
         startActivity(intent);
     }
 
@@ -501,7 +507,7 @@ public class KPointActivity extends BaseActivity implements RadioGroup.OnChecked
     };
 
     private void loadSelectCycle() {
-        if((mCurSelected >=0)&&(mCurSelected < 4)) {
+        if ((mCurSelected >= 0) && (mCurSelected < 4)) {
             mBSRadio.setText(cycles[mCurSelected]);
             if (mCurSelected == 0) {
                 loadBSChart();
@@ -563,40 +569,59 @@ public class KPointActivity extends BaseActivity implements RadioGroup.OnChecked
 
     @Override
     public void onDestroy() {
-        if(socket != null) {
-            if(socket.connected()) {
+        if (socket != null) {
+            if (socket.connected()) {
                 socket.disconnect();
                 socket.close();
             }
             socket = null;
         }
-        mWebHelper = null;
+        LizoneApp.getOkHttpClient().cancel(TAG);
         super.onDestroy();
         //android.os.Process.killProcess(android.os.Process.myPid());
     }
 
     private int viewNum = 0;
     private int tradeNum = 0;
+
     private void getViewNumAndTradeNum() {
-        mWebHelper.doLoadGet(Utils.BASE_URL + "GuandSum/ex_id/" + dataItem.id, null, new WebHelper.OnWebFinished() {
+        Request request = new Request.Builder().url(Utils.BASE_URL + "GuandSum/ex_id/" + dataItem.id).tag(TAG).build();
+        LizoneApp.getOkHttpClient().newCall(request).enqueue(new Callback() {
             @Override
-            public void onWebFinished(boolean success, String msg) {
-                if(success) {
+            public void onFailure(Request request, IOException e) {
+                if (e != null) {
+                    e.printStackTrace();
+                }
+            }
+
+            @Override
+            public void onResponse(Response response) throws IOException {
+                if (response.isSuccessful()) {
+                    String msg = response.body().string();
                     JSONObject obj = JsnTool.getObject(msg);
-                    if((obj != null)&&(JsnTool.getInt(obj,"status")==1)) {
-                        JSONObject data = JsnTool.getObject(obj,"data");
-                        viewNum = Integer.parseInt(JsnTool.getString(data,"GDcount"));
-                        tradeNum = Integer.parseInt(JsnTool.getString(data,"JYcount"));
-						refreshNumView();
+                    if ((obj != null) && (JsnTool.getInt(obj, "status") == 1)) {
+                        Message message = mHanler.obtainMessage();
+                        message.what = 19;
+                        message.obj = obj;
+                        message.sendToTarget();
                     }
                 }
             }
         });
     }
-	private void refreshNumView(){
-		mTvNumMessage.setText(viewNum + "条观点");
-		mTvNumTrade.setText(tradeNum + "条交易");
-	}
+
+    private void refreshNumView() {
+        mTvNumMessage.setText(viewNum + "条观点");
+        mTvNumTrade.setText(tradeNum + "条交易");
+    }
+
+    private void pareseViewAndTradeNum(JSONObject obj) {
+        JSONObject data = JsnTool.getObject(obj, "data");
+        viewNum = Integer.parseInt(JsnTool.getString(data, "GDcount"));
+        tradeNum = Integer.parseInt(JsnTool.getString(data, "JYcount"));
+        refreshNumView();
+    }
+
     private RadioGroup.OnCheckedChangeListener onCycleChangeListener = new RadioGroup.OnCheckedChangeListener() {
 
         @Override

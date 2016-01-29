@@ -2,6 +2,8 @@ package com.cquant.lizone.frag;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -15,16 +17,19 @@ import com.cquant.lizone.R;
 import com.cquant.lizone.activity.AccountActivity;
 import com.cquant.lizone.activity.OpenPositionActivity;
 import com.cquant.lizone.bean.AccountOverViewItem;
-import com.cquant.lizone.net.WebHelper;
 import com.cquant.lizone.tool.ACache;
 import com.cquant.lizone.tool.JsnTool;
 import com.cquant.lizone.tool.Md5FileNameGenerator;
 import com.cquant.lizone.tool.StrTool;
 import com.cquant.lizone.util.GlobalVar;
 import com.cquant.lizone.util.Utils;
+import com.squareup.okhttp.Callback;
+import com.squareup.okhttp.Request;
+import com.squareup.okhttp.Response;
 
 import org.json.JSONObject;
 
+import java.io.IOException;
 import java.util.ArrayList;
 
 /**
@@ -37,7 +42,6 @@ public class AccountOverviewFragment extends BaseFragment {
     private ACache mACache;
 
     private String url = Utils.BASE_URL+"MyAccount/";
-    protected WebHelper mWebhelper = null;
 
     private TextView mTvFloatingProfit;
     private ImageView mIconFloating;
@@ -124,7 +128,6 @@ public class AccountOverviewFragment extends BaseFragment {
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        mWebhelper = new WebHelper(getActivity());
         initOverViewData();
     }
     private void initOverViewData(){
@@ -156,23 +159,41 @@ public class AccountOverviewFragment extends BaseFragment {
 
     }
     private void getOverView() {
-        Log.d("TianjunXu", " getOverView:url = " + url);
-        mWebhelper.doLoadGet(url, null, new WebHelper.OnWebFinished() {
+        Request request = new Request.Builder().url(url).tag(TAG).build();
+        LizoneApp.getOkHttpClient().newCall(request).enqueue(new Callback() {
+            @Override
+            public void onFailure(Request request, IOException e) {
+            }
 
             @Override
-            public void onWebFinished(boolean success, String msg) {
-                Log.d("TianjunXu", " getOverView:success = " + success + ",msg =" + msg);
-                if (success) {
-                    JSONObject response = JsnTool.getObject(msg);
-                    if ((response != null) && (JsnTool.getInt(response, "status") == 1)) {
-                        parseOverView(msg);
-                        mWebhelper.cancleRequest();
+            public void onResponse(Response response) throws IOException {
+                if (response.isSuccessful()) {
+                    String msg = response.body().string();
+                    JSONObject obj = JsnTool.getObject(msg);
+                    if ((obj != null) && (JsnTool.getInt(obj, "status") == 1)) {
+                        Message message = mHandler.obtainMessage();
+                        message.what = MSG_PARSE_DATA;
+                        message.obj = msg;
+                        message.sendToTarget();
                     }
                 }
             }
         });
     }
-
+    private static final int MSG_PARSE_DATA = 21;
+    private Handler mHandler = new Handler() {
+        @Override
+        public void handleMessage(Message msg) {
+            switch(msg.what){
+                case MSG_PARSE_DATA:{
+                    parseOverView((String) msg.obj);
+                    break;
+                }
+                default:break;
+            }
+            super.handleMessage(msg);
+        }
+    };
     private void parseOverView(String msg) {
 
         mOverView =AccountOverViewItem.getItem(msg);
@@ -182,8 +203,7 @@ public class AccountOverviewFragment extends BaseFragment {
 
     @Override
     public void onDestroy() {
+        LizoneApp.getOkHttpClient().cancel(TAG);
         super.onDestroy();
-        mWebhelper.cancleRequest();
-        mWebhelper = null;
     }
 }

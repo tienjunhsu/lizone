@@ -3,6 +3,8 @@ package com.cquant.lizone.activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -24,7 +26,6 @@ import com.cquant.lizone.R;
 import com.cquant.lizone.bean.GiftItem;
 import com.cquant.lizone.bean.NewsItem;
 import com.cquant.lizone.bean.PromotionItem;
-import com.cquant.lizone.net.WebHelper;
 import com.cquant.lizone.tool.ACache;
 import com.cquant.lizone.tool.JsnTool;
 import com.cquant.lizone.tool.LogTool;
@@ -34,16 +35,20 @@ import com.cquant.lizone.util.GlobalVar;
 import com.cquant.lizone.util.SharedPrefsUtil;
 import com.cquant.lizone.util.Utils;
 import com.nostra13.universalimageloader.core.ImageLoader;
+import com.squareup.okhttp.Callback;
+import com.squareup.okhttp.Request;
+import com.squareup.okhttp.Response;
 
 import org.json.JSONObject;
 
+import java.io.IOException;
 import java.util.ArrayList;
 
 /**
  * Created by PC on 2015/9/11.
  */
 public class MyPointActivity extends BaseActivity {
-
+    private static final String TAG = "MyPointActivity";
     private Toolbar toolbar;
     private Button mActionMenu;
     private ConvenientBanner mCBView;
@@ -53,7 +58,6 @@ public class MyPointActivity extends BaseActivity {
 
     private ACache mACache;
 
-    private WebHelper mWebhelper = null;
     private TextView mTvPoint;
     private TextView mTvNum;
     private GridView gridView;
@@ -79,7 +83,6 @@ public class MyPointActivity extends BaseActivity {
         mTvPoint = (TextView)findViewById(R.id.tv_point);
         mTvNum = (TextView)findViewById(R.id.tv_num);
         gridView = (GridView)findViewById(R.id.gridview);
-        mWebhelper = new WebHelper(this);
         initToolBar();
         initCBView();
         mFileName = Md5FileNameGenerator.generate(url);
@@ -97,13 +100,12 @@ public class MyPointActivity extends BaseActivity {
     @Override
     public void onPause() {
         super.onPause();
-        mWebhelper.cancleRequest();
     }
 
     @Override
     public void onDestroy() {
         super.onDestroy();
-        mWebhelper = null;
+        LizoneApp.getOkHttpClient().cancel(TAG);
     }
     private void initGridView() {
 
@@ -117,21 +119,42 @@ public class MyPointActivity extends BaseActivity {
         gridView.setAdapter(mAdapter);
     }
     private void getGifts() {
-        mWebhelper.doLoadGet(url, null, new WebHelper.OnWebFinished() {
+        Request request = new Request.Builder().url(url).tag(TAG).build();
+        LizoneApp.getOkHttpClient().newCall(request).enqueue(new Callback() {
+            @Override
+            public void onFailure(Request request, IOException e) {
+            }
 
             @Override
-            public void onWebFinished(boolean success, String msg) {
-                ;
-                if (success) {
-                    JSONObject response = JsnTool.getObject(msg);
-                    if ((response != null) && (JsnTool.getInt(response, "status") == 1)) {
-                        parseGifts(msg);
-                        mWebhelper.cancleRequest();
+            public void onResponse(Response response) throws IOException {
+                if (response.isSuccessful()) {
+                    String msg = response.body().string();
+                    JSONObject obj = JsnTool.getObject(msg);
+                    if ((obj != null) && (JsnTool.getInt(obj, "status") == 1)) {
+                        Message message = mHandler.obtainMessage();
+                        message.what = MSG_PARSE_GIFT;
+                        message.obj = msg;
+                        message.sendToTarget();
                     }
                 }
             }
         });
     }
+    private static final int MSG_PARSE_GIFT = 20;
+    private Handler mHandler = new Handler() {
+        @Override
+        public void handleMessage(Message msg) {
+            switch (msg.what) {
+                case MSG_PARSE_GIFT:
+                    parseGifts((String) msg.obj);
+                    break;
+                default:
+                    break;
+            }
+            super.handleMessage(msg);
+        }
+
+    };
     private void startExchangeActivity(int position) {
         //Intent intent = new Intent(this, IntegralExchangeActivity.class);
         //intent.putExtra("gid", mGiftList.get(position).id);

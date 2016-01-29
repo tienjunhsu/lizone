@@ -25,24 +25,30 @@ import android.widget.Toast;
 import com.cquant.lizone.LizoneApp;
 import com.cquant.lizone.R;
 import com.cquant.lizone.bean.AccountItem;
-import com.cquant.lizone.net.WebHelper;
 import com.cquant.lizone.tool.JsnTool;
 import com.cquant.lizone.tool.LogTool;
 import com.cquant.lizone.tool.StrTool;
 import com.cquant.lizone.util.GlobalVar;
 import com.cquant.lizone.util.SharedPrefsUtil;
 import com.cquant.lizone.util.Utils;
+import com.squareup.okhttp.Callback;
+import com.squareup.okhttp.FormEncodingBuilder;
+import com.squareup.okhttp.Request;
+import com.squareup.okhttp.RequestBody;
+import com.squareup.okhttp.Response;
 
 import org.json.JSONObject;
+
+import java.io.IOException;
 
 /**
  * Created by PC on 2015/8/26.
  */
 public class RegisterActivity extends BaseActivity {
 
-    private Toolbar toolbar;
+    private static final String TAG ="RegisterActivity";
 
-    private WebHelper mWebhelper = null;
+    private Toolbar toolbar;
 
     private final int CHECK_USER = 1;
     private final int CHECK_PASSWORD = 2;
@@ -65,6 +71,12 @@ public class RegisterActivity extends BaseActivity {
     private String mStrMsg=null;
 
     private String url = Utils.BASE_URL+"Get_Reg/";
+
+    private static final int MSG_POP_MSG = 13;
+    private static final int MSG_PARSE_CODE_RESULT = 14;
+    private static final int MSG_LOGIN_SUCCEED = 15;
+    private static final int MSG_REGISTER_SUCCEED = 16;
+
     private Handler mHander = new Handler() {
         @Override
         public void handleMessage(Message msg) {
@@ -82,6 +94,24 @@ public class RegisterActivity extends BaseActivity {
                 }
                 case 2:{
                     mPbProgress.setVisibility(View.GONE);
+                    break;
+                }
+                case MSG_POP_MSG:{
+                    popMsg((String) msg.obj);
+                    break;
+                }
+                case MSG_PARSE_CODE_RESULT:{
+                    parseCodeResult((JSONObject)msg.obj);
+                    break;
+                }
+                case MSG_LOGIN_SUCCEED:{
+                    parseAccountInf((String)msg.obj);
+                    break;
+                }
+                case MSG_REGISTER_SUCCEED:{
+                    if(parseRegisterResult((JSONObject)msg.obj)) {
+                        startLogin();
+                    }
                     break;
                 }
                 default:finish();
@@ -134,7 +164,6 @@ public class RegisterActivity extends BaseActivity {
                 }
             }
         });
-        mWebhelper = new WebHelper(this);
     }
 
     @Override
@@ -169,13 +198,12 @@ public class RegisterActivity extends BaseActivity {
     @Override
     public void onPause() {
         super.onPause();
-        mWebhelper.cancleRequest();
     }
 
     @Override
     public void onDestroy() {
+        LizoneApp.getOkHttpClient().cancel(TAG);
         super.onDestroy();
-        mWebhelper = null;
     }
     public void onXmlBtClick(View v) {
         switch (v.getId()) {
@@ -209,37 +237,56 @@ public class RegisterActivity extends BaseActivity {
         if(isNetAvailable()){
             enable_user=false;
             sendStateMsg("正在注册...", true);
-            String params = "userid="+mEtUser.getText().toString().trim()+"&pwd="+mEtPassword.getText().toString().trim();
-                //end add by TianjunXu
-                mWebhelper.doLoadPost(url, params, new WebHelper.OnWebFinished() {
-                    @Override
-                    public void onWebFinished(boolean success, String msg) {
-                        if (success) {
-                            JSONObject response = JsnTool.getObject(msg);
-                            if (response != null) {
-                                if (parseRegisterResult(response)) {
-                                    mWebhelper.cancleRequest();
-                                    startLogin();
-                                }
-                            }
-                                //LogTool.d(TAG+" login success:"+msg);
-                            } else {
-                                //tipsNetError("登陆失败，请重试");
-                                popMsg("注册失败，请重试");
-                            }
-                            sendStateMsg("", false);
-                            enable_user = true;
-                        }
+            RequestBody body = new FormEncodingBuilder().add("userid",mEtUser.getText().toString().trim())
+                    .add("pwd",mEtPassword.getText().toString().trim()).build();
+            Request request = new Request.Builder().url(url).post(body).tag(TAG).build();
+            LizoneApp.getOkHttpClient().newCall(request).enqueue(new Callback() {
+                @Override
+                public void onFailure(Request request, IOException e) {
+                    if (e != null) {
+                        e.printStackTrace();
                     }
+                    Message message = mHander.obtainMessage();
+                    message.what = MSG_POP_MSG;
+                    message.obj = "注册失败，请重试";
+                    message.sendToTarget();
+                    sendStateMsg("", false);
+                    enable_user = true;
+                }
 
-                    );
+                @Override
+                public void onResponse(Response response) throws IOException {
+                    if (response.isSuccessful()) {
+                        String msg = response.body().string();
+                        JSONObject obj = JsnTool.getObject(msg);
+                        if (obj != null) {
+                            Message message = mHander.obtainMessage();
+                            message.what = MSG_REGISTER_SUCCEED;
+                            message.obj = obj;
+                            message.sendToTarget();
+                        } else {
+                            Message message = mHander.obtainMessage();
+                            message.what = MSG_POP_MSG;
+                            message.obj = "注册失败，请重试";
+                            message.sendToTarget();
+                        }
+                    } else {
+                        Message message = mHander.obtainMessage();
+                        message.what = MSG_POP_MSG;
+                        message.obj = "注册失败，请重试";
+                        message.sendToTarget();
+                    }
+                    sendStateMsg("", false);
+                    enable_user = true;
+                }
+            });
                 }else{
             popMsg("网络不可用");
         }
     }
 
     private boolean parseRegisterResult(JSONObject response) {
-        int status = JsnTool.getInt(response,"status");
+        int status = JsnTool.getInt(response, "status");
         if(status == 1) {
             popMsg("注册成功");
             SharedPrefsUtil.putStringValue(LizoneApp.getApp(), SharedPrefsUtil.PREFS_USER_ID, mEtUser.getText().toString().trim());
@@ -258,23 +305,41 @@ public class RegisterActivity extends BaseActivity {
             return;
         }
         String url = Utils.BASE_URL+Utils.GET_CODE_ADDR+Utils.PARA_USER_ID+"/"+mEtUser.getText().toString().trim();
-        mWebhelper.doLoadGet(url, null, new WebHelper.OnWebFinished() {
+        Request request = new Request.Builder().url(url).tag(TAG).build();
+        LizoneApp.getOkHttpClient().newCall(request).enqueue(new Callback() {
             @Override
-            public void onWebFinished(boolean success, String msg) {
-                if (success) {
-                    JSONObject response = JsnTool.getObject(msg);
-                    if (response != null) {
-                        if (parseCodeResult(response)) {
-                            mWebhelper.cancleRequest();
-                        }
-                    } else {
-                        //tipsNetError(getString(R.string.get_code_error)+","+getString(R.string.check_net));
-                        popMsg(getString(R.string.get_code_error) + "," + getString(R.string.check_net));
-                    }
+            public void onFailure(Request request, IOException e) {
+                Message message = mHander.obtainMessage();
+                message.what = MSG_POP_MSG;
+                message.obj = (getString(R.string.get_code_error) + "," + getString(R.string.check_net));
+                message.sendToTarget();
+            }
 
+            @Override
+            public void onResponse(Response response) throws IOException {
+                if (response.isSuccessful()) {
+                    String msg = response.body().string();
+                    JSONObject obj = JsnTool.getObject(msg);
+                    if ((obj != null) && (JsnTool.getInt(obj, "status") == 1)) {
+                        Message message = mHander.obtainMessage();
+                        message.what = MSG_PARSE_CODE_RESULT;
+                        message.obj = obj;
+                        message.sendToTarget();
+                    } else {
+                        Message message = mHander.obtainMessage();
+                        message.what = MSG_POP_MSG;
+                        if(StrTool.areNotEmpty(JsnTool.getString(obj, "msg"))) {
+                            message.obj = JsnTool.getString(obj, "msg");
+                        } else {
+                            message.obj = (getString(R.string.get_code_error) + "," + getString(R.string.check_net));
+                        }
+                        message.sendToTarget();
+                    }
                 } else {
-                    //tipsNetError(getString(R.string.get_code_error)+","+getString(R.string.check_net));
-                    popMsg(getString(R.string.get_code_error) + "," + getString(R.string.check_net));
+                    Message message = mHander.obtainMessage();
+                    message.what = MSG_POP_MSG;
+                    message.obj = (getString(R.string.get_code_error) + "," + getString(R.string.check_net));
+                    message.sendToTarget();
                 }
             }
         });
@@ -283,23 +348,41 @@ public class RegisterActivity extends BaseActivity {
         if (isNetAvailable()) {
             enable_user = false;
             sendStateMsg("正在登录...", true);
-            String params = "name="+mEtUser.getText().toString().trim()+"&pwd="+mEtPassword.getText().toString().trim();
-            mWebhelper.doLoadPost(Utils.BASE_URL+Utils.LOGIN_ADDR, params,
-                    new WebHelper.OnWebFinished() {
-                        @Override
-                        public void onWebFinished(boolean success,
-                                                  String msg) {
-                            if (success) {
-                                parseAccountInf(msg);
-                                mWebhelper.cancleRequest();
-                                //LogTool.d(TAG+" login success:"+msg);
-                            } else {
-                                tipsNetError("登陆失败，请重新登陆");
-                            }
-                            sendStateMsg("", false);
-                            enable_user = true;
-                        }
-                    });
+            RequestBody body = new FormEncodingBuilder().add("name",mEtUser.getText().toString().trim())
+                    .add("pwd",mEtPassword.getText().toString().trim()).build();
+            Request request = new Request.Builder().url(Utils.BASE_URL+Utils.LOGIN_ADDR).post(body).tag(TAG).build();
+            LizoneApp.getOkHttpClient().newCall(request).enqueue(new Callback() {
+                @Override
+                public void onFailure(Request request, IOException e) {
+                    if (e != null) {
+                        e.printStackTrace();
+                    }
+                    Message message = mHander.obtainMessage();
+                    message.what = MSG_POP_MSG;
+                    message.obj = "登陆失败，请重试";
+                    message.sendToTarget();
+                    sendStateMsg("", false);
+                    enable_user = true;
+                }
+
+                @Override
+                public void onResponse(Response response) throws IOException {
+                    if (response.isSuccessful()) {
+                        String msg = response.body().string();
+                            Message message = mHander.obtainMessage();
+                            message.what = MSG_LOGIN_SUCCEED;
+                            message.obj = msg;
+                            message.sendToTarget();
+                    } else {
+                        Message message = mHander.obtainMessage();
+                        message.what = MSG_POP_MSG;
+                        message.obj = "登陆失败，请重试";
+                        message.sendToTarget();
+                    }
+                    sendStateMsg("", false);
+                    enable_user = true;
+                }
+            });
         } else {
             tipsNetError("网络不可用，登陆失败");
         }

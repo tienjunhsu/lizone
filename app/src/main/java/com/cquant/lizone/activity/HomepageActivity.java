@@ -2,6 +2,8 @@ package com.cquant.lizone.activity;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
@@ -25,15 +27,19 @@ import com.cquant.lizone.frag.HomepagePositionFragment;
 import com.cquant.lizone.frag.HomepageRecordFragment;
 import com.cquant.lizone.frag.HomepageStatFragment;
 import com.cquant.lizone.frag.HomepageViewFragment;
-import com.cquant.lizone.net.WebHelper;
 import com.cquant.lizone.tool.JsnTool;
 import com.cquant.lizone.tool.LogTool;
 import com.cquant.lizone.tool.StrTool;
 import com.cquant.lizone.util.Utils;
 import com.nostra13.universalimageloader.core.ImageLoader;
+import com.squareup.okhttp.Callback;
+import com.squareup.okhttp.Request;
+import com.squareup.okhttp.Response;
 
+import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -41,6 +47,8 @@ import java.util.List;
  * Created by PC on 2015/9/17.
  */
 public class HomepageActivity extends BaseActivity {
+
+    private static final String TAG = "HomepageActivity";
 
     //将ToolBar与TabLayout结合放入AppBarLayout
     private Toolbar mToolbar;
@@ -64,7 +72,6 @@ public class HomepageActivity extends BaseActivity {
 
     private String header_url;
 
-    private WebHelper mWebhelper = null;
     private HomepageHeadItem headerData;
 
     @Override
@@ -76,7 +83,6 @@ public class HomepageActivity extends BaseActivity {
 
         user_id = getIntent().getStringExtra("user_id");
         header_url = Utils.BASE_URL +"UserHomeData/uid/" +user_id;
-        mWebhelper = new WebHelper(this);
 
        // AppBarLayout mAppBarLayout = (AppBarLayout)findViewById(R.id.app_bar);
         //mAppBarLayout.
@@ -88,16 +94,30 @@ public class HomepageActivity extends BaseActivity {
         return user_id;
     }
     private void getHeaderData() {
-        mWebhelper.doLoadGet(header_url, null, new WebHelper.OnWebFinished() {
+        Request request = new Request.Builder().url(header_url).tag(TAG).build();
+        LizoneApp.getOkHttpClient().newCall(request).enqueue(new Callback() {
+            @Override
+            public void onFailure(Request request, IOException e) {
+                if (e != null) {
+                    e.printStackTrace();
+                }
+            }
 
             @Override
-            public void onWebFinished(boolean success, String msg) {
-                LogTool.v(" HomePageActivity ->getHeaderData,gonWebFinished:success = " + success + ",msg =" + msg);
-                if (success) {
-                    JSONObject response = JsnTool.getObject(msg);
-                    if ((response != null) && (JsnTool.getInt(response, "status") == 1)) {
-                        parseHeaderData(msg);
-                        mWebhelper.cancleRequest();
+            public void onResponse(Response response) throws IOException {
+                if (response.isSuccessful()) {
+                    String msg = response.body().string();
+                    LogTool.e("addAgree_ok:onResponse->msg=" + msg);
+                    JSONObject obj = JsnTool.getObject(msg);
+                    try {
+                        if ((obj != null) && (obj.getInt("status") == 1)) {
+                            Message message = mHandler.obtainMessage();
+                            message.what = MSG_PARSE_HEADER_DATA;
+                            message.obj = msg;
+                            message.sendToTarget();
+                        }
+                    } catch (JSONException e) {
+                        e.printStackTrace();
                     }
                 }
             }
@@ -201,55 +221,63 @@ public class HomepageActivity extends BaseActivity {
     };
 
     private void subOrCancleSub() {
-        mWebhelper.doLoadGet(Utils.BASE_URL+"Dingyue/sub_id/"+user_id, null, new WebHelper.OnWebFinished() {
+        Request request = new Request.Builder().url(Utils.BASE_URL+"Dingyue/sub_id/"+user_id).tag(TAG).build();
+        LizoneApp.getOkHttpClient().newCall(request).enqueue(new Callback() {
+            @Override
+            public void onFailure(Request request, IOException e) {
+                if (e != null) {
+                    e.printStackTrace();
+                }
+                Message message = mHandler.obtainMessage();
+                message.what = MSG_POP_MSG;
+                if (headerData.dingys == 1) {
+                    message.obj = "取消订阅失败";
+                } else {
+                    message.obj = "订阅失败";
+                }
+                message.sendToTarget();
+            }
 
             @Override
-            public void onWebFinished(boolean success, String msg) {
-                LogTool.e(" subOrCancleSub :msg="+msg+",id="+user_id);
-                if (success) {
-                    JSONObject response = JsnTool.getObject(msg);
-                    if((response != null)) {
-                    if (JsnTool.getInt(response, "status") == 1) {
-                        mWebhelper.cancleRequest();
-                        if (StrTool.areNotEmpty(JsnTool.getString(response, "msg"))) {
-                            popMsg(JsnTool.getString(response, "msg"));
-                        }else {
-                            if (headerData.dingys == 1) {
-                                popMsg("取消订阅成功");
-                            } else {
-                                popMsg("订阅成功");
+            public void onResponse(Response response) throws IOException {
+                if (response.isSuccessful()) {
+                    String msg = response.body().string();
+                    JSONObject obj = JsnTool.getObject(msg);
+                    try {
+                        if ((obj != null) && (obj.getInt("status") == 1)) {
+                            Message message = mHandler.obtainMessage();
+                            message.what = MSG_CHANGE_SUB_SUCCEED;
+                            if (StrTool.areNotEmpty(JsnTool.getString(obj, "msg"))) {
+                                message.obj= JsnTool.getString(obj, "msg");
+                            }else {
+                                if (headerData.dingys == 1) {
+                                    message.obj = "取消订阅成功";
+                                } else {
+                                    message.obj = "订阅成功";
+                                }
                             }
+                            message.sendToTarget();
                         }
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                        Message message = mHandler.obtainMessage();
+                        message.what = MSG_POP_MSG;
                         if (headerData.dingys == 1) {
-                            headerData.dingys = 0;
-                        } else if (headerData.dingys == 0) {
-                            headerData.dingys = 1;
-                        }
-                        setSubBtnText();
-                    } else {
-                        if (StrTool.areNotEmpty(JsnTool.getString(response, "msg"))) {
-                            popMsg(JsnTool.getString(response, "msg"));
+                            message.obj = "取消订阅失败";
                         } else {
-                            if (headerData.dingys == 1) {
-                                popMsg("取消订阅失败");
-                            } else {
-                                popMsg("订阅失败");
-                            }
+                            message.obj = "订阅失败";
                         }
-                    }
-                    } else {
-                        if (headerData.dingys == 1) {
-                            popMsg("取消订阅失败");
-                        } else {
-                            popMsg("订阅失败");
-                        }
+                        message.sendToTarget();
                     }
                 } else {
+                    Message message = mHandler.obtainMessage();
+                    message.what = MSG_POP_MSG;
                     if (headerData.dingys == 1) {
-                        popMsg("取消订阅失败");
+                        message.obj = "取消订阅失败";
                     } else {
-                        popMsg("订阅失败");
+                        message.obj = "订阅失败";
                     }
+                    message.sendToTarget();
                 }
             }
         });
@@ -294,24 +322,100 @@ public class HomepageActivity extends BaseActivity {
 
 
     private void cancleFollow() {
-        mWebhelper.doLoadGet(Utils.BASE_URL + "Cancel_Gend/gend_id/" + user_id, null, new WebHelper.OnWebFinished() {
+        Request request = new Request.Builder().url(Utils.BASE_URL + "Cancel_Gend/gend_id/" + user_id).tag(TAG).build();
+        LizoneApp.getOkHttpClient().newCall(request).enqueue(new Callback() {
+            @Override
+            public void onFailure(Request request, IOException e) {
+                if (e != null) {
+                    e.printStackTrace();
+                }
+                Message message = mHandler.obtainMessage();
+                message.what = MSG_POP_MSG;
+                message.obj = "取消跟单失败";
+                message.sendToTarget();
+            }
 
             @Override
-            public void onWebFinished(boolean success, String msg) {
-                if (success) {
-                    JSONObject response = JsnTool.getObject(msg);
-                    if ((response != null) && (JsnTool.getInt(response, "status") == 1)) {
-                        mWebhelper.cancleRequest();
-                        headerData.gend = 0;
-                        setFollowBtnText();
-                    } else {
-                        popMsg("取消跟单失败");
+            public void onResponse(Response response) throws IOException {
+                if (response.isSuccessful()) {
+                    String msg = response.body().string();
+                    JSONObject obj = JsnTool.getObject(msg);
+                    try {
+                        if ((obj != null) && (obj.getInt("status") == 1)) {
+                            Message message = mHandler.obtainMessage();
+                            message.what = MSG__CANCLE_FOLLOW_SUCCESSED;
+                            message.obj = obj;
+                            message.sendToTarget();
+                        } else {
+                            Message message = mHandler.obtainMessage();
+                            message.what = MSG_POP_MSG;
+                            message.obj = "取消跟单失败";
+                            message.sendToTarget();
+                        }
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                        Message message = mHandler.obtainMessage();
+                        message.what = MSG_POP_MSG;
+                        message.obj = "取消跟单失败";
+                        message.sendToTarget();
                     }
                 } else {
-                    popMsg("取消跟单失败");
+                    Message message = mHandler.obtainMessage();
+                    message.what = MSG_POP_MSG;
+                    message.obj = "取消跟单失败";
+                    message.sendToTarget();
                 }
             }
         });
+    }
+    private void cancleFollowSuccessed() {
+        headerData.gend = 0;
+        setFollowBtnText();
+    }
+    private void changeSubSucceed() {
+        if (headerData.dingys == 1) {
+            headerData.dingys = 0;
+        } else if (headerData.dingys == 0) {
+            headerData.dingys = 1;
+        }
+        setSubBtnText();
+    }
+    private static final int MSG_POP_MSG = 15;
+    private static final int MSG__CANCLE_FOLLOW_SUCCESSED = 16;
+    private static final int MSG_PARSE_HEADER_DATA =17;
+    private static final int MSG_CHANGE_SUB_SUCCEED =18;
+
+
+
+    private Handler mHandler = new Handler() {
+        @Override
+        public void handleMessage(Message msg) {
+            switch (msg.what) {
+                case MSG_PARSE_HEADER_DATA:
+                    parseHeaderData((String) msg.obj);
+                    break;
+                case MSG__CANCLE_FOLLOW_SUCCESSED:
+                    cancleFollowSuccessed();
+                    break;
+                case MSG_CHANGE_SUB_SUCCEED:
+                    popMsg((String) msg.obj);
+                    changeSubSucceed();
+                    break;
+                case MSG_POP_MSG:
+                    popMsg((String) msg.obj);
+                    break;
+                default:
+                    break;
+            }
+            super.handleMessage(msg);
+        }
+
+    };
+
+    @Override
+    public void onDestroy() {
+        LizoneApp.getOkHttpClient().cancel(TAG);
+        super.onDestroy();
     }
     private void gotoLogin() {
         startActivity(new Intent(this,LoginActivity.class));

@@ -44,9 +44,9 @@ public class WebPageActivity extends BaseActivity {
         initToolBar();
 
         initWebView();
-        setSession();
-        webview.loadUrl(url);
+        //setSession();
         webLogin();
+        webview.loadUrl(url);
     }
 
     private void setSession() {

@@ -2,6 +2,8 @@ package com.cquant.lizone.frag;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.support.v7.widget.LinearLayoutManager;
 import android.text.TextUtils;
 import android.util.Log;
@@ -20,16 +22,19 @@ import com.cquant.lizone.R;
 import com.cquant.lizone.activity.LoginActivity;
 import com.cquant.lizone.activity.OpenPositionActivity;
 import com.cquant.lizone.bean.DynamicItem;
-import com.cquant.lizone.net.WebHelper;
 import com.cquant.lizone.tool.ACache;
 import com.cquant.lizone.tool.JsnTool;
 import com.cquant.lizone.tool.Md5FileNameGenerator;
 import com.cquant.lizone.util.Utils;
 import com.cquant.lizone.view.ItemDivider;
 import com.nostra13.universalimageloader.core.ImageLoader;
+import com.squareup.okhttp.Callback;
+import com.squareup.okhttp.Request;
+import com.squareup.okhttp.Response;
 
 import org.json.JSONObject;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.regex.Pattern;
 import java.util.regex.Matcher;
@@ -55,7 +60,6 @@ public class DynamicFragment extends BaseFragment {
     private String mContent ;
 
 	private String url = Utils.BASE_URL+Utils.SUB_LIST_ADDR+Utils.PARA_SUB_LIST;
-	private WebHelper mWebhelper = null;
 
 	private ACache mACache;
 
@@ -83,7 +87,6 @@ public class DynamicFragment extends BaseFragment {
     @Override  
     public void onActivityCreated(Bundle savedInstanceState) {  
         super.onActivityCreated(savedInstanceState);
-        mWebhelper = new WebHelper(getActivity());
 		mACache = LizoneApp.getACache();
         initList();
         initReRecyclerView();
@@ -105,18 +108,38 @@ public class DynamicFragment extends BaseFragment {
             mDynamicList = new ArrayList<DynamicItem>();
         }
     }
+    private static final int MSG_PARSE_DATA = 21;
+    private Handler mHandler = new Handler() {
+        @Override
+        public void handleMessage(Message msg) {
+            switch(msg.what){
+                case MSG_PARSE_DATA:{
+                    parseDynamic((String) msg.obj);
+                    break;
+                }
+                default:break;
+            }
+            super.handleMessage(msg);
+        }
+    };
     private void getDynamic() {
         Log.d("TianjunXu"," getDynamic:url = "+url);
-        mWebhelper.doLoadGet(url, null, new WebHelper.OnWebFinished() {
+        Request request = new Request.Builder().url(url).tag(mFileName).build();
+        LizoneApp.getOkHttpClient().newCall(request).enqueue(new Callback() {
+            @Override
+            public void onFailure(Request request, IOException e) {
+            }
 
             @Override
-            public void onWebFinished(boolean success, String msg) {
-                Log.d("TianjunXu"," gonWebFinished:success = "+success+",msg ="+msg);
-                if(success) {
-                    JSONObject response = JsnTool.getObject(msg);
-                    if((response != null)&&(JsnTool.getInt(response,"status")==1))  {
-                        parseDynamic(msg);
-                        mWebhelper.cancleRequest();
+            public void onResponse(Response response) throws IOException {
+                if (response.isSuccessful()) {
+                    String msg = response.body().string();
+                    JSONObject obj = JsnTool.getObject(msg);
+                    if ((obj != null) && (JsnTool.getInt(obj, "status") == 1)) {
+                        Message message = mHandler.obtainMessage();
+                        message.what = MSG_PARSE_DATA;
+                        message.obj = msg;
+                        message.sendToTarget();
                     }
                 }
             }
@@ -126,9 +149,13 @@ public class DynamicFragment extends BaseFragment {
     private void parseDynamic(String msg) {
         mDynamicList =DynamicItem.getItemList(msg);
         mAdapter.notifyDataSetChanged();
-        mACache.put(mFileName,msg);
+        mACache.put(mFileName, msg);
     }
-
+    @Override
+    public void onDestroy() {
+        LizoneApp.getOkHttpClient().cancel(mFileName);
+        super.onDestroy();
+    }
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View root = inflater.inflate(R.layout.dynamic_fragment, container, false);

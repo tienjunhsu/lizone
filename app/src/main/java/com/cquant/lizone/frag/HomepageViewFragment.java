@@ -1,6 +1,8 @@
 package com.cquant.lizone.frag;
 
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -8,18 +10,22 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import com.cquant.lizone.LizoneApp;
 import com.cquant.lizone.R;
 import com.cquant.lizone.activity.HomepageActivity;
 import com.cquant.lizone.bean.HomepageRecordItem;
 import com.cquant.lizone.bean.HomepageViewItem;
-import com.cquant.lizone.net.WebHelper;
 import com.cquant.lizone.tool.JsnTool;
 import com.cquant.lizone.tool.LogTool;
 import com.cquant.lizone.util.Utils;
 import com.cquant.lizone.view.ItemDivider;
+import com.squareup.okhttp.Callback;
+import com.squareup.okhttp.Request;
+import com.squareup.okhttp.Response;
 
 import org.json.JSONObject;
 
+import java.io.IOException;
 import java.util.ArrayList;
 
 /**
@@ -29,7 +35,6 @@ public class HomepageViewFragment extends BaseFragment {
     private static final String TAG = "HomepageViewFragment";
 
     protected String url = Utils.BASE_URL+"UserGuand_list/uid/";
-    protected WebHelper mWebhelper = null;
 
     protected ArrayList<HomepageViewItem> mViewList;
 
@@ -43,7 +48,6 @@ public class HomepageViewFragment extends BaseFragment {
         url = url+((HomepageActivity)getActivity()).getUserId();
         initList();
         initReRecyclerView();
-        mWebhelper = new WebHelper(getActivity());
         return root;
     }
     @Override
@@ -54,15 +58,11 @@ public class HomepageViewFragment extends BaseFragment {
     @Override
     public void setUserVisibleHint(boolean isVisibleToUser) {
         super.setUserVisibleHint(isVisibleToUser);
-        if(mWebhelper != null) {
             if (isVisibleToUser) {
                 //相当于Fragment的onResume,当前可见
                 LogTool.v(TAG + "setUserVisibleHint to true");
                 getViews();
-            } else {
-                mWebhelper.cancleRequest();
             }
-        }
     }
     @Override
     public void onPause() {
@@ -87,22 +87,46 @@ public class HomepageViewFragment extends BaseFragment {
         mViewList = new ArrayList<HomepageViewItem>();
     }
     private void getViews() {
-        mWebhelper.doLoadGet(url, null, new WebHelper.OnWebFinished() {
+        Request request = new Request.Builder().url(url).tag(TAG).build();
+        LizoneApp.getOkHttpClient().newCall(request).enqueue(new Callback() {
+            @Override
+            public void onFailure(Request request, IOException e) {
+            }
 
             @Override
-            public void onWebFinished(boolean success, String msg) {
-                LogTool.v(TAG + "getViews gonWebFinished:success = " + success + ",msg =" + msg);
-                if (success) {
-                    JSONObject response = JsnTool.getObject(msg);
-                    if ((response != null) && (JsnTool.getInt(response, "status") == 1)) {
-                        parseRecord(msg);
-                        mWebhelper.cancleRequest();
+            public void onResponse(Response response) throws IOException {
+                if (response.isSuccessful()) {
+                    String msg = response.body().string();
+                    JSONObject obj = JsnTool.getObject(msg);
+                    if ((obj != null) && (JsnTool.getInt(obj, "status") == 1)) {
+                        Message message = mHandler.obtainMessage();
+                        message.what = MSG_PARSE_DATA;
+                        message.obj = msg;
+                        message.sendToTarget();
                     }
                 }
             }
         });
     }
-
+    private static final int MSG_PARSE_DATA = 21;
+    private Handler mHandler = new Handler() {
+        @Override
+        public void handleMessage(Message msg) {
+            switch(msg.what){
+                case MSG_PARSE_DATA:{
+                    parseRecord((String) msg.obj);
+                    break;
+                }
+                default:break;
+            }
+            super.handleMessage(msg);
+        }
+    };
+    @Override
+    public void onDestroy() {
+        LizoneApp.getOkHttpClient().cancel(TAG);
+        super.onDestroy();
+    }
     private void parseRecord(String msg) {
         mViewList =HomepageViewItem.getItemList(msg);
         mAdapter.notifyDataSetChanged();

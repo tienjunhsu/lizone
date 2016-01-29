@@ -18,7 +18,6 @@ import com.cquant.lizone.activity.BaseActivity;
 import com.cquant.lizone.activity.KPointActivity;
 import com.cquant.lizone.activity.MainActivity;
 import com.cquant.lizone.bean.MarketDataItem;
-import com.cquant.lizone.net.WebHelper;
 import com.cquant.lizone.tool.ACache;
 import com.cquant.lizone.tool.JsnTool;
 import com.cquant.lizone.tool.LogTool;
@@ -28,11 +27,15 @@ import com.cquant.lizone.util.GlobalVar;
 import com.cquant.lizone.util.SharedPrefsUtil;
 import com.cquant.lizone.util.Utils;
 import com.cquant.lizone.view.OptListView;
+import com.squareup.okhttp.Callback;
+import com.squareup.okhttp.Request;
+import com.squareup.okhttp.Response;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.IOException;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -47,6 +50,8 @@ import io.socket.emitter.Emitter;
  * Created by asus on 2015/8/30.
  */
 public class MarketFragment extends BaseFragment implements MainActivity.OnActivityResultObserver {
+
+    private static final String TAG = "MarketFragment";
 
     private static final int GROUP_COUNT = 3;
 
@@ -91,7 +96,6 @@ public class MarketFragment extends BaseFragment implements MainActivity.OnActiv
 	private String mOptStr;//保存在本地的自选字符串,单个是id#label#name,形式如"1#XAGUSD#现货白银,2#AG1000#现货白银1K"
 
     //
-    private WebHelper mWebhelper;
 
     private int red ;
     private int green;
@@ -281,17 +285,6 @@ public class MarketFragment extends BaseFragment implements MainActivity.OnActiv
             }
         });;
         socket.connect();
-
-        //test
-       /* WebHelper mWebhelper = new WebHelper(getActivity());
-        mWebhelper.doLoadGet(url, null, new WebHelper.OnWebFinished() {
-
-            @Override
-            public void onWebFinished(boolean success, String msg) {
-                Log.d("TianjunXu", " connect:success = " + success + ",msg =" + msg);
-            }
-        });*/
-        //test
     }
 
     public void disconnected() {
@@ -313,25 +306,45 @@ public class MarketFragment extends BaseFragment implements MainActivity.OnActiv
 
             }else if(msg.what==3){
                 connect();
+            } else if(msg.what ==MSG_PARSE_OPT_LIST) {
+                parseOptList((String)msg.obj);
+                resizeOptListView();
+            }else if(msg.what ==MSG_PARSE_OPT_FROM_CACHE) {
+                parseOptListFromCache();
+                resizeOptListView();
             }
             super.handleMessage(msg);
         }
 
     };
+
+    private static final int MSG_PARSE_OPT_LIST = 30;
+    private static final int MSG_PARSE_OPT_FROM_CACHE = 31;
     private void getOptList() {
         String optUrl = Utils.BASE_URL+"optlist/";
 		if(((BaseActivity)getActivity()).isNetAvailable()) {
-            mWebhelper.doLoadGet(optUrl, null, new WebHelper.OnWebFinished() {
+            Request request = new Request.Builder().url(optUrl).tag(TAG).build();
+            LizoneApp.getOkHttpClient().newCall(request).enqueue(new Callback() {
+                @Override
+                public void onFailure(Request request, IOException e) {
+                    Message message = mHanler.obtainMessage();
+                    message.what = MSG_PARSE_OPT_FROM_CACHE;
+                    message.sendToTarget();
+                }
 
                 @Override
-                public void onWebFinished(boolean success, String msg) {
-                    LogTool.d("getOptList:success = " + success + ",msg =" + msg);
-                    if(success) {
-                        parseOptList(msg);
-                    }else {
-                        parseOptListFromCache();
+                public void onResponse(Response response) throws IOException {
+                    if (response.isSuccessful()) {
+                        String msg = response.body().string();
+                            Message message = mHanler.obtainMessage();
+                            message.what = MSG_PARSE_OPT_LIST;
+                            message.obj = msg;
+                            message.sendToTarget();
+                    } else {
+                        Message message = mHanler.obtainMessage();
+                        message.what = MSG_PARSE_OPT_FROM_CACHE;
+                        message.sendToTarget();
                     }
-                    resizeOptListView();//hsu
                 }
             });
 		} else {
@@ -472,7 +485,6 @@ public class MarketFragment extends BaseFragment implements MainActivity.OnActiv
         super.onActivityCreated(savedInstanceState);
         LogTool.v("MarketFragment:onActivityCreated");
         mCache = LizoneApp.getACache();
-        mWebhelper = new WebHelper(getActivity());
         red = getActivity().getResources().getColor(R.color.red_two);
         green = getActivity().getResources().getColor(R.color.green_two);
         white = getActivity().getResources().getColor(R.color.white_two);
@@ -522,6 +534,7 @@ public class MarketFragment extends BaseFragment implements MainActivity.OnActiv
             }
             socket = null;
         }
+        LizoneApp.getOkHttpClient().cancel(TAG);
         super.onDestroy();
     }
 

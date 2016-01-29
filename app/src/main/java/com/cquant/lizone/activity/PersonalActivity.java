@@ -1,6 +1,8 @@
 package com.cquant.lizone.activity;
 
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
@@ -11,7 +13,6 @@ import android.widget.Toast;
 import com.cquant.lizone.LizoneApp;
 import com.cquant.lizone.R;
 import com.cquant.lizone.bean.AccountOverViewItem;
-import com.cquant.lizone.net.WebHelper;
 import com.cquant.lizone.tool.ACache;
 import com.cquant.lizone.tool.JsnTool;
 import com.cquant.lizone.tool.Md5FileNameGenerator;
@@ -20,13 +21,20 @@ import com.cquant.lizone.util.SharedPrefsUtil;
 import com.cquant.lizone.util.Utils;
 import com.cquant.lizone.view.CircleImageView;
 import com.nostra13.universalimageloader.core.ImageLoader;
+import com.squareup.okhttp.Callback;
+import com.squareup.okhttp.Request;
+import com.squareup.okhttp.Response;
 
 import org.json.JSONObject;
+
+import java.io.IOException;
 
 /**
  * Created by asus on 2015/10/23.
  */
 public class PersonalActivity extends BaseActivity {
+
+    private static final String TAG ="PersonalActivity";
 
     private CircleImageView mImgHead;
     private EditText mEditName;
@@ -40,19 +48,18 @@ public class PersonalActivity extends BaseActivity {
     private ACache mACache;
 
     private String url = Utils.BASE_URL+"MyAccount/";
-    protected WebHelper mWebhelper = null;
     private AccountOverViewItem mOverView;
     private String mFileName;
     private View.OnFocusChangeListener mEditNameFocusChanged = new View.OnFocusChangeListener() {
         @Override
         public void onFocusChange(View view, boolean b) {
             if(!b) {
-                checkUserName();
+                //checkUserName();
             }
         }
     };
 
-    private void checkUserName() {
+    /*private void checkUserName() {
         if(mEditName.getText().toString().trim().isEmpty()) {
             popMsg("用户名不能为空");
             mEditName.setText(GlobalVar.sAccountInf.name);
@@ -87,7 +94,7 @@ public class PersonalActivity extends BaseActivity {
                 }
             }
         });
-    }
+    }*/
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -102,7 +109,6 @@ public class PersonalActivity extends BaseActivity {
         mTvAvailableCash = (TextView)findViewById(R.id.tv_available_cash);
         mTvRisk = (TextView)findViewById(R.id.tv_risk_ratio);
         initToolBar();
-        mWebhelper = new WebHelper(this);
         mACache = LizoneApp.getACache();
         mFileName = Md5FileNameGenerator.generate(url);
         initOverViewData();
@@ -134,13 +140,12 @@ public class PersonalActivity extends BaseActivity {
     @Override
     public void onPause() {
         super.onPause();
-        mWebhelper.cancleRequest();
     }
 
     @Override
     public void onDestroy() {
+        LizoneApp.getOkHttpClient().cancel(TAG);
         super.onDestroy();
-        mWebhelper = null;
     }
     @Override
     protected void initToolBar() {
@@ -154,17 +159,37 @@ public class PersonalActivity extends BaseActivity {
             }
         });
     }
-
+    private static final int MSG_PARSE_DATA = 21;
+    private Handler mHandler = new Handler() {
+        @Override
+        public void handleMessage(Message msg) {
+            switch(msg.what){
+                case MSG_PARSE_DATA:{
+                    parseOverView((String) msg.obj);
+                    break;
+                }
+                default:break;
+            }
+            super.handleMessage(msg);
+        }
+    };
     private void getOverView() {
-        mWebhelper.doLoadGet(url, null, new WebHelper.OnWebFinished() {
+        Request request = new Request.Builder().url(url).tag(TAG).build();
+        LizoneApp.getOkHttpClient().newCall(request).enqueue(new Callback() {
+            @Override
+            public void onFailure(Request request, IOException e) {
+            }
 
             @Override
-            public void onWebFinished(boolean success, String msg) {
-                if (success) {
-                    JSONObject response = JsnTool.getObject(msg);
-                    if ((response != null) && (JsnTool.getInt(response, "status") == 1)) {
-                        parseOverView(msg);
-                        mWebhelper.cancleRequest();
+            public void onResponse(Response response) throws IOException {
+                if (response.isSuccessful()) {
+                    String msg = response.body().string();
+                    JSONObject obj = JsnTool.getObject(msg);
+                    if ((obj != null) && (JsnTool.getInt(obj, "status") == 1)) {
+                        Message message = mHandler.obtainMessage();
+                        message.what = MSG_PARSE_DATA;
+                        message.obj = msg;
+                        message.sendToTarget();
                     }
                 }
             }

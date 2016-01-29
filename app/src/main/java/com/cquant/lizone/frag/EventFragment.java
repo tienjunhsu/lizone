@@ -2,6 +2,8 @@ package com.cquant.lizone.frag;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -15,7 +17,6 @@ import com.cquant.lizone.LizoneApp;
 import com.cquant.lizone.R;
 import com.cquant.lizone.activity.WebPageActivity;
 import com.cquant.lizone.bean.EventItem;
-import com.cquant.lizone.net.WebHelper;
 import com.cquant.lizone.tool.ACache;
 import com.cquant.lizone.tool.JsnTool;
 import com.cquant.lizone.tool.LogTool;
@@ -25,9 +26,13 @@ import com.cquant.lizone.util.Utils;
 import com.cquant.lizone.view.ItemDivider;
 import com.cquant.lizone.view.OnItemClickListener;
 import com.nostra13.universalimageloader.core.ImageLoader;
+import com.squareup.okhttp.Callback;
+import com.squareup.okhttp.Request;
+import com.squareup.okhttp.Response;
 
 import org.json.JSONObject;
 
+import java.io.IOException;
 import java.util.ArrayList;
 
 /**
@@ -38,7 +43,6 @@ public class EventFragment extends BaseFragment {
     private static final String TAG = "EventFragment";
 
     protected String url = Utils.BASE_URL+"Myhuodong_list/sel_id/";
-    protected WebHelper mWebhelper = null;
     private ACache mACache;
 
     private String mFileName;
@@ -68,7 +72,6 @@ public class EventFragment extends BaseFragment {
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        mWebhelper = new WebHelper(getActivity());
         mACache = LizoneApp.getACache();
         initList();
         initReRecyclerView();
@@ -88,22 +91,17 @@ public class EventFragment extends BaseFragment {
     @Override
     public void onResume() {
         super.onResume();
-        mWebhelper.cancleRequest();
         getEvents();
     }
     @Override
     public void setUserVisibleHint(boolean isVisibleToUser) {
         super.setUserVisibleHint(isVisibleToUser);
-        if(mWebhelper != null) {
             if (isVisibleToUser) {
                 //相当于Fragment的onResume,当前可见
                 LogTool.v(TAG + "setUserVisibleHint to true");
 
                 getEvents();
-            } else {
-                mWebhelper.cancleRequest();
             }
-        }
     }
     @Override
     public void onPause() {
@@ -111,8 +109,7 @@ public class EventFragment extends BaseFragment {
     }
     @Override
     public void onDestroy() {
-        mWebhelper.cancleRequest();
-        mWebhelper =null;
+        LizoneApp.getOkHttpClient().cancel(mFileName);
         super.onDestroy();
     }
 
@@ -133,21 +130,42 @@ public class EventFragment extends BaseFragment {
         }
     }
     private void getEvents() {
-        mWebhelper.doLoadGet(url, null, new WebHelper.OnWebFinished() {
+        Request request = new Request.Builder().url(url).tag(mFileName).build();
+        LizoneApp.getOkHttpClient().newCall(request).enqueue(new Callback() {
+            @Override
+            public void onFailure(Request request, IOException e) {
+            }
 
             @Override
-            public void onWebFinished(boolean success, String msg) {
-                LogTool.v(TAG+"getEvents gonWebFinished:success = " + success + ",msg =" + msg);
-                if (success) {
-                    JSONObject response = JsnTool.getObject(msg);
-                    if ((response != null) && (JsnTool.getInt(response, "status") == 1)) {
-                        parseEvents(msg);
-                        mWebhelper.cancleRequest();
+            public void onResponse(Response response) throws IOException {
+                if (response.isSuccessful()) {
+                    String msg = response.body().string();
+                    JSONObject obj = JsnTool.getObject(msg);
+                    if ((obj != null) && (JsnTool.getInt(obj, "status") == 1)) {
+                        Message message = mHandler.obtainMessage();
+                        message.what = MSG_PARSE_DATA;
+                        message.obj = msg;
+                        message.sendToTarget();
                     }
                 }
             }
         });
     }
+
+    private static final int MSG_PARSE_DATA = 21;
+    private Handler mHandler = new Handler() {
+        @Override
+        public void handleMessage(Message msg) {
+            switch(msg.what){
+                case MSG_PARSE_DATA:{
+                    parseEvents((String) msg.obj);
+                    break;
+                }
+                default:break;
+            }
+            super.handleMessage(msg);
+        }
+    };
 
     private void parseEvents(String msg) {
         mEventList =EventItem.getItemList(msg);

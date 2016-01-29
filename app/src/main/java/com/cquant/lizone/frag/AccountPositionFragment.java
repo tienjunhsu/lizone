@@ -4,6 +4,8 @@ import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.os.Bundle;
 //import android.support.v7.app.AlertDialog;
+import android.os.Handler;
+import android.os.Message;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -18,7 +20,6 @@ import com.cquant.lizone.LizoneApp;
 import com.cquant.lizone.R;
 import com.cquant.lizone.activity.BaseActivity;
 import com.cquant.lizone.bean.PositionItem;
-import com.cquant.lizone.net.WebHelper;
 import com.cquant.lizone.tool.ACache;
 import com.cquant.lizone.tool.JsnTool;
 import com.cquant.lizone.tool.Md5FileNameGenerator;
@@ -26,9 +27,13 @@ import com.cquant.lizone.tool.StrTool;
 import com.cquant.lizone.util.Utils;
 import com.cquant.lizone.view.ItemDivider;
 import com.cquant.lizone.view.OnItemClickListener;
+import com.squareup.okhttp.Callback;
+import com.squareup.okhttp.Request;
+import com.squareup.okhttp.Response;
 
 import org.json.JSONObject;
 
+import java.io.IOException;
 import java.util.ArrayList;
 
 /**
@@ -39,7 +44,6 @@ public class AccountPositionFragment extends BaseFragment {
 
 
     private String url = Utils.BASE_URL+"Chicang_list/";
-    protected WebHelper mWebhelper = null;
 
     protected ACache mACache;
 
@@ -57,7 +61,6 @@ public class AccountPositionFragment extends BaseFragment {
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        mWebhelper = new WebHelper(getActivity());
         mACache = LizoneApp.getACache();
         initList();
         initReRecyclerView();
@@ -101,33 +104,6 @@ public class AccountPositionFragment extends BaseFragment {
             mRecordList = new ArrayList<TradeRecordItem>();
         }*/
         mPositionList = new ArrayList<PositionItem>();
-    }
-    private void getPosition() {
-        if(!((BaseActivity)getActivity()).isNetAvailable()) {
-            popMsg("网络不可用");
-            return;
-        }
-        Log.d("TianjunXu", " getPosition:url = " + url);
-        mWebhelper.doLoadGet(url, null, new WebHelper.OnWebFinished() {
-
-            @Override
-            public void onWebFinished(boolean success, String msg) {
-                Log.d("TianjunXu", " gonWebFinished:success = " + success + ",msg =" + msg);
-                if (success) {
-                    JSONObject response = JsnTool.getObject(msg);
-                    if ((response != null) && (JsnTool.getInt(response, "status") == 1)) {
-                        parseRecord(msg);
-                        mWebhelper.cancleRequest();
-                    }
-                }
-            }
-        });
-    }
-
-    private void parseRecord(String msg) {
-        mPositionList=PositionItem.getItemList(msg);
-        mAdapter.notifyDataSetChanged();
-        //mACache.put(mFileName, msg);
     }
 
     public class MasterAdapter extends RecyclerView.Adapter {
@@ -238,29 +214,108 @@ public class AccountPositionFragment extends BaseFragment {
             popMsg("网络不可用");
             return;
         }
-            mWebhelper.doLoadGet(Utils.BASE_URL + "/Ex_EndDeal/id/" + mPositionList.get(position).id + "/number/" + mPositionList.get(position).ex_number, null, new WebHelper.OnWebFinished() {
+        Request request = new Request.Builder().url(Utils.BASE_URL + "/Ex_EndDeal/id/" + mPositionList.get(position).id + "/number/" + mPositionList.get(position).ex_number).tag(TAG).build();
+        LizoneApp.getOkHttpClient().newCall(request).enqueue(new Callback() {
+            @Override
+            public void onFailure(Request request, IOException e) {
+                Message message = mHandler.obtainMessage();
+                message.what = MSG_CLOSE_POSITION_FAILED;
+                message.obj = "平仓失败";
+                message.sendToTarget();
+            }
 
-                @Override
-                public void onWebFinished(boolean success, String msg) {
-                    if (success) {
-                        JSONObject response = JsnTool.getObject(msg);
-                        if (response != null) {
-                            if (StrTool.areNotEmpty(JsnTool.getString(response, "msg"))) {
-                                popMsg(JsnTool.getString(response, "msg"));
-
-                            } else {
-                                if (JsnTool.getInt(response, "status") == 1) {
-                                    popMsg("平仓成功");
-                                } else {
-                                    popMsg("平仓失败");
-                                }
-                            }
+            @Override
+            public void onResponse(Response response) throws IOException {
+                if (response.isSuccessful()) {
+                    String msg = response.body().string();
+                    JSONObject obj = JsnTool.getObject(msg);
+                    if ((obj != null) && (JsnTool.getInt(obj, "status") == 1)) {
+                        Message message = mHandler.obtainMessage();
+                        message.what = MSG_CLOSE_POSITION_SUCCEED;
+                        message.sendToTarget();
+                    } else {
+                        String tips = JsnTool.getString(obj, "msg");
+                        Message message = mHandler.obtainMessage();
+                        message.what = MSG_CLOSE_POSITION_FAILED;
+                        if (StrTool.areNotEmpty(tips)) {
+                            message.obj = tips;
+                        } else {
+                            message.obj = "平仓失败";
                         }
-                        mWebhelper.cancleRequest();
-                        getPosition();
+                        message.sendToTarget();
+                    }
+                } else {
+                    Message message = mHandler.obtainMessage();
+                    message.what = MSG_CLOSE_POSITION_FAILED;
+                    message.obj = "平仓失败";
+                    message.sendToTarget();
+                }
+            }
+        });
+    }
+    private void getPosition() {
+        if(!((BaseActivity)getActivity()).isNetAvailable()) {
+            popMsg("网络不可用");
+            return;
+        }
+        Log.d("TianjunXu", " getPosition:url = " + url);
+        Request request = new Request.Builder().url(url).tag(TAG).build();
+        LizoneApp.getOkHttpClient().newCall(request).enqueue(new Callback() {
+            @Override
+            public void onFailure(Request request, IOException e) {
+            }
+
+            @Override
+            public void onResponse(Response response) throws IOException {
+                if (response.isSuccessful()) {
+                    String msg = response.body().string();
+                    JSONObject obj = JsnTool.getObject(msg);
+                    if ((obj != null) && (JsnTool.getInt(obj, "status") == 1)) {
+                        Message message = mHandler.obtainMessage();
+                        message.what = MSG_PARSE_DATA;
+                        message.obj = msg;
+                        message.sendToTarget();
                     }
                 }
-            });
+            }
+        });
+    }
+
+    private void parseRecord(String msg) {
+        mPositionList=PositionItem.getItemList(msg);
+        mAdapter.notifyDataSetChanged();
+        //mACache.put(mFileName, msg);
+    }
+    private static final int MSG_PARSE_DATA = 21;
+    private static final int MSG_POP_MSG = 4;
+    private static final int MSG_CLOSE_POSITION_SUCCEED = 22;
+    private static final int MSG_CLOSE_POSITION_FAILED = 23;
+
+    private Handler mHandler = new Handler() {
+        @Override
+        public void handleMessage(Message msg) {
+            switch(msg.what){
+                case MSG_CLOSE_POSITION_FAILED:
+                    closePositionFailed((String) msg.obj);
+                    break;
+                case MSG_CLOSE_POSITION_SUCCEED:
+                    closePositionSucceed();
+                    break;
+                case MSG_PARSE_DATA:
+                    parseRecord((String) msg.obj);
+                    break;
+                default:break;
+            }
+            super.handleMessage(msg);
+        }
+    };
+    private void closePositionSucceed() {
+        popMsg("平仓成功");
+        getPosition();
+    }
+    private void closePositionFailed(String msg) {
+        popMsg(msg);
+        getPosition();
     }
     protected void popMsg(String msg) {
         Toast.makeText(getActivity(), msg, Toast.LENGTH_SHORT).show();
@@ -268,7 +323,6 @@ public class AccountPositionFragment extends BaseFragment {
     @Override
     public void onDestroy() {
         super.onDestroy();
-        mWebhelper.cancleRequest();
-        mWebhelper = null;
+        LizoneApp.getOkHttpClient().cancel(TAG);
     }
 }
